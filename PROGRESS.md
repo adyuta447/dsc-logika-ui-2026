@@ -7,7 +7,7 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 
 - Public terbaik: **0.55784**, peringkat 11.
 - Model terbaik di CV: notebook 10 fold + factor model, AUC **0.84649** (top_mix).
-- Submit 12 Okt 07:01: hanya `run_fac` top_mix (10 fold + factor). Slot 2 dan 3 menunggu skornya dilihat dulu.
+- Submit 12 Okt 07:01: satu file top_mix. Pakai `run_seeds` (2 seed) kalau sudah selesai dan CV lebih baik (AUC > 0.84649, KS >= 0.5237), selain itu `run_fac`. Slot 2 dan 3 menunggu skornya dilihat dulu.
   Kandidat berikutnya: `run_full_fac` top_mix (refit 100% + factor), `run10` top_mix (tanpa factor, pembanding).
 - Sedang jalan: notebook 10 fold + factor dengan 2 seed CatBoost dan XGBoost (`run_seeds/`), selesai sekitar 03:30 WIB.
 
