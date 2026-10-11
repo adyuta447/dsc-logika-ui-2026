@@ -3,3 +3,6 @@ v1 check sources 12 seeds [0.84518, 0.84507] 2 seed avg 0.84524 0.52203
 fold scale check [0.819, 0.8209, 0.8292, 0.8175, 0.8145]
 groups sources 12 seeds [0.84513, 0.84497] 2 seed avg 0.84517 0.52334
 fold scale check [0.819, 0.8209, 0.8292, 0.8175, 0.8145]
+all_fs sources 12 seeds [0.84505, 0.84519] 2 seed avg 0.84523 0.52246
+fold scale check [0.819, 0.8209, 0.8292, 0.8175, 0.8145]
+groups+all_fs sources 12 seeds [0.84507, 0.84526] 2 seed avg 0.84527 0.52239

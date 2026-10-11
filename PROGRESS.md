@@ -3,12 +3,13 @@
 Kaggle: data-science-competition-logika-ui-2026, metrik KS. Deadline 30 Okt 2026 23:59 WIB.
 Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 submit per hari, reset 07:00 WIB.
 
-## Status terakhir (11 Okt 23:20 WIB)
+## Status terakhir (11 Okt 23:35 WIB)
 
 - Public terbaik: **0.55784**, peringkat 11.
 - Model terbaik di CV: notebook 10 fold + factor model, AUC **0.84649** (top_mix).
 - Antrean submit 12 Okt 07:01: `run_fac` top_mix, `run_fac` linear30, `run10` main (pembanding).
-- Sedang jalan: uji sub factor per kelompok dan shrinkage untuk semua sumber (`experiments/fz4.py`).
+- Sedang jalan: notebook 10 fold + factor dengan 2 seed CatBoost dan XGBoost (`run_seeds/`), selesai sekitar 03:30 WIB.
+- Cadangan untuk Selasa: refit 100% data + factor (`run_full_fac/`).
 
 ## Riwayat submit
 
@@ -40,7 +41,8 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 ## Sudah dicoba, tidak membantu
 
 400+ fitur tambahan, MLP, GAM, stacking, pseudo label, seleksi fitur, denoising harga, normalisasi per kelompok,
-pisah data 6 bulan di factor model, tambah 6 sumber di factor model, pembersihan noise cicilan.
+pisah data 6 bulan di factor model (0.84502), tambah 6 sumber di factor model (0.84521), pembersihan noise cicilan,
+sub factor per kelompok (0.84517), shrinkage semua sumber (0.84523). Patokan factor v1: 0.84524 (LightGBM lean, 5 fold, 2 seed).
 
 ## Struktur repo
 
