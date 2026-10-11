@@ -1,0 +1,6 @@
+mlp1e-3 fold 0
+mlp1e-3 fold 1
+mlp1e-3 fold 2
+mlp1e-3 fold 3
+mlp1e-3 fold 4
+mlp1e-3 AUC 0.83767 KS 0.51312

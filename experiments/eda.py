@@ -1,0 +1,22 @@
+import pandas as pd, numpy as np
+D='data/'
+tr=pd.read_csv(D+'train_applications.csv',parse_dates=['application_datetime','decision_datetime'])
+te=pd.read_csv(D+'test_applications.csv',parse_dates=['application_datetime','decision_datetime'])
+print(tr.target.mean(), tr.shape, te.shape, tr.customer_id.nunique(), te.customer_id.isin(tr.customer_id).sum())
+print(tr.decision_datetime.describe(), te.decision_datetime.describe())
+print(tr.term_months.value_counts().head(), tr.annual_interest_rate.value_counts().head())
+app=pd.concat([tr,te])[['customer_id','decision_datetime']]
+pa=pd.read_csv(D+'previous_applications.csv',parse_dates=['application_datetime','decision_datetime']).merge(app,on='customer_id',suffixes=('','_sel'))
+print('prev after cutoff', (pa.decision_datetime>=pa.decision_datetime_sel).mean(), (pa.application_datetime>=pa.decision_datetime_sel).mean())
+print(pa.decision.value_counts())
+rh=pd.read_csv(D+'repayment_history.csv',parse_dates=['due_date','last_payment_datetime']).merge(app,on='customer_id')
+print('rh due after', (rh.due_date>=rh.decision_datetime).mean(), 'pay after',(rh.last_payment_datetime>=rh.decision_datetime).mean())
+print(rh.describe())
+ab=pd.read_csv(D+'account_behavior.csv',parse_dates=['month']).merge(app,on='customer_id')
+print('ab month after', (ab.month>=ab.decision_datetime.dt.to_period('M').dt.to_timestamp()).mean())
+bu=pd.read_csv(D+'bureau_observations.csv',parse_dates=['report_datetime','available_datetime'])
+bu=bu.merge(app,on='customer_id')
+print('bureau avail after', (bu.available_datetime>bu.decision_datetime).mean(), 'report after',(bu.report_datetime>bu.decision_datetime).mean())
+print('bureau app ids in sel', bu.application_id.isin(pd.concat([tr,te]).application_id).mean())
+ec=pd.read_csv(D+'ecommerce_transactions.csv',parse_dates=['transaction_datetime'],usecols=['customer_id','transaction_datetime']).merge(app,on='customer_id')
+print('ec after', (ec.transaction_datetime>=ec.decision_datetime).mean())

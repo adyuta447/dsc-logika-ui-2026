@@ -1,0 +1,6 @@
+spline8 fold 0
+spline8 fold 1
+spline8 fold 2
+spline8 fold 3
+spline8 fold 4
+spline8 AUC 0.83962 KS 0.5172

@@ -1,0 +1,6 @@
+fold scale check [0.8175, 0.8201, 0.8276, 0.8162, 0.8118]
+split180 sources 23 seeds [0.84493, 0.84489] 2 seed avg 0.84502 0.52234
+fold scale check [0.8204, 0.8222, 0.8312, 0.8187, 0.8169]
+extra sources 18 seeds [0.84519, 0.84501] 2 seed avg 0.84521 0.52179
+fold scale check [0.8178, 0.8207, 0.8285, 0.8168, 0.8126]
+split180+extra sources 35 seeds [0.84497, 0.8448] 2 seed avg 0.845 0.52308

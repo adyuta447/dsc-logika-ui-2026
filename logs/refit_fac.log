@@ -1,0 +1,21 @@
+full lgb 0
+full lgb 1
+full lgb 2
+full cat
+full xgb
+lean lgb 0
+lean lgb 1
+lean lgb 2
+lean cat
+lean xgb
+top lgb 0
+top lgb 1
+top lgb 2
+top cat
+top xgb
+main spearman vs 10 fold factor 0.99951
+top_mix spearman vs 10 fold factor 0.9997
+top_heavy spearman vs 10 fold factor 0.99968
+top_only spearman vs 10 fold factor 0.99951
+trees_only spearman vs 10 fold factor 0.99956
+linear30 spearman vs 10 fold factor 0.99976

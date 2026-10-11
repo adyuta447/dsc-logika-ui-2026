@@ -1,0 +1,15 @@
+import pandas as pd, numpy as np
+D='data/'
+tr=pd.read_csv(D+'train_applications.csv',parse_dates=['application_datetime','decision_datetime'])
+cp=pd.read_csv(D+'customer_profiles.csv'); print(cp.describe().T); print(cp.isna().sum().sum())
+bu=pd.read_csv(D+'bureau_observations.csv',parse_dates=['report_datetime','available_datetime'])
+print(bu.describe().T)
+print(bu.groupby('application_id').size().value_counts().head())
+print(bu.groupby(['application_id','bureau_provider']).size().value_counts().head())
+sel=bu[bu.application_id.isin(tr.application_id)].merge(tr[['application_id','target']])
+print('sel bureau target corr', sel.groupby('application_id').agg(s=('score','mean'),t=('target','first')).corr())
+print('apps without sel bureau', 1-tr.application_id.isin(bu.application_id).mean())
+rh=pd.read_csv(D+'repayment_history.csv'); print(rh.days_past_due.describe(), (rh.amount_paid>rh.amount_due).mean(), rh.duplicated(['installment_id']).sum())
+ab=pd.read_csv(D+'account_behavior.csv'); print(ab.describe().T); print(ab.groupby('customer_id').size().describe()); print('dups',ab.duplicated(['customer_id','month']).sum())
+ec=pd.read_csv(D+'ecommerce_transactions.csv',nrows=500000); print(ec.order_status.value_counts(), ec.duplicated('order_item_id').sum(), ec.describe().T)
+print(tr.describe().T)

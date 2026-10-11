@@ -1,0 +1,4 @@
+fold scale check [0.819, 0.8209, 0.8292, 0.8175, 0.8145]
++factor per fold seed 0 0.84518 0.52133
++factor per fold seed 1 0.84507 0.52227
++factor per fold 2 seed avg 0.84524 0.52203

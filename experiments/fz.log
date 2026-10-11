@@ -1,0 +1,9 @@
+base seed 0 0.84434 0.52197
+base seed 1 0.84416 0.52114
+base 2 seed avg 0.84437 0.52199
++factor seed 0 0.84466 0.52266
++factor seed 1 0.84497 0.5234
++factor 2 seed avg 0.84493 0.52319
++factor_z only seed 0 0.84472 0.52312
++factor_z only seed 1 0.8444 0.52084
++factor_z only 2 seed avg 0.84467 0.52284
