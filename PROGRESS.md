@@ -42,7 +42,8 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 
 400+ fitur tambahan, MLP, GAM, stacking, pseudo label, seleksi fitur, denoising harga, normalisasi per kelompok,
 pisah data 6 bulan di factor model (0.84502), tambah 6 sumber di factor model (0.84521), pembersihan noise cicilan,
-sub factor per kelompok (0.84517), shrinkage semua sumber (0.84523). Patokan factor v1: 0.84524 (LightGBM lean, 5 fold, 2 seed).
+sub factor per kelompok (0.84517), shrinkage semua sumber (0.84523),
+optimasi bobot blend (validasi setengah data: +0.00002 dan +0.0001, bobot manual sudah hampir optimal). Patokan factor v1: 0.84524 (LightGBM lean, 5 fold, 2 seed).
 
 ## Struktur repo
 
