@@ -7,9 +7,8 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 
 - Public terbaik: **0.55784**, peringkat 11.
 - Model terbaik di CV: notebook 10 fold + factor model, AUC **0.84649** (top_mix).
-- Antrean submit 12 Okt 07:01: `run_fac` top_mix, `run_fac` linear30, `run10` main (pembanding).
+- Antrean submit 12 Okt 07:01 (semua varian top_mix): `run_fac` (10 fold + factor), `run_full_fac` (refit 100% + factor), `run10` (tanpa factor, pembanding).
 - Sedang jalan: notebook 10 fold + factor dengan 2 seed CatBoost dan XGBoost (`run_seeds/`), selesai sekitar 03:30 WIB.
-- Cadangan untuk Selasa: refit 100% data + factor (`run_full_fac/`).
 
 ## Riwayat submit
 
@@ -49,7 +48,7 @@ sub factor per kelompok (0.84517), shrinkage semua sumber (0.84523). Patokan fac
 - `features.py`: pipeline fitur, termasuk `factor_inputs` dan `factor_features`.
 - `make_nb.py`: generator notebook. `python make_nb.py <output.ipynb> <N_FOLDS> <TREE_SEEDS>`.
 - `DSC0152_kali ini beneran deh_Notebook.ipynb`: notebook deliverable (masih versi 5 fold tanpa factor, diganti setelah pilihan final).
-- `run10/`, `run_fac/`: notebook 10 fold yang sudah dijalankan beserta outputnya.
+- `run10/`, `run_fac/`, `run_seeds/`: notebook 10 fold yang sudah dijalankan beserta outputnya.
 - `experiments/`: skrip eksperimen dan log hasilnya.
 - `scheduled_submit*.sh`: skrip submit terjadwal.
 
