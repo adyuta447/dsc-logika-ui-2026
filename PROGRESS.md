@@ -33,6 +33,8 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 | 10 fold | `run10/` | 0.84579 | 0.84580 | 0.52556 |
 | 10 fold + factor | `run_fac/` | 0.84635 | **0.84649** | 0.52568 |
 | 10 fold + factor, 2 seed cat/xgb | `run_seeds/` | 0.84639 | 0.84648 | 0.52510 |
+| 10 fold + factor, fold seed 7 | `run_s7/` | 0.84637 | 0.84664 | 0.52723 |
+| bag fold seed 42 + 7 | `variants/bag_*_2.csv` | | 0.84670 | 0.52642 |
 | refit 100% data + factor | `run_full_fac/` | tidak bisa di CV | | |
 
 ## Temuan penting
@@ -51,6 +53,8 @@ optimasi bobot blend (validasi setengah data: +0.00002 dan +0.0001, bobot manual
 bobot kelas untuk KS (AUC turun ke 0.840), empirical logit sumber biner (0.84505), kalibrasi ulang per kelompok (turun), bobot blend dioptimalkan untuk KS (validasi setengah data: -0.00016 dan +0.00027).
 
 ## Analisis batas skor (12 Okt pagi)
+
+- Varian fold seed hampir identik di data test (spearman 0.99996), jadi tidak menambah keragaman skor public. Yang berbeda hanya varian bobot blend (linear30 0.9998, top_only 0.9995) dan versi tanpa factor (0.996).
 
 - Noise harga dan skor bureau berdistribusi normal murni (skew 0.00, kurtosis 0.01), jadi rata-rata per nasabah sudah penaksir optimal.
 - Ambang KS ada di p 0.139, sama dengan base rate 0.136. Kalibrasi antar kelompok sudah baik.
