@@ -65,7 +65,9 @@ model khusus nasabah baru (AUC di kelompok baru 0.8277 vs global 0.8293; dirata 
 
 - Noise harga dan skor bureau berdistribusi normal murni (skew 0.00, kurtosis 0.01), jadi rata-rata per nasabah sudah penaksir optimal.
 - Ambang KS ada di p 0.139, sama dengan base rate 0.136. Kalibrasi antar kelompok sudah baik.
-- AUC per desil ketidakpastian risiko: 0.86 untuk nasabah yang datanya lengkap, 0.83 untuk yang datanya sedikit. Batas teoritis kalau risiko terukur sempurna sekitar 0.869 (sekarang 0.8465). Sisa celah berasal dari jumlah data per nasabah, bukan dari model. Patokan factor v1: 0.84524 (LightGBM lean, 5 fold, 2 seed).
+- AUC per desil ketidakpastian risiko: 0.86 untuk nasabah yang datanya lengkap, 0.83 untuk yang datanya sedikit. Batas teoritis kalau risiko terukur sempurna sekitar 0.869 (sekarang 0.8465). Sisa celah berasal dari jumlah data per nasabah, bukan dari model.
+- Semua 72 kolom di 7 tabel sudah dipakai. Hubungan antar tabel (hutang di luar, akun di luar, telat di bureau vs internal) dan proses bureau untuk pengajuan sekarang tidak berisi sinyal.
+- Musim: default rate per bulan 12.0% (Mei) sampai 14.7% (Feb). Kuat untuk kalibrasi (LR 45), tapi koreksi bulan di luar sampel hanya AUC +0.00012. Patokan factor v1: 0.84524 (LightGBM lean, 5 fold, 2 seed).
 
 ## Struktur repo
 
