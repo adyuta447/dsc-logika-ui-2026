@@ -45,7 +45,8 @@ os.makedirs("variants", exist_ok=True)"""),
 md("""## Features
 
 Every table is joined to the selected application through `customer_id` and filtered against `decision_datetime`.
-The applications table gives loan terms, and the profile table gives declared income used for affordability ratios."""),
+The applications table gives loan terms, and the profile table gives declared income used for affordability ratios.
+Default rates move with the calendar, from 12 percent for May decisions to 15 percent for February, so the decision day of year is kept as a feature."""),
 code(fn["load_apps"] + "\n\n\n" + fn["app_features"] + "\n\n\n" + fn["profile_features"]),
 md("""Bureau reports from every provider and every past application are noisy readings of the same customer, so besides the current reports we also pool all of them."""),
 code(fn["bureau_features"]),

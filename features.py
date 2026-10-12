@@ -21,6 +21,8 @@ def app_features(app):
     f["decision_lag_h"] = (app.decision_datetime - app.application_datetime).dt.total_seconds() / 3600
     f["app_hour"] = app.application_datetime.dt.hour
     f["app_dow"] = app.application_datetime.dt.dayofweek
+    # default rates move with the season (12% in May, 15% in February), so the decision date enters as day of year
+    f["dec_doy"] = app.decision_datetime.dt.dayofyear
     return f
 
 
