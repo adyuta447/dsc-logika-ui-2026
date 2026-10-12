@@ -1,0 +1,48 @@
+import pandas as pd, numpy as np, lightgbm as lgb, sys
+sys.path.insert(0, sys.argv[1])
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import roc_auc_score
+from scipy.stats import ks_2samp, rankdata
+from features import load_apps
+from features import factor_inputs, factor_features
+app = load_apps(); M, E = factor_inputs(app); ya = app.target.values
+f = pd.read_parquet('features.parquet')
+tr = f[f.target.notna()].reset_index(drop=True); y = tr.target.astype(int).values
+d = app.set_index('application_id').decision_datetime[tr.application_id].values
+d = pd.to_datetime(d); tr['dec_doy'] = d.dayofyear.values; tr['dec_month'] = d.month.values
+import sys as _s; _s.path.insert(0, '/private/tmp/claude-501/-Users-yutaaa-Developments-dsc-logikaui/58ebb857-fe45-4d65-a85d-951e7d9dcdc2/scratchpad'); from extra import extra_features
+X_ = extra_features(app, M); X_.index = app.application_id.values
+for c in X_.columns: tr[c] = X_[c].reindex(tr.application_id).values
+pos = pd.Series(np.arange(len(app)), index=app.application_id)[tr.application_id].values
+assert (ya[pos] == y).all()
+noise = ["region","employment_type","housing_status","age","employment_tenure_months","dependents","tenure_to_age","income_per_dependent","loan_purpose","decision_lag_h","app_hour","app_dow"]
+base = [c for c in tr.columns if c not in noise+['application_id','customer_id','target'] and not c.startswith(('ec_share_','ec_catqty_','cs_shift','buh_','dec_','ab_inc_share','ab_open_avg','pa_gap','ec_gap','factor_unsup'))]
+folds = list(StratifiedKFold(5, shuffle=True, random_state=42).split(tr, y))
+FF = [factor_features(M, E, ya, pos[a]).iloc[pos].reset_index(drop=True) for a, b in folds]
+print('fold scale check', [round(roc_auc_score(y[b], FF[k].factor_z.values[b]), 4) for k, (a, b) in enumerate(folds)], flush=True)
+def run(seed, extra_cols=(), obj=None, et=False):
+    p = dict(objective="binary",learning_rate=0.01,num_leaves=15,min_child_samples=200,feature_fraction=0.3,bagging_fraction=0.8,bagging_freq=1,lambda_l2=20,max_bin=127,seed=seed,deterministic=True,force_row_wise=True,n_jobs=-1,verbose=-1)
+    oof = np.zeros(len(tr))
+    for k, (a, b) in enumerate(folds):
+        X = pd.concat([tr[base + list(extra_cols)], FF[k]], axis=1)
+        if et:
+            from sklearn.ensemble import ExtraTreesClassifier
+            Xn = X.copy()
+            for c in Xn.columns:
+                if str(Xn[c].dtype) == 'category': Xn[c] = Xn[c].cat.codes
+            Xn = Xn.astype(float).fillna(-999)
+            m = ExtraTreesClassifier(n_estimators=400, min_samples_leaf=40, max_features=0.3, n_jobs=-1, random_state=seed).fit(Xn.iloc[a], y[a])
+            oof[b] = m.predict_proba(Xn.iloc[b])[:, 1]; continue
+        if obj: p['objective'] = obj
+        m = lgb.train(p, lgb.Dataset(X.iloc[a], y[a], group=[len(a)] if obj else None), 10000, valid_sets=[lgb.Dataset(X.iloc[b], y[b], group=[len(b)] if obj else None)], callbacks=[lgb.early_stopping(300, verbose=False)])
+        oof[b] = m.predict(X.iloc[b])
+    return oof
+ks = lambda p: ks_2samp(p[y==1], p[y==0]).statistic
+V = ["dec_doy", "ab_inc_share", "ab_open_avg", "pa_gap_mean", "ec_gap_mean", "ec_gap_last3"]
+basep = [run(s, V) for s in (0, 1)]; bm = np.mean([rankdata(v) for v in basep], 0) / len(y)
+print("lgb binary 2 seeds", round(roc_auc_score(y, bm), 5), "ks", round(ks(bm), 5), flush=True)
+for name, kw in [("lgb rank_xendcg", dict(obj="rank_xendcg")), ("extra trees", dict(et=True))]:
+    o = run(0, V, **kw); r = rankdata(o) / len(y)
+    print(name, "alone auc", round(roc_auc_score(y, o), 5), "ks", round(ks(o), 5), flush=True)
+    for w in (0.15, 0.3):
+        q = (1 - w) * bm + w * r; print("   blend w", w, "auc", round(roc_auc_score(y, q), 5), "ks", round(ks(q), 5), flush=True)
