@@ -3,9 +3,9 @@
 Kaggle: data-science-competition-logika-ui-2026, metrik KS. Deadline 30 Okt 2026 23:59 WIB.
 Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 submit per hari, reset 07:00 WIB.
 
-## Status terakhir (12 Okt 16:50 WIB)
+## Status terakhir (12 Okt 23:15 WIB)
 
-- Public terbaik: **0.55865** (run_fac top_mix, 12 Okt), peringkat 17 (12 Okt 12:28, rank 8: 0.56203). Yang lolos final: **top 8** (rank 8 sekarang 0.56149).
+- Public terbaik: **0.55865** (run_fac top_mix, 12 Okt), peringkat 20 (12 Okt 23:15, rank 8: 0.56440). Yang lolos final: **top 8** (rank 8 sekarang 0.56149).
 - Model terbaik di CV: notebook 10 fold + factor model, AUC **0.84649** (top_mix).
 - Submit 12 Okt 07:01: satu file top_mix. Pakai `run_seeds` (2 seed) kalau sudah selesai dan CV lebih baik (AUC > 0.84649, KS >= 0.5237), selain itu `run_fac`. Slot 2 dan 3 TIDAK otomatis, menunggu keputusan setelah skor slot 1 dilihat.
   Kandidat: `run_full_fac` top_mix (refit 100% + factor), linear30 dari run factor terbaik.
@@ -27,6 +27,7 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 | 11 Okt | + spline logistic 20% | AUC 0.8450 | 0.55658 |
 | 12 Okt | run_fac top_mix (10 fold + factor) | AUC 0.84649 | **0.55865** |
 | 12 Okt | bag seed 42+7 linear30 | AUC 0.84663 | 0.55826 |
+| 12 Okt | bag v4 seed 42+7+13 top_mix | AUC 0.84774 | 0.55860 |
 
 ## CV per versi notebook
 
