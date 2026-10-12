@@ -9,7 +9,9 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 - Model terbaik di CV: notebook 10 fold + factor model, AUC **0.84649** (top_mix).
 - Submit 12 Okt 07:01: satu file top_mix. Pakai `run_seeds` (2 seed) kalau sudah selesai dan CV lebih baik (AUC > 0.84649, KS >= 0.5237), selain itu `run_fac`. Slot 2 dan 3 TIDAK otomatis, menunggu keputusan setelah skor slot 1 dilihat.
   Kandidat: `run_full_fac` top_mix (refit 100% + factor), linear30 dari run factor terbaik.
-- Sedang jalan: varian fold seed 7 (`run_s7/`), lalu seed 13 dan 21 berurutan (`run_seed_queue.sh`), masing masing sekitar 2.5 jam.
+- 12 Okt: slot 3 tidak dipakai (keputusan tim).
+- Sedang jalan: seed 13 dan 21 (`run_seed_queue.sh`), uji setelan parameter (`experiments/fz6.py`), uji model khusus nasabah baru (`experiments/newcust.py`).
+  Rencana sore: gabungkan semua yang lolos uji jadi satu run final (bagging 4 seed, varian trees_only dan top_mix).
   `bag.py` merata ratakan blend dari beberapa seed, CV dihitung dari rata rata OOF. File: `variants/bag_top_mix_N.csv`.
 - Run 2 seed CatBoost dan XGBoost (`run_seeds/`) selesai: top_mix 0.84648 / KS 0.52510, tidak lebih baik dari 1 seed (0.84649 / 0.52568). Slot 1 pagi ini tetap `run_fac` top_mix.
 
