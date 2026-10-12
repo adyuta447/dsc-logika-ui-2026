@@ -56,7 +56,8 @@ pisah data 6 bulan di factor model (0.84502), tambah 6 sumber di factor model (0
 sub factor per kelompok (0.84517), shrinkage semua sumber (0.84523),
 optimasi bobot blend (validasi setengah data: +0.00002 dan +0.0001, bobot manual sudah hampir optimal),
 bobot kelas untuk KS (AUC turun ke 0.840), empirical logit sumber biner (0.84505), kalibrasi ulang per kelompok (turun), bobot blend dioptimalkan untuk KS (validasi setengah data: -0.00016 dan +0.00027),
-batasan monoton (0.84522), num_leaves 31 (0.84498), min_child_samples 100 (0.84527), feature_fraction 0.5 (0.84503).
+batasan monoton (0.84522), num_leaves 31 (0.84498), min_child_samples 100 (0.84527), feature_fraction 0.5 (0.84503),
+model khusus nasabah baru (AUC di kelompok baru 0.8277 vs global 0.8293; dirata rata 0.84520 vs 0.84523).
 
 ## Analisis batas skor (12 Okt pagi)
 
