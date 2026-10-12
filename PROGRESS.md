@@ -24,6 +24,7 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 | 11 Okt | blend cat heavy | AUC 0.8447 | **0.55784** |
 | 11 Okt | + spline logistic 20% | AUC 0.8450 | 0.55658 |
 | 12 Okt | run_fac top_mix (10 fold + factor) | AUC 0.84649 | **0.55865** |
+| 12 Okt | bag seed 42+7 linear30 | AUC 0.84663 | 0.55826 |
 
 ## CV per versi notebook
 

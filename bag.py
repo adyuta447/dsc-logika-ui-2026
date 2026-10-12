@@ -18,11 +18,12 @@ def blends(res, i):
     trees = lambda t: (np.mean([rank(res[f"lgb_{t}_{s}"][i]) for s in range(3)], 0) + rank(one("cat", t)[i]) + rank(one("xgb", t)[i])) / 3
     core = (trees("full") + trees("lean") + rank(one("cat", "full")[i]) + rank(one("cat", "lean")[i])) / 4
     lin = rank(res["linear"][i])
-    return {"top_mix": 0.8 * (core + trees("top")) / 2 + 0.2 * lin, "linear30": 0.7 * (core + trees("top")) / 2 + 0.3 * lin}
+    return {"top_mix": 0.8 * (core + trees("top")) / 2 + 0.2 * lin, "linear30": 0.7 * (core + trees("top")) / 2 + 0.3 * lin,
+            "trees_only": (core + trees("top")) / 2}
 
 
 B = {r: [blends(pd.read_pickle(f"{r}/models/predictions.pkl"), i) for i in (0, 1)] for r in runs}
-for v in ["top_mix", "linear30"]:
+for v in ["top_mix", "linear30", "trees_only"]:
     for r in runs:
         print(f"{v:9s} {r:10s} auc {roc_auc_score(y, B[r][0][v]):.5f} ks {ks(B[r][0][v]):.5f}")
     oof = np.mean([B[r][0][v] for r in runs], 0)
