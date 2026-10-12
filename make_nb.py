@@ -31,7 +31,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import QuantileTransformer, SplineTransformer
 
-SEED = 42
+SEED = """ + (sys.argv[4] if len(sys.argv) > 4 else "42") + """
 VARIANT = "main"
 N_FOLDS = """ + (sys.argv[2] if len(sys.argv) > 2 else "5") + """
 TREE_SEEDS = """ + (sys.argv[3] if len(sys.argv) > 3 else "1") + """

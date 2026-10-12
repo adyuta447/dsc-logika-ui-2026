@@ -3,4 +3,24 @@ Mon 12 Oct 2026 07:01:00 WIB
 picked run_fac/variants/top_mix.csv
 Using competition: data-science-competition-logika-ui-2026
   0%|          | 0.00/1.09M [00:00<?, ?B/s]  1%|▏         | 16.0k/1.09M [00:01<01:12, 15.5kB/s] 40%|████      | 448k/1.09M [00:01<00:01, 538kB/s]   63%|██████▎   | 704k/1.09M [00:01<00:00, 423kB/s] 77%|███████▋  | 864k/1.09M [00:02<00:00, 493kB/s]100%|██████████| 1.09M/1.09M [00:03<00:00, 370kB/s]
-Successfully submitted to Data Science Competition (DSC) LOGIKA UI 2026
+Successfully submitted to Data Science Competition (DSC) LOGIKA UI 2026Using competition: data-science-competition-logika-ui-2026
+     ref  fileName             date                        description                                                  status                     publicScore  privateScore  
+--------  -------------------  --------------------------  -----------------------------------------------------------  -------------------------  -----------  ------------  
+57088310  top_mix.csv          2026-10-12 00:01:13.277000  run_fac top_mix                                              SubmissionStatus.COMPLETE  0.55865                    
+57059020  sub_lin.csv          2026-10-11 02:01:37.823000  trees cat heavy + 0.2 spline logistic cv auc0.8450 ks0.5268  SubmissionStatus.COMPLETE  0.55658                    
+Using competition: data-science-competition-logika-ui-2026
+Next Page Token = CfDJ8JDwKpgsc5hJpcljKjpYpOHrJMLDxV8BrVJc0CaaJeQ7UrRm06GUYsHFWYsqkfx2syfuPj-e1ORqp9r-Z66AjEU
+  teamId  teamName                       submissionDate              score    
+--------  -----------------------------  --------------------------  -------  
+17075724  puncak dingin                  2026-10-11 22:06:51.460000  0.56814  
+17075759  masih nunggu marvel dan yafi   2026-10-11 00:41:25.753000  0.56650  
+17075751  1000ShotsEspresso              2026-10-11 16:16:17.016000  0.56572  
+17075847  Pengen Ketemu Ayang            2026-10-11 19:22:28.730000  0.56333  
+17077306  abis bantai filkom geser mipa  2026-10-11 18:56:29.496000  0.56203  
+17076041  pengen nyoba lagi sekali lagi  2026-10-10 19:56:42.216000  0.56189  
+17075794  Shira Pramudita                2026-10-11 09:12:05.716000  0.56160  
+17075726  depok sejuk dsj                2026-10-11 23:20:48.366000  0.56149  
+17075796  SAGARAS                        2026-10-11 09:50:02.440000  0.55988  
+17081684  AI25 - Urex                    2026-10-11 12:46:31.186000  0.55904  
+17076736  kali ini beneran deh           2026-10-12 00:01:13.276000  0.55865  
+17075705  Bigdons                        2026-10-12 00:00:57.770000  0.55780  

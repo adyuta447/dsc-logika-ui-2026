@@ -9,6 +9,7 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 - Model terbaik di CV: notebook 10 fold + factor model, AUC **0.84649** (top_mix).
 - Submit 12 Okt 07:01: satu file top_mix. Pakai `run_seeds` (2 seed) kalau sudah selesai dan CV lebih baik (AUC > 0.84649, KS >= 0.5237), selain itu `run_fac`. Slot 2 dan 3 TIDAK otomatis, menunggu keputusan setelah skor slot 1 dilihat.
   Kandidat: `run_full_fac` top_mix (refit 100% + factor), linear30 dari run factor terbaik.
+- Sedang jalan: varian fold seed 7 (`run_s7/`, 10 fold + factor), selesai sekitar 09:45 WIB, untuk slot hari berikutnya.
 - Run 2 seed CatBoost dan XGBoost (`run_seeds/`) selesai: top_mix 0.84648 / KS 0.52510, tidak lebih baik dari 1 seed (0.84649 / 0.52568). Slot 1 pagi ini tetap `run_fac` top_mix.
 
 ## Riwayat submit
@@ -50,7 +51,7 @@ optimasi bobot blend (validasi setengah data: +0.00002 dan +0.0001, bobot manual
 ## Struktur repo
 
 - `features.py`: pipeline fitur, termasuk `factor_inputs` dan `factor_features`.
-- `make_nb.py`: generator notebook. `python make_nb.py <output.ipynb> <N_FOLDS> <TREE_SEEDS>`.
+- `make_nb.py`: generator notebook. `python make_nb.py <output.ipynb> <N_FOLDS> <TREE_SEEDS> <SEED>`. SEED mengatur pembagian fold, 42 = versi utama.
 - `DSC0152_kali ini beneran deh_Notebook.ipynb`: notebook deliverable (masih versi 5 fold tanpa factor, diganti setelah pilihan final).
 - `run10/`, `run_fac/`, `run_seeds/`: notebook 10 fold yang sudah dijalankan beserta outputnya.
 - `experiments/`: skrip eksperimen dan log hasilnya.
