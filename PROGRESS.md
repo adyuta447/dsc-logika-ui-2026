@@ -50,6 +50,13 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 | bag v4 3 seed + lr 0.005 | `variants/bag_run_v4_s42_*_4.csv` | | 0.84769 | 0.52771 |
 | refit 100% data + factor | `run_full_fac/` | tidak bisa di CV | | |
 
+## Strategi baru (12 Okt malam)
+
+- Noise potongan public antar model kita ternyata 0.0015 sampai 0.003 (bukan 0.0005). Itu sebabnya bag v4 tidak naik di public walau CV naik.
+- Public: submit varian kuat yang beragam (`variants/harvest_*.csv`, 12 file siap), skor public terbaik yang dihitung. Perkiraan dengan 13 submit: rank 15 sekitar 71%, rank 13 41%, rank 10 16%, rank 8 7%.
+- Private: pilih bag v4 top_mix sebagai final (CV terbaik), plus varian kedua kalau boleh pilih dua.
+- Perlu ditanyakan ke panitia: komponen public 45% itu skor public terbaik atau skor public dari submission yang dipilih, dan boleh pilih berapa submission final.
+
 ## Temuan penting
 
 - Sinyal terkuat: harga satuan belanja ecommerce relatif terhadap median kategori (`ec_price_rel`).
