@@ -38,6 +38,8 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 | 10 fold + factor, 2 seed cat/xgb | `run_seeds/` | 0.84639 | 0.84648 | 0.52510 |
 | 10 fold + factor, fold seed 7 | `run_s7/` | 0.84637 | 0.84664 | 0.52723 |
 | bag fold seed 42 + 7 | `variants/bag_*_2.csv` | | 0.84670 | 0.52642 |
+| 10 fold + factor, fold seed 13 | `run_s13/` | | 0.84666 | 0.52507 |
+| bag fold seed 42 + 7 + 13 | `variants/bag_*_3.csv` | | **0.84678** | 0.52645 |
 | refit 100% data + factor | `run_full_fac/` | tidak bisa di CV | | |
 
 ## Temuan penting
@@ -53,7 +55,8 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 pisah data 6 bulan di factor model (0.84502), tambah 6 sumber di factor model (0.84521), pembersihan noise cicilan,
 sub factor per kelompok (0.84517), shrinkage semua sumber (0.84523),
 optimasi bobot blend (validasi setengah data: +0.00002 dan +0.0001, bobot manual sudah hampir optimal),
-bobot kelas untuk KS (AUC turun ke 0.840), empirical logit sumber biner (0.84505), kalibrasi ulang per kelompok (turun), bobot blend dioptimalkan untuk KS (validasi setengah data: -0.00016 dan +0.00027).
+bobot kelas untuk KS (AUC turun ke 0.840), empirical logit sumber biner (0.84505), kalibrasi ulang per kelompok (turun), bobot blend dioptimalkan untuk KS (validasi setengah data: -0.00016 dan +0.00027),
+batasan monoton (0.84522), num_leaves 31 (0.84498), min_child_samples 100 (0.84527), feature_fraction 0.5 (0.84503).
 
 ## Analisis batas skor (12 Okt pagi)
 
