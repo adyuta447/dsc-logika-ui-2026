@@ -5,7 +5,7 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 
 ## Status terakhir (12 Okt 08:15 WIB)
 
-- Public terbaik: **0.55865** (run_fac top_mix, 12 Okt), peringkat 12 dari 62 tim (rank 10: 0.55988, rank 8: 0.56149). Yang lolos final: **top 8** (rank 8 sekarang 0.56149).
+- Public terbaik: **0.55865** (run_fac top_mix, 12 Okt), peringkat 13 dari 62 tim (12 Okt 09:10, rank 8: 0.56189). Yang lolos final: **top 8** (rank 8 sekarang 0.56149).
 - Model terbaik di CV: notebook 10 fold + factor model, AUC **0.84649** (top_mix).
 - Submit 12 Okt 07:01: satu file top_mix. Pakai `run_seeds` (2 seed) kalau sudah selesai dan CV lebih baik (AUC > 0.84649, KS >= 0.5237), selain itu `run_fac`. Slot 2 dan 3 TIDAK otomatis, menunggu keputusan setelah skor slot 1 dilihat.
   Kandidat: `run_full_fac` top_mix (refit 100% + factor), linear30 dari run factor terbaik.
@@ -48,7 +48,7 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 pisah data 6 bulan di factor model (0.84502), tambah 6 sumber di factor model (0.84521), pembersihan noise cicilan,
 sub factor per kelompok (0.84517), shrinkage semua sumber (0.84523),
 optimasi bobot blend (validasi setengah data: +0.00002 dan +0.0001, bobot manual sudah hampir optimal),
-bobot kelas untuk KS (AUC turun ke 0.840), empirical logit sumber biner (0.84505), kalibrasi ulang per kelompok (turun).
+bobot kelas untuk KS (AUC turun ke 0.840), empirical logit sumber biner (0.84505), kalibrasi ulang per kelompok (turun), bobot blend dioptimalkan untuk KS (validasi setengah data: -0.00016 dan +0.00027).
 
 ## Analisis batas skor (12 Okt pagi)
 
