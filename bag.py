@@ -30,4 +30,4 @@ for v in ["top_mix", "linear30", "trees_only"]:
     print(f"{v:9s} {'bag':10s} auc {roc_auc_score(y, oof):.5f} ks {ks(oof):.5f}")
     sub = pd.DataFrame({"application_id": te, "default_probability": rank(np.mean([B[r][1][v] for r in runs], 0))})
     assert len(sub) == 30000 and sub.application_id.is_unique and sub.default_probability.between(0, 1).all()
-    sub.to_csv(f"variants/bag_{v}_{len(runs)}.csv", index=False)
+    sub.to_csv(f"variants/bag_{runs[0]}_{v}_{len(runs)}.csv", index=False)

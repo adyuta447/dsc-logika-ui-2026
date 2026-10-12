@@ -40,7 +40,9 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 | bag fold seed 42 + 7 | `variants/bag_*_2.csv` | | 0.84670 | 0.52642 |
 | 10 fold + factor, fold seed 13 | `run_s13/` | | 0.84666 | 0.52507 |
 | bag fold seed 42 + 7 + 13 | `variants/bag_*_3.csv` | | 0.84678 | 0.52645 |
-| **v4: + musim + porsi gaji + saldo awal + jarak pengajuan/belanja** | `run_v4_s42/` | 0.84726 | **0.84748** | **0.52752** |
+| **v4: + musim + porsi gaji + saldo awal + jarak pengajuan/belanja** | `run_v4_s42/` | 0.84726 | 0.84748 | 0.52752 |
+| v4 fold seed 7 | `run_v4_s7/` | | 0.84760 | 0.52884 |
+| **bag v4 seed 42 + 7** | `variants/bag_run_v4_s42_*_2.csv` | | **0.84769** | **0.52826** |
 | refit 100% data + factor | `run_full_fac/` | tidak bisa di CV | | |
 
 ## Temuan penting
