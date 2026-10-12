@@ -3,7 +3,7 @@
 Kaggle: data-science-competition-logika-ui-2026, metrik KS. Deadline 30 Okt 2026 23:59 WIB.
 Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 submit per hari, reset 07:00 WIB.
 
-## Status terakhir (12 Okt 08:15 WIB)
+## Status terakhir (12 Okt 14:40 WIB)
 
 - Public terbaik: **0.55865** (run_fac top_mix, 12 Okt), peringkat 17 (12 Okt 12:28, rank 8: 0.56203). Yang lolos final: **top 8** (rank 8 sekarang 0.56149).
 - Model terbaik di CV: notebook 10 fold + factor model, AUC **0.84649** (top_mix).
@@ -39,7 +39,8 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 | 10 fold + factor, fold seed 7 | `run_s7/` | 0.84637 | 0.84664 | 0.52723 |
 | bag fold seed 42 + 7 | `variants/bag_*_2.csv` | | 0.84670 | 0.52642 |
 | 10 fold + factor, fold seed 13 | `run_s13/` | | 0.84666 | 0.52507 |
-| bag fold seed 42 + 7 + 13 | `variants/bag_*_3.csv` | | **0.84678** | 0.52645 |
+| bag fold seed 42 + 7 + 13 | `variants/bag_*_3.csv` | | 0.84678 | 0.52645 |
+| **v4: + musim + porsi gaji + saldo awal + jarak pengajuan/belanja** | `run_v4_s42/` | 0.84726 | **0.84748** | **0.52752** |
 | refit 100% data + factor | `run_full_fac/` | tidak bisa di CV | | |
 
 ## Temuan penting
