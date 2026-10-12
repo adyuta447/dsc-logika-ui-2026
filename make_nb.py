@@ -35,6 +35,7 @@ SEED = """ + (sys.argv[4] if len(sys.argv) > 4 else "42") + """
 VARIANT = "main"
 N_FOLDS = """ + (sys.argv[2] if len(sys.argv) > 2 else "5") + """
 TREE_SEEDS = """ + (sys.argv[3] if len(sys.argv) > 3 else "1") + """
+LR = """ + (sys.argv[5] if len(sys.argv) > 5 else "0.01") + """
 random.seed(SEED)
 np.random.seed(SEED)
 KAGGLE = "/kaggle/input/data-science-competition-logika-ui-2026/"
@@ -97,13 +98,13 @@ rank = lambda v: rankdata(v) / len(v)
 report = lambda name, p: print(f"{name:12s} auc {roc_auc_score(y, p):.5f}  ks {ks(p):.5f}")"""),
 md("""## Models"""),
 code("""def fit_lgb(cols, tag, seed):
-    params = dict(objective="binary", learning_rate=0.01, num_leaves=15, min_child_samples=200,
+    params = dict(objective="binary", learning_rate=LR, num_leaves=15, min_child_samples=200,
                   feature_fraction=0.3, bagging_fraction=0.8, bagging_freq=1, lambda_l2=20, max_bin=127,
                   seed=seed, deterministic=True, force_row_wise=True, n_jobs=-1, verbose=-1)
     oof, pred = np.zeros(len(X_all)), np.zeros(len(X_test_all))
     for k, (a, b) in enumerate(folds):
         X, Xt = [d[cols[k]] for d in frame(k)]
-        m = lgb.train(params, lgb.Dataset(X.iloc[a], y[a]), 10000, valid_sets=[lgb.Dataset(X.iloc[b], y[b])],
+        m = lgb.train(params, lgb.Dataset(X.iloc[a], y[a]), 20000, valid_sets=[lgb.Dataset(X.iloc[b], y[b])],
                       callbacks=[lgb.early_stopping(300, verbose=False)])
         m.save_model(f"models/lgb_{tag}_s{seed}_f{k}.txt")
         oof[b] = m.predict(X.iloc[b])
@@ -117,7 +118,7 @@ def fit_cat(cols, tag, seed):
         X, Xt = [d[cols[k]].copy() for d in frame(k)]
         cats = [c for c in X.columns if str(X[c].dtype) == "category"]
         X[cats], Xt[cats] = X[cats].astype(str), Xt[cats].astype(str)
-        m = CatBoostClassifier(iterations=6000, learning_rate=0.03, depth=6, l2_leaf_reg=5, eval_metric="AUC",
+        m = CatBoostClassifier(iterations=int(60 / LR), learning_rate=3 * LR, depth=6, l2_leaf_reg=5, eval_metric="AUC",
                                od_type="Iter", od_wait=300, random_seed=seed, cat_features=cats, verbose=0)
         m.fit(X.iloc[a], y[a], eval_set=(X.iloc[b], y[b]))
         m.save_model(f"models/cat_{tag}_s{seed}_f{k}.cbm")
@@ -130,7 +131,7 @@ def fit_xgb(cols, tag, seed):
     oof, pred = np.zeros(len(X_all)), np.zeros(len(X_test_all))
     for k, (a, b) in enumerate(folds):
         X, Xt = [d[cols[k]] for d in frame(k)]
-        m = xgb.XGBClassifier(n_estimators=10000, learning_rate=0.01, max_depth=4, min_child_weight=20,
+        m = xgb.XGBClassifier(n_estimators=10000, learning_rate=LR, max_depth=4, min_child_weight=20,
                               subsample=0.8, colsample_bytree=0.3, reg_lambda=20, tree_method="hist", max_bin=128,
                               enable_categorical=True, eval_metric="auc", early_stopping_rounds=300,
                               random_state=seed, n_jobs=-1)
