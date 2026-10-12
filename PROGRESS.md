@@ -45,6 +45,8 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 | bag v4 seed 42 + 7 | `variants/bag_run_v4_s42_*_2.csv` | | 0.84769 | 0.52826 |
 | v4 fold seed 13 | `run_v4_s13/` | | 0.84754 | 0.52725 |
 | **bag v4 seed 42 + 7 + 13** | `variants/bag_run_v4_s42_*_3.csv` | | **0.84774** | 0.52786 |
+| v4 learning rate 0.005 | `run_v4_lr005/` | 0.84715 | 0.84741 | 0.52697 |
+| bag v4 3 seed + lr 0.005 | `variants/bag_run_v4_s42_*_4.csv` | | 0.84769 | 0.52771 |
 | refit 100% data + factor | `run_full_fac/` | tidak bisa di CV | | |
 
 ## Temuan penting
