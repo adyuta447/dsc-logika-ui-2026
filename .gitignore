@@ -1,6 +1,13 @@
 .venv/
 .claude/
 __pycache__/
+run_fac/
+run_full/
+run_full_fac/
+run_s7/
+run_seeds/
+run1/
+run10/
 catboost_info/
 data
 models/

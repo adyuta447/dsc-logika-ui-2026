@@ -1,0 +1,6 @@
+/private/tmp/claude-501/-Users-yutaaa-Developments-dsc-logikaui/58ebb857-fe45-4d65-a85d-951e7d9dcdc2/scratchpad/factor4.py:23: RuntimeWarning: invalid value encountered in sqrt
+  M[j] = ((el - el.mean()) / np.sqrt(b)).reindex(app.customer_id).values
+fold scale check [0.82, 0.8217, 0.8304, 0.8185, 0.8161]
+elogit factor seed 0 0.84495 0.52173
+elogit factor seed 1 0.84492 0.52136
+elogit factor 2 seed avg 0.84505 0.52155

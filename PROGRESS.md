@@ -46,7 +46,14 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 400+ fitur tambahan, MLP, GAM, stacking, pseudo label, seleksi fitur, denoising harga, normalisasi per kelompok,
 pisah data 6 bulan di factor model (0.84502), tambah 6 sumber di factor model (0.84521), pembersihan noise cicilan,
 sub factor per kelompok (0.84517), shrinkage semua sumber (0.84523),
-optimasi bobot blend (validasi setengah data: +0.00002 dan +0.0001, bobot manual sudah hampir optimal). Patokan factor v1: 0.84524 (LightGBM lean, 5 fold, 2 seed).
+optimasi bobot blend (validasi setengah data: +0.00002 dan +0.0001, bobot manual sudah hampir optimal),
+bobot kelas untuk KS (AUC turun ke 0.840), empirical logit sumber biner (0.84505), kalibrasi ulang per kelompok (turun).
+
+## Analisis batas skor (12 Okt pagi)
+
+- Noise harga dan skor bureau berdistribusi normal murni (skew 0.00, kurtosis 0.01), jadi rata-rata per nasabah sudah penaksir optimal.
+- Ambang KS ada di p 0.139, sama dengan base rate 0.136. Kalibrasi antar kelompok sudah baik.
+- AUC per desil ketidakpastian risiko: 0.86 untuk nasabah yang datanya lengkap, 0.83 untuk yang datanya sedikit. Batas teoritis kalau risiko terukur sempurna sekitar 0.869 (sekarang 0.8465). Sisa celah berasal dari jumlah data per nasabah, bukan dari model. Patokan factor v1: 0.84524 (LightGBM lean, 5 fold, 2 seed).
 
 ## Struktur repo
 

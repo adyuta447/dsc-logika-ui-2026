@@ -1,0 +1,5 @@
+fold scale check [0.819, 0.8209, 0.8292, 0.8175, 0.8145]
+positive rate 0.1358
+base seeds auc [0.84518, 0.84507] ks [np.float64(0.52133), np.float64(0.52227)] | 2 seed auc 0.84524 ks 0.52203 fold ks 0.52593
+spw2 seeds auc [0.83967, 0.83958] ks [np.float64(0.51154), np.float64(0.51333)] | 2 seed auc 0.83998 ks 0.51268 fold ks 0.51599
+spw_bal seeds auc [0.82469, 0.82628] ks [np.float64(0.49224), np.float64(0.49636)] | 2 seed auc 0.82602 ks 0.49573 fold ks 0.49958
