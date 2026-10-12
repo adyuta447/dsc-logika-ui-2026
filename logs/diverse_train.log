@@ -16,3 +16,11 @@ lgb_extra seed 13 auc 0.84725 minutes 2.1
 lgb_ff06 seed 13 auc 0.84630 minutes 2.4
 xgb_deep seed 13 auc 0.84655 minutes 4.2
 cat_deep seed 13 auc 0.84454 minutes 5.4
+lgb_extra31 seed 42 auc 0.84667 minutes 2.6
+lgb_lintree seed 42 auc 0.83812 minutes 0.6
+lgb_ff015 seed 42 auc 0.84621 minutes 1.1
+lgb_mc800 seed 42 auc 0.84656 minutes 1.4
+lgb_fullset seed 42 auc 0.84659 minutes 1.3
+lgb_goss seed 42 auc 0.84556 minutes 1.0
+xgb_shallow seed 42 auc 0.84657 minutes 4.7
+cat_lossguide seed 42 auc 0.84409 minutes 4.5
