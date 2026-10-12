@@ -57,6 +57,8 @@ md("""Account behavior is compared with the customer's own baseline, because a d
 code(fn["account_features"]),
 md("""Ecommerce turned out to hold the most surprising signal. Customers who later default pay noticeably more per unit than the category median, so the log price relative to the category median is computed per item and averaged over several windows."""),
 code(fn["ecommerce_features"] + "\n\n\n" + fn["category_shift_features"]),
+md("""Two small signals sit in how steady a customer is: the share of account inflows that look like salary, and the spacing between past applications and between orders."""),
+code(fn["rhythm_features"]),
 md("""Every table is also a noisy reading of the same hidden risk. A one factor model pools them: each source mean is scaled by its spread across customers, its noise shrinks with the number of items behind it, and the posterior mean of the risk weighs every source by how reliable it is for that customer. Installment lateness is first cleaned of calendar, sequence and size effects. Only the loadings use labels, so they are fitted inside each fold."""),
 code(fn["factor_inputs"] + "\n\n\n" + fn["factor_features"]),
 code(fn["build"]),

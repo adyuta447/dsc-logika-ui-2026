@@ -329,12 +329,31 @@ def category_shift_features(app):
     return res.reset_index()
 
 
+def rhythm_features(app):
+    cut = app[["customer_id", "decision_datetime"]].rename(columns={"decision_datetime": "cut"})
+    ab = pd.read_csv(D + "account_behavior.csv", parse_dates=["month"]).merge(cut, on="customer_id")
+    g = ab[ab.month + pd.offsets.MonthBegin(1) <= ab.cut].groupby("customer_id")
+    out = pd.DataFrame({"ab_inc_share": g.income_like_credits.sum() / g.inflows.sum().replace(0, np.nan),
+                        "ab_open_avg": g.opening_balance.mean() / g.average_balance.mean().replace(0, np.nan)})
+    # the spacing of past applications and of orders says how steady the customer's needs are
+    pa = pd.read_csv(D + "previous_applications.csv", parse_dates=["application_datetime"]).merge(cut, on="customer_id")
+    pa = pa[pa.application_datetime < pa.cut].sort_values(["customer_id", "application_datetime"])
+    pa["gap"] = pa.groupby("customer_id").application_datetime.diff().dt.total_seconds() / 86400
+    out = out.join(pa.groupby("customer_id").gap.mean().rename("pa_gap_mean"), how="outer")
+    ec = pd.read_csv(D + "ecommerce_transactions.csv", parse_dates=["transaction_datetime"]).merge(cut, on="customer_id")
+    od = ec[ec.transaction_datetime < ec.cut].drop_duplicates("order_id").sort_values(["customer_id", "transaction_datetime"])
+    od["gap"] = od.groupby("customer_id").transaction_datetime.diff().dt.total_seconds() / 86400
+    go = od.groupby("customer_id").gap
+    out = out.join(pd.DataFrame({"ec_gap_mean": go.mean(), "ec_gap_last3": go.apply(lambda s: s.tail(3).mean()) / go.mean()}), how="outer")
+    return out.reset_index()
+
+
 def build():
     app = load_apps()
     f = profile_features(app_features(app))
     f = f.merge(bureau_features(app), on="application_id", how="left")
     for fn in [previous_features, repayment_features, account_features, ecommerce_features,
-               sequence_features, category_shift_features]:
+               sequence_features, category_shift_features, rhythm_features]:
         f = f.merge(fn(app), on="customer_id", how="left")
 
     f = f.copy()
