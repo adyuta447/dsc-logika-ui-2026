@@ -69,6 +69,8 @@ configs = {"lgb_deep": lgb_fit(dict(num_leaves=63, min_child_samples=50)), "lgb_
            "lgb_ff015": lgb_fit(dict(feature_fraction=0.15)), "lgb_mc800": lgb_fit(dict(min_child_samples=800)),
            "lgb_fullset": full_set(lgb_fit({})), "lgb_goss": lgb_fit(dict(data_sample_strategy="goss", bagging_fraction=1.0, bagging_freq=0)),
            "xgb_shallow": xgb_shallow, "cat_lossguide": cat_lossguide}
+# third pass: the full feature set did well on the public split, so the strongest model types are repeated on it
+configs.update({f"full_{k}": full_set(configs[k]) for k in ("lgb_extra", "xgb_deep", "lgb_shallow", "lgb_ff06", "lgb_extra31", "lgb_mc800", "xgb_shallow", "cat_deep")})
 for seed in (42, 7, 13):
     folds = list(StratifiedKFold(10, shuffle=True, random_state=seed).split(tr, y))
     frames = []
