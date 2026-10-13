@@ -3,10 +3,13 @@
 Kaggle: data-science-competition-logika-ui-2026, metrik KS. Deadline 30 Okt 2026 23:59 WIB.
 Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 submit per hari, reset 07:00 WIB.
 
-## Status terakhir (13 Okt 18:50 WIB)
+## Status terakhir (13 Okt 22:00 WIB)
 
-- Rank 18 dari 82, public terbaik **0.56171** (13 Okt 18:43, ekstrapolasi 1.5 v4 dikurangi fac, full_only). Rank 13: 0.56275, rank 8: 0.56553. Antrean 46 submit otomatis berjalan (`scheduled_unified.sh`, file `variants/qc_*.csv`), diurutkan ulang 12:25 dengan skor 12:01 (simulasi 20000 potongan public).
-  Peluang dengan 46 slot tersisa terhadap batas sekarang: rank 13 62%, rank 10 25%, rank 8 13%, public 0.565 15%. Batas akan naik karena tim lain juga submit, jadi angka sebenarnya lebih kecil.
+- Rank 18 dari 83, public terbaik **0.56171** (13 Okt 18:43, ekstrapolasi 1.5 v4 dikurangi fac, full_only). Rank 13: 0.56341, rank 10: 0.56440, rank 8: 0.56572, rank 1: 0.57059.
+- Antrean 45 submit otomatis (`scheduled_unified.sh`, file `variants/pNN_*.csv`) mulai 14 Okt 10:01. Jam submit 14 Okt: 10:01, 15:01, 20:01; hari lain 07:01, 12:01, 18:01; 29 dan 30 Okt dikosongkan.
+- `replan.sh` menyusun ulang antrean otomatis setiap ada skor public baru atau training selesai (`experiments/harvest_kf.py`: 4000 potongan public simulasi, dikondisikan ke semua skor public yang sudah terlihat).
+  Peluang dengan 45 slot terhadap batas sekarang: rank 13 77%, rank 10 55%, rank 8 28%, public 0.565 42%, 0.568 5%. Batas akan naik karena tim lain juga submit.
+- Training malam ini: tahap 4 (model fitur lengkap tanpa fitur musim dan ritme), lalu tahap 5 (`run_pass5.sh`) dan v4 fold seed 21 (`run_v4_s21.sh`).
 - Notebook final siap di `run_final/notebook.ipynb`: training diulang untuk 3 fold seed (42, 7, 13), lalu blend top_mix dirata rata (`FOLD_SEEDS`, `VARIANT`).
   Bagian blend sudah dicek **bit-identical** dengan file yang disubmit (`variants/bag_run_v4_s42_top_mix_3.csv`) memakai prediksi tersimpan.
   Verifikasi penuh (training ulang, sekitar 3.5 jam) dijalankan saat laptop dicas: `./run_final.sh`.
