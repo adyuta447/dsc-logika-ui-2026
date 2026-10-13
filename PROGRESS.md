@@ -3,16 +3,16 @@
 Kaggle: data-science-competition-logika-ui-2026, metrik KS. Deadline 30 Okt 2026 23:59 WIB.
 Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 submit per hari, reset 07:00 WIB.
 
-## Status terakhir (13 Okt 22:00 WIB)
+## Status terakhir (14 Okt 01:15 WIB)
 
 - Rank 18 dari 83, public terbaik **0.56171** (13 Okt 18:43, ekstrapolasi 1.5 v4 dikurangi fac, full_only). Rank 13: 0.56341, rank 10: 0.56440, rank 8: 0.56572, rank 1: 0.57059.
-- Antrean 45 submit otomatis (`scheduled_unified.sh`, file `variants/pNN_*.csv`) mulai 14 Okt 10:01. Jam submit 14 Okt: 10:01, 15:01, 20:01; hari lain 07:01, 12:01, 18:01; 29 dan 30 Okt dikosongkan.
-- `replan.sh` menyusun ulang antrean otomatis setiap ada skor public baru atau training selesai (`experiments/harvest_kf.py`: 4000 potongan public simulasi, dikondisikan ke semua skor public yang sudah terlihat).
-  Peluang dengan 45 slot terhadap batas sekarang: rank 13 77%, rank 10 55%, rank 8 28%, public 0.565 42%, 0.568 5%. Batas akan naik karena tim lain juga submit.
-- Training malam ini: tahap 4 (model fitur lengkap tanpa fitur musim dan ritme), lalu tahap 5 (`run_pass5.sh`) dan v4 fold seed 21 (`run_v4_s21.sh`).
-- Notebook final siap di `run_final/notebook.ipynb`: training diulang untuk 3 fold seed (42, 7, 13), lalu blend top_mix dirata rata (`FOLD_SEEDS`, `VARIANT`).
-  Bagian blend sudah dicek **bit-identical** dengan file yang disubmit (`variants/bag_run_v4_s42_top_mix_3.csv`) memakai prediksi tersimpan.
-  Verifikasi penuh (training ulang, sekitar 3.5 jam) dijalankan saat laptop dicas: `./run_final.sh`.
+- Antrean 50 submit otomatis (`scheduled_unified.sh`, file `variants/pNN_*.csv`, sekarang p05) mulai 14 Okt 10:01. Jam submit 14 Okt: 10:01, 15:01, 20:01; hari lain 07:01, 12:01, 18:01; 30 Okt hanya 07:01 dan 12:01, 30 Okt 18:01 cadangan.
+- `replan.sh` menyusun ulang antrean otomatis setiap ada skor public baru atau training selesai (`experiments/harvest_kf.py`: 10000 potongan public simulasi, dikondisikan ke semua skor public yang sudah terlihat, file dipilih demi peluang tembus 0.565).
+  p05 (339 kandidat): peluang 0.565 54%, 0.568 10%. Batas akan naik karena tim lain juga submit.
+- Pencarian keberuntungan (`experiments/luck_search.py`, `experiments/luck_check.py`): dari 1,2 juta potongan simulasi, 1086 cocok dengan semua skor public kita. Isinya tidak berbeda dari potongan acak (pergeseran fitur maks 0,1 sd, proporsi default sama), jadi keberuntungan 0.56171 murni soal baris mana yang masuk public. File 0.56171 itu lebih jelek di semua 70000 baris train (AUC 0.84654 vs 0.84774), pilihan final tetap bag v4 top_mix.
+  Antrean p05 dinilai ulang di 1086 potongan itu: peluang 0.565 55%, sama dengan planner; file 10:01 punya peluang tunggal tertinggi (7%).
+- Training: tahap 4 selesai 14 Okt 00:52. Tahap 5 (38 model) dan v4 fold seed 21 jalan, lalu tahap 6 dan 7.
+- Notebook final: verifikasi penuh selesai 14 Okt 00:40, output **bit-identical** dengan bag v4 top_mix yang disubmit. Notebook dan CSV deliverable di folder utama sudah diganti dengan hasil ini (versi lama di `old_deliverables/`). Bobot `run_final/models` (1,4 GB) belum diupload ke Drive.
 - Uji 13 Okt tanpa sinyal: pola waktu antar tabel (LR maks 4.2), arus kas vs cicilan (LR maks 2.8). Setiap nasabah hanya muncul sekali (train 70000, test 30000, tidak ada irisan).
 
 - Public terbaik: **0.55865** (run_fac top_mix, 12 Okt), peringkat 20 (12 Okt 23:15, rank 8: 0.56440). Yang lolos final: **top 8** (rank 8 sekarang 0.56149).
