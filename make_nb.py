@@ -15,6 +15,7 @@ Approach in short:
 1. Build customer level features from six tables, using only records available at the decision time.
 2. Train gradient boosted trees (LightGBM, CatBoost, XGBoost) on two feature sets and a spline logistic regression.
 3. Blend the models by rank, since KS only depends on the ordering of scores.
+4. Repeat the whole training over three fold splits and average the blends.
 
 Everything runs on CPU with fixed seeds so the submission can be reproduced exactly."""),
 code("""import os, random, joblib
@@ -31,13 +32,13 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import QuantileTransformer, SplineTransformer
 
-SEED = """ + (sys.argv[4] if len(sys.argv) > 4 else "42") + """
-VARIANT = "main"
+FOLD_SEEDS = [""" + (sys.argv[4] if len(sys.argv) > 4 else "42") + """]
+VARIANT = "top_mix"
 N_FOLDS = """ + (sys.argv[2] if len(sys.argv) > 2 else "5") + """
 TREE_SEEDS = """ + (sys.argv[3] if len(sys.argv) > 3 else "1") + """
 LR = """ + (sys.argv[5] if len(sys.argv) > 5 else "0.01") + """
-random.seed(SEED)
-np.random.seed(SEED)
+random.seed(FOLD_SEEDS[0])
+np.random.seed(FOLD_SEEDS[0])
 KAGGLE = "/kaggle/input/data-science-competition-logika-ui-2026/"
 D = KAGGLE if os.path.exists(KAGGLE) else "data/"
 os.makedirs("models", exist_ok=True)
@@ -73,7 +74,7 @@ ax.set_ylabel("default rate")
 plt.show()"""),
 md("""## Validation
 
-Stratified K fold CV on the training applications, with K set by `N_FOLDS`. AUC is tracked next to KS because it is a smoother guide for model selection.
+Stratified K fold CV on the training applications, with K set by `N_FOLDS`. The split is repeated for every seed in `FOLD_SEEDS`. AUC is tracked next to KS because it is a smoother guide for model selection.
 
 Profile fields, application timing and a few ecommerce share blocks add noise for the boosted trees, so a second feature set drops them. Training on both sets gives the blend some diversity."""),
 code("""tr = f[f.target.notna()].reset_index(drop=True)
@@ -87,12 +88,18 @@ noise = ["region", "employment_type", "housing_status", "age", "employment_tenur
 noise += [c for c in X_all.columns if c.startswith(("ec_share_", "ec_catqty_", "cs_shift", "buh_"))]
 sets = {"full": list(X_all.columns), "lean": [c for c in X_all.columns if c not in noise]}
 
-folds = list(StratifiedKFold(N_FOLDS, shuffle=True, random_state=SEED).split(X_all, y))
 app = load_apps()
 M, E = factor_inputs(app)
 pos = pd.Series(np.arange(len(app)), index=app.application_id)
 p_tr, p_te = pos[tr.application_id].values, pos[te.application_id].values
-fac = [factor_features(M, E, app.target.values, p_tr[a]) for a, b in folds]
+
+
+def split(seed):
+    folds = list(StratifiedKFold(N_FOLDS, shuffle=True, random_state=seed).split(X_all, y))
+    return folds, [factor_features(M, E, app.target.values, p_tr[a]) for a, b in folds]
+
+
+folds, fac = split(FOLD_SEEDS[0])
 frame = lambda k: (pd.concat([X_all, fac[k].iloc[p_tr].reset_index(drop=True)], axis=1),
                    pd.concat([X_test_all, fac[k].iloc[p_te].reset_index(drop=True)], axis=1))
 sets = {k: v + list(fac[0].columns) for k, v in sets.items()}
@@ -109,7 +116,7 @@ code("""def fit_lgb(cols, tag, seed):
         X, Xt = [d[cols[k]] for d in frame(k)]
         m = lgb.train(params, lgb.Dataset(X.iloc[a], y[a]), 20000, valid_sets=[lgb.Dataset(X.iloc[b], y[b])],
                       callbacks=[lgb.early_stopping(300, verbose=False)])
-        m.save_model(f"models/lgb_{tag}_s{seed}_f{k}.txt")
+        m.save_model(f"{MD}lgb_{tag}_s{seed}_f{k}.txt")
         oof[b] = m.predict(X.iloc[b])
         pred += m.predict(Xt) / len(folds)
     return oof, pred
@@ -124,7 +131,7 @@ def fit_cat(cols, tag, seed):
         m = CatBoostClassifier(iterations=int(60 / LR), learning_rate=3 * LR, depth=6, l2_leaf_reg=5, eval_metric="AUC",
                                od_type="Iter", od_wait=300, random_seed=seed, cat_features=cats, verbose=0)
         m.fit(X.iloc[a], y[a], eval_set=(X.iloc[b], y[b]))
-        m.save_model(f"models/cat_{tag}_s{seed}_f{k}.cbm")
+        m.save_model(f"{MD}cat_{tag}_s{seed}_f{k}.cbm")
         oof[b] = m.predict_proba(X.iloc[b])[:, 1]
         pred += m.predict_proba(Xt)[:, 1] / len(folds)
     return oof, pred
@@ -139,7 +146,7 @@ def fit_xgb(cols, tag, seed):
                               enable_categorical=True, eval_metric="auc", early_stopping_rounds=300,
                               random_state=seed, n_jobs=-1)
         m.fit(X.iloc[a], y[a], eval_set=[(X.iloc[b], y[b])], verbose=False)
-        m.save_model(f"models/xgb_{tag}_s{seed}_f{k}.json")
+        m.save_model(f"{MD}xgb_{tag}_s{seed}_f{k}.json")
         oof[b] = m.predict_proba(X.iloc[b])[:, 1]
         pred += m.predict_proba(Xt)[:, 1] / len(folds)
     return oof, pred
@@ -168,27 +175,35 @@ def fit_linear():
         m = make_pipeline(QuantileTransformer(n_quantiles=200, subsample=10**6, random_state=SEED),
                           SplineTransformer(n_knots=4, degree=2), LogisticRegression(C=0.03, max_iter=3000))
         m.fit(linear_matrix(X.iloc[a], med), y[a])
-        joblib.dump((m, med), f"models/linear_f{k}.pkl")
+        joblib.dump((m, med), f"{MD}linear_f{k}.pkl")
         oof[b] = m.predict_proba(linear_matrix(X.iloc[b], med))[:, 1]
         pred += m.predict_proba(linear_matrix(Xt, med))[:, 1] / len(folds)
     return oof, pred"""),
-code("""res = {}
-for tag, cols in sets.items():
-    fit_set([cols] * len(folds), tag)
-res["linear"] = fit_linear()"""),
-md("""Many features are close copies of each other, so a third set keeps only the 80 strongest. The ranking for each fold uses the gain of that fold's lean LightGBM models only, which keeps the validation rows out of the selection."""),
-code("""top = []
-for k in range(len(folds)):
-    gain = sum(lgb.Booster(model_file=f"models/lgb_lean_s{s}_f{k}.txt").feature_importance("gain") for s in range(3))
-    top.append(list(pd.Series(gain, index=sets["lean"]).sort_values(ascending=False).index[:80]))
-fit_set(top, "top")
-for name, (oof, _) in res.items():
-    report(name, oof)"""),
+md("""Many features are close copies of each other, so a third set keeps only the 80 strongest. The ranking for each fold uses the gain of that fold's lean LightGBM models only, which keeps the validation rows out of the selection.
+
+Everything is trained once per fold split, and the models of each split go to their own folder."""),
+code("""runs = {}
+for SEED in FOLD_SEEDS:
+    folds, fac = split(SEED)
+    MD = f"models/folds_{SEED}/"
+    os.makedirs(MD, exist_ok=True)
+    res = {}
+    for tag, cols in sets.items():
+        fit_set([cols] * len(folds), tag)
+    res["linear"] = fit_linear()
+    top = []
+    for k in range(len(folds)):
+        gain = sum(lgb.Booster(model_file=f"{MD}lgb_lean_s{s}_f{k}.txt").feature_importance("gain") for s in range(3))
+        top.append(list(pd.Series(gain, index=sets["lean"]).sort_values(ascending=False).index[:80]))
+    fit_set(top, "top")
+    for name, (oof, _) in res.items():
+        report(f"{SEED} {name}", oof)
+    runs[SEED] = res"""),
 md("""## Blend
 
 Within each feature set the seeds of each model are averaged first, then LightGBM, CatBoost and XGBoost get equal weight. In the main blend CatBoost gets one extra share because it was the most stable model across folds, and the linear model takes 20 percent.
 
-The other variants mix the same models with different weights. Their CV scores are nearly identical, and `VARIANT` picks the one written as the submission."""),
+The other variants mix the same models with different weights. Their CV scores are nearly identical, and `VARIANT` picks the one written as the submission. Each variant is averaged over the fold splits and ranked again."""),
 code("""def avg(model, tag, i, n):
     return np.mean([rank(res[f"{model}_{tag}_{s}"][i]) for s in range(n)], axis=0)
 
@@ -210,11 +225,17 @@ variants = {
     "trees_only": lambda i: (core(i) + trees("top", i)) / 2,
     "linear30": lambda i: 0.7 * (core(i) + trees("top", i)) / 2 + 0.3 * lin(i),
 }
-for name, blend in variants.items():
-    report(name, blend(0))
-    pd.DataFrame({"application_id": te.application_id, "default_probability": blend(1)}).to_csv(f"variants/{name}.csv", index=False)
-pd.to_pickle(res, "models/predictions.pkl")"""),
-code("""sub = pd.DataFrame({"application_id": te.application_id, "default_probability": variants[VARIANT](1)})
+bag = {name: [] for name in variants}
+for SEED, res in runs.items():
+    for name, blend in variants.items():
+        bag[name].append((blend(0), blend(1)))
+final = {}
+for name, b in bag.items():
+    report(name, np.mean([o for o, p in b], axis=0))
+    final[name] = rank(np.mean([p for o, p in b], axis=0))
+    pd.DataFrame({"application_id": te.application_id, "default_probability": final[name]}).to_csv(f"variants/{name}.csv", index=False)
+pd.to_pickle(runs, "models/predictions.pkl")"""),
+code("""sub = pd.DataFrame({"application_id": te.application_id, "default_probability": final[VARIANT]})
 assert len(sub) == 30000 and sub.application_id.is_unique and sub.default_probability.between(0, 1).all()
 sub.to_csv("DSC0152_kali ini beneran deh_Submisi.csv", index=False)
 sub.head()"""),

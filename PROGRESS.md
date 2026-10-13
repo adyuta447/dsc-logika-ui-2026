@@ -3,7 +3,13 @@
 Kaggle: data-science-competition-logika-ui-2026, metrik KS. Deadline 30 Okt 2026 23:59 WIB.
 Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 submit per hari, reset 07:00 WIB.
 
-## Status terakhir (12 Okt 23:15 WIB)
+## Status terakhir (13 Okt 12:00 WIB)
+
+- Rank 22 dari 79 (public 0.55865). Rank 13: 0.56275, rank 8: 0.56553. Antrean 47 submit otomatis berjalan (`scheduled_unified.sh`).
+- Notebook final siap di `run_final/notebook.ipynb`: training diulang untuk 3 fold seed (42, 7, 13), lalu blend top_mix dirata rata (`FOLD_SEEDS`, `VARIANT`).
+  Bagian blend sudah dicek **bit-identical** dengan file yang disubmit (`variants/bag_run_v4_s42_top_mix_3.csv`) memakai prediksi tersimpan.
+  Verifikasi penuh (training ulang, sekitar 3.5 jam) dijalankan saat laptop dicas: `./run_final.sh`.
+- Uji 13 Okt tanpa sinyal: pola waktu antar tabel (LR maks 4.2), arus kas vs cicilan (LR maks 2.8). Setiap nasabah hanya muncul sekali (train 70000, test 30000, tidak ada irisan).
 
 - Public terbaik: **0.55865** (run_fac top_mix, 12 Okt), peringkat 20 (12 Okt 23:15, rank 8: 0.56440). Yang lolos final: **top 8** (rank 8 sekarang 0.56149).
 - Model terbaik di CV: notebook 10 fold + factor model, AUC **0.84649** (top_mix).
@@ -91,7 +97,7 @@ Patokan factor v1: 0.84524 (LightGBM lean, 5 fold, 2 seed).
 ## Struktur repo
 
 - `features.py`: pipeline fitur, termasuk `factor_inputs` dan `factor_features`.
-- `make_nb.py`: generator notebook. `python make_nb.py <output.ipynb> <N_FOLDS> <TREE_SEEDS> <SEED>`. SEED mengatur pembagian fold, 42 = versi utama.
+- `make_nb.py`: generator notebook. `python make_nb.py <output.ipynb> <N_FOLDS> <TREE_SEEDS> <FOLD_SEEDS> <LR>`, contoh final: `10 1 42,7,13 0.01`.
 - `DSC0152_kali ini beneran deh_Notebook.ipynb`: notebook deliverable (masih versi 5 fold tanpa factor, diganti setelah pilihan final).
 - `run10/`, `run_fac/`, `run_seeds/`: notebook 10 fold yang sudah dijalankan beserta outputnya.
 - `experiments/`: skrip eksperimen dan log hasilnya.
