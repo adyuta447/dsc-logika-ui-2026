@@ -41,8 +41,9 @@ for new_, old_ in (("lgb_extra", "lgb_only"), ("xgb_deep", "xgb_only"), ("lgb_sh
     if f"new|{new_}" in O:
         for a_ in (0.5, 1.0): ext(f"ext{a_}|{new_}-v4|{old_}", f"new|{new_}", f"v4|{old_}", a_)
 # per model type: full set minus lean set, and full set v4 minus the same without the season and rhythm features
-for k in ("lgb_extra", "xgb_deep", "lgb_shallow", "lgb_ff06", "lgb_extra31", "lgb_mc800", "xgb_shallow", "cat_deep", "lgb_deep", "lgb_goss", "lgb_ff015", "cat_lossguide"):
-    for hi, lo, steps in ((f"full_{k}", k, (0.5, 1.0)), (f"full_{k}", f"facfull_{k}", (1.0, 1.5, 2.0))):
+for k in ("lgb_extra", "xgb_deep", "lgb_shallow", "lgb_ff06", "lgb_extra31", "lgb_mc800", "xgb_shallow", "cat_deep", "lgb_deep", "lgb_goss", "lgb_ff015", "cat_lossguide",
+          "hgb", "xgb_lossguide", "cat_d6", "lgb_extra_s1"):
+    for hi, lo, steps in ((f"full_{k}", k, (0.5, 1.0, 1.5)), (f"full_{k}", f"facfull_{k}", (1.0, 1.5, 2.0))):
         if f"new|{hi}" in O and f"new|{lo}" in O:
             for a_ in steps: ext(f"ext{a_}|{hi}-{lo}", f"new|{hi}", f"new|{lo}", a_)
 # full set minus lean set on the notebook blends, the direction the public split has rewarded so far

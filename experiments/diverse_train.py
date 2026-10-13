@@ -1,6 +1,7 @@
 import os, sys, time
 import numpy as np, pandas as pd, lightgbm as lgb, xgboost as xgb
 from catboost import CatBoostClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score
 from features import build, load_apps, factor_inputs, factor_features
@@ -54,12 +55,27 @@ def with_cols(fit, extra):
     return lambda X, Xt, a, b: fit(pd.concat([X, tr[extra]], axis=1), pd.concat([Xt, te[extra]], axis=1), a, b)
 full_set = lambda fit: with_cols(fit, noise)
 
-def cat_fit(X, Xt, a, b):
+def cat_fit(X, Xt, a, b, depth=8):
     X, Xt = X.copy(), Xt.copy(); cats = [c for c in X.columns if str(X[c].dtype) == "category"]
     X[cats], Xt[cats] = X[cats].astype(str), Xt[cats].astype(str)
-    m = CatBoostClassifier(iterations=4000, learning_rate=0.06, depth=8, l2_leaf_reg=10, eval_metric="AUC", od_type="Iter", od_wait=200,
+    m = CatBoostClassifier(iterations=4000, learning_rate=0.06, depth=depth, l2_leaf_reg=10, eval_metric="AUC", od_type="Iter", od_wait=200,
                            random_seed=0, cat_features=cats, verbose=0, thread_count=-1)
     m.fit(X.iloc[a], y[a], eval_set=(X.iloc[b], y[b]))
+    return m.predict_proba(X.iloc[b])[:, 1], m.predict_proba(Xt)[:, 1]
+
+def xgb_lossguide(X, Xt, a, b):
+    m = xgb.XGBClassifier(n_estimators=10000, learning_rate=0.02, grow_policy="lossguide", max_leaves=31, max_depth=0, min_child_weight=50, subsample=0.8,
+                          colsample_bytree=0.3, reg_lambda=20, tree_method="hist", max_bin=128, enable_categorical=True, eval_metric="auc",
+                          early_stopping_rounds=200, random_state=0, n_jobs=-1)
+    m.fit(X.iloc[a], y[a], eval_set=[(X.iloc[b], y[b])], verbose=False)
+    return m.predict_proba(X.iloc[b])[:, 1], m.predict_proba(Xt)[:, 1]
+
+def hgb_fit(X, Xt, a, b):
+    # categories as their codes (train and test share them), early stopping on a slice of the training fold
+    X, Xt = (d.apply(lambda c: c.cat.codes.where(c.notna()) if str(c.dtype) == "category" else c) for d in (X, Xt))
+    m = HistGradientBoostingClassifier(learning_rate=0.03, max_iter=5000, max_leaf_nodes=15, min_samples_leaf=200, l2_regularization=20, max_features=0.3,
+                                       early_stopping=True, validation_fraction=0.1, n_iter_no_change=200, random_state=0)
+    m.fit(X.iloc[a], y[a])
     return m.predict_proba(X.iloc[b])[:, 1], m.predict_proba(Xt)[:, 1]
 
 configs = {"lgb_deep": lgb_fit(dict(num_leaves=63, min_child_samples=50)), "lgb_shallow": lgb_fit(dict(num_leaves=7, min_child_samples=300)),
@@ -85,6 +101,11 @@ if os.environ.get("PASS6"):
             "time": ["decision_lag_h", "app_hour", "app_dow"], "ec": [c for c in noise if c.startswith(("ec_share_", "ec_catqty_"))],
             "cs": [c for c in noise if c.startswith(("cs_shift", "buh_"))]}
     configs = {f"plus_{g}_{k}": with_cols(configs[k], c) for g, c in plus.items() for k in ("lgb_extra", "xgb_deep")}
+# seventh pass, only with PASS7 set: four new model families, each on the lean and the full set, so each adds its own full minus lean direction
+if os.environ.get("PASS7"):
+    new7 = {"hgb": hgb_fit, "xgb_lossguide": xgb_lossguide, "cat_d6": lambda X, Xt, a, b: cat_fit(X, Xt, a, b, depth=6),
+            "lgb_extra_s1": lgb_fit(dict(extra_trees=True, seed=1))}
+    configs = {**new7, **{f"full_{k}": full_set(f) for k, f in new7.items()}}
 for seed in (42, 7, 13):
     folds = list(StratifiedKFold(10, shuffle=True, random_state=seed).split(tr, y))
     frames = []

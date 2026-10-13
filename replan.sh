@@ -2,7 +2,7 @@
 # Re-plans the submit queue whenever new information arrives: a new public score in PROGRESS.md, or a finished training run.
 cd /Users/yutaaa/Developments/dsc-logikaui
 S=/private/tmp/claude-501/-Users-yutaaa-Developments-dsc-logikaui/58ebb857-fe45-4d65-a85d-951e7d9dcdc2/scratchpad/
-info() { print -- $(grep -c ': public 0\.' PROGRESS.md) $(cat logs/diverse_train4.log logs/diverse_train5.log logs/diverse_train6.log logs/nb_v4_s21.log 2>/dev/null | grep -cE 'pass done|v4_s21 exit 0') }
+info() { print -- $(grep -c ': public 0\.' PROGRESS.md) $(cat logs/diverse_train*.log logs/nb_v4_s21.log 2>/dev/null | grep -cE 'pass done|v4_s21 exit 0') }
 requeue() {
   NSLOTS=$(.venv/bin/python $S/slots.py count) PREFIX=$1 .venv/bin/python $S/harvest_kf.py $S > logs/harvest_kf_$1.log 2>&1 || { echo "$(date '+%F %T') simulation $1 failed"; return 1 }
   # never swap the scheduler from 15 minutes before to 40 minutes after a submit slot; a slot passing meanwhile fails the rebuild, and the next loop plans again
