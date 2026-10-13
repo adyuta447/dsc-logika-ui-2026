@@ -114,7 +114,7 @@ names += new; post = condition(np.hstack([diff, ks(new) - base]))
 print("mixes added:", len(new), "best mix means:", pd.Series(post[:, -len(new):].mean(0), index=new).sort_values(ascending=False).head(5).round(5).to_dict())
 nslots = int(os.environ.get("NSLOTS", "37"))
 fam = [names.index(n) for n in ["v4|top_mix"] + list(obs)]; cur = post[:, fam].max(1)
-lb = {"rank 13": 0.56341, "rank 10": 0.56440, "rank 8": 0.56572, "0.565": 0.565, "0.568": 0.568}
+lb = {"rank 13": 0.56341, "rank 10": 0.56440, "rank 8": 0.56706, "0.565": 0.565, "0.568": 0.568}
 print(f"now: E[best] {0.55860 + cur.mean():.5f}")
 goal = 0.565 - 0.55860; picked = []
 for step in range(nslots):
