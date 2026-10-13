@@ -71,6 +71,15 @@ configs = {"lgb_deep": lgb_fit(dict(num_leaves=63, min_child_samples=50)), "lgb_
            "xgb_shallow": xgb_shallow, "cat_lossguide": cat_lossguide}
 # third pass: the full feature set did well on the public split, so the strongest model types are repeated on it
 configs.update({f"full_{k}": full_set(configs[k]) for k in ("lgb_extra", "xgb_deep", "lgb_shallow", "lgb_ff06", "lgb_extra31", "lgb_mc800", "xgb_shallow", "cat_deep")})
+# fourth pass: the same full set models without the season and rhythm features, so the step from fac to v4 can be extrapolated per model type
+V4 = ["dec_doy", "ab_inc_share", "ab_open_avg", "pa_gap_mean", "ec_gap_mean", "ec_gap_last3"]
+without_v4 = lambda fit: lambda X, Xt, a, b: fit(X.drop(columns=V4), Xt.drop(columns=V4), a, b)
+configs.update({f"facfull_{k}": without_v4(configs[f"full_{k}"]) for k in ("lgb_extra", "xgb_deep", "lgb_shallow", "lgb_ff06", "lgb_extra31", "lgb_mc800", "xgb_shallow", "cat_deep")})
+# fifth pass, run only with PASS5 set so the fourth pass finishes on its own first
+if os.environ.get("PASS5"):
+    extra = ("lgb_deep", "lgb_goss", "lgb_ff015", "cat_lossguide")
+    configs.update({f"full_{k}": full_set(configs[k]) for k in extra})
+    configs.update({f"facfull_{k}": without_v4(configs[f"full_{k}"]) for k in extra})
 for seed in (42, 7, 13):
     folds = list(StratifiedKFold(10, shuffle=True, random_state=seed).split(tr, y))
     frames = []
