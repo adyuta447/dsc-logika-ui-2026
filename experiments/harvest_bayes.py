@@ -1,4 +1,4 @@
-import glob, sys
+import glob, os, sys
 import numpy as np, pandas as pd
 from scipy.stats import rankdata, spearmanr
 from sklearn.metrics import roc_auc_score
@@ -19,6 +19,7 @@ def variants(r, i):
             "full_only": tr["full"], "lean_only": tr["lean"], "linear_only": lin}
 # fac3 uses only the fold seeds v4 has, so v4 minus fac3 carries the feature step without fold noise
 groups = {"v4": ["run_v4_s42", "run_v4_s7", "run_v4_s13"], "fac": ["run_fac", "run_s7", "run_s13", "run_s21"], "fac3": ["run_fac", "run_s7", "run_s13"]}
+if os.path.exists("run_v4_s21/models/predictions.pkl"): groups["v4_4"] = ["run_v4_s42", "run_v4_s7", "run_v4_s13", "run_v4_s21"]
 O, T = {}, {}
 for g, rs in groups.items():
     vo = [variants(r, 0) for r in rs]; vt = [variants(r, 1) for r in rs]
@@ -33,9 +34,9 @@ for name in sorted({p.split("/")[-1].rsplit("_s", 1)[0] for p in glob.glob(S + "
 
 # extrapolations: step past the better model along the direction it improved on
 for k in ("top_mix", "trees_only", "linear30", "main", "top_only", "lgb_only", "cat_only", "xgb_only", "full_only", "lean_only"):
-    for base in ("fac", "fac3"):
+    for hi, lo in [("v4", "fac"), ("v4", "fac3")] + [("v4_4", "fac")] * ("v4_4" in groups):
         for a_ in (0.5, 1.0, 1.5, 2.0, 2.5, 3.0):
-            n_ = f"ext{a_}|v4-{base}|{k}"; O[n_] = rank(O[f"v4|{k}"] + a_ * (O[f"v4|{k}"] - O[f"{base}|{k}"])); T[n_] = rank(T[f"v4|{k}"] + a_ * (T[f"v4|{k}"] - T[f"{base}|{k}"]))
+            n_ = f"ext{a_}|{hi}-{lo}|{k}"; O[n_] = rank(O[f"{hi}|{k}"] + a_ * (O[f"{hi}|{k}"] - O[f"{lo}|{k}"])); T[n_] = rank(T[f"{hi}|{k}"] + a_ * (T[f"{hi}|{k}"] - T[f"{lo}|{k}"]))
 for new_, old_ in (("lgb_extra", "lgb_only"), ("xgb_deep", "xgb_only"), ("lgb_shallow", "lgb_only"), ("cat_deep", "cat_only")):
     if f"new|{new_}" in O:
         for a_ in (0.5, 1.0):
@@ -75,6 +76,15 @@ wmean = lambda c: (w * c).sum()
 lb = {"rank 13": 0.56275 - 0.55860, "rank 10": 0.56440 - 0.55860, "rank 8": 0.56553 - 0.55860, "0.565": 0.565 - 0.55860}
 m = pd.Series({n: wmean(diff[:, j]) for j, n in enumerate(names)}).sort_values(ascending=False)
 print("best conditioned means:", m.head(12).round(5).to_dict())
+# 50/50 mixes of the ten candidates that look best on the conditioned splits, scored on the same splits
+top = list(m.index[:10]); new = []
+for i, a in enumerate(top):
+    for b in top[i + 1:]:
+        n_ = f"mix2|{a}+{b}"; O[n_] = rank((O[a] + O[b]) / 2); T[n_] = rank((T[a] + T[b]) / 2); new.append(n_)
+Pm = np.column_stack([O[n] for n in new])
+Dm = np.array([ks_cols(Pm[idx], y[idx]) for idx in map(split, keep)])
+names += new; diff = np.hstack([diff, Dm - D[:, [ir]]])
+print("mixes added:", len(new), "best mix means:", pd.Series({n: wmean(diff[:, names.index(n)]) for n in new}).sort_values(ascending=False).head(5).round(5).to_dict())
 picked = []
 for step in range(nslots):
     g, j = max((wmean(np.maximum(cur, diff[:, j])), j) for j in range(len(names)) if j not in fam)
