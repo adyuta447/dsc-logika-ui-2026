@@ -1,9 +1,10 @@
 import glob, hashlib, os, re, sys
 import numpy as np, pandas as pd
+from scipy.special import ndtr
 from scipy.stats import rankdata
 
 # Picks the next public submissions: every candidate is scored on simulated public splits, the splits are moved to agree with
-# every public score seen so far, and files are chosen greedily for the best expected maximum.
+# every public score seen so far, and files are chosen greedily for the best chance of reaching 0.565 (ties: best expected maximum).
 S = sys.argv[1]
 f = pd.read_parquet("features.parquet", columns=["target"]); y = f[f.target.notna()].target.astype(int).values
 rank = lambda v: rankdata(v) / len(v)
@@ -46,7 +47,17 @@ for k in ("lgb_extra", "xgb_deep", "lgb_shallow", "lgb_ff06", "lgb_extra31", "lg
             for a_ in steps: ext(f"ext{a_}|{hi}-{lo}", f"new|{hi}", f"new|{lo}", a_)
 # full set minus lean set on the notebook blends, the direction the public split has rewarded so far
 for g in [g for g in ("v4", "v4_4") if g in groups]:
-    for a_ in (0.5, 1.0, 1.5): ext(f"ext{a_}|{g}|full-lean", f"{g}|full_only", f"{g}|lean_only", a_)
+    for a_ in (0.5, 1.0, 1.5, 2.0, 3.0): ext(f"ext{a_}|{g}|full-lean", f"{g}|full_only", f"{g}|lean_only", a_)
+# bolder steps for the 0.565 goal: further along v4 minus fac, and both rewarded directions at once (v4 full set minus fac lean set)
+for k in ("full_only", "lgb_full", "cat_full", "xgb_full"):
+    for lo in ("fac", "fac3"):
+        for a_ in (4.0, 5.0): ext(f"ext{a_}|v4-{lo}|{k}", f"v4|{k}", f"{lo}|{k}", a_)
+for a_ in (0.5, 1.0, 1.5, 2.0): ext(f"ext{a_}|v4full-faclean", "v4|full_only", "fac|lean_only", a_)
+# lean set plus one group of the dropped fields (sixth pass)
+for k in ("lgb_extra", "xgb_deep"):
+    for g in ("prof", "time", "ec", "cs"):
+        if f"new|plus_{g}_{k}" in O:
+            for a_ in (1.0, 2.0): ext(f"ext{a_}|plus_{g}_{k}-{k}", f"new|plus_{g}_{k}", f"new|{k}", a_)
 
 # public scores relative to bag v4 top_mix (0.55860): two early manual submits, then every scored file in the submit log
 san = lambda n: re.sub(r"[^A-Za-z0-9.]+", "_", n)
@@ -68,8 +79,8 @@ print("observed:", {k: round(v, 5) for k, v in obs.items()})
 def ks_cols(Ps, ys):
     o = np.argsort(-Ps, axis=0); yy = ys[o]
     return np.max(np.cumsum(yy, 0) / ys.sum() - np.cumsum(1 - yy, 0) / (len(ys) - ys.sum()), 0)
-N = int(os.environ.get("N", "4000"))
-splits = [np.random.default_rng([1, b]).choice(len(y), 9000, replace=False) for b in range(N)]
+N = int(os.environ.get("N", "10000"))
+split = lambda b: np.random.default_rng([1, b]).choice(len(y), 9000, replace=False)
 cf = S + "ks_cache.pkl"; cache = pd.read_pickle(cf) if os.path.exists(cf) else {}
 def ks(ns):
     # KS of each candidate on the same simulated splits, cached by the prediction itself so a changed candidate is scored again
@@ -77,7 +88,7 @@ def ks(ns):
     todo = [j for j, k in enumerate(keys) if k not in cache]
     if todo:
         P = np.column_stack([O[ns[j]] for j in todo])
-        D = np.array([ks_cols(P[idx], y[idx]) for idx in splits])
+        D = np.array([ks_cols(P[idx], y[idx]) for idx in map(split, range(N))])
         cache.update({keys[j]: D[:, i] for i, j in enumerate(todo)}); pd.to_pickle(cache, cf)
     return np.column_stack([cache[k] for k in keys])
 sig = 0.0006
@@ -104,12 +115,13 @@ nslots = int(os.environ.get("NSLOTS", "37"))
 fam = [names.index(n) for n in ["v4|top_mix"] + list(obs)]; cur = post[:, fam].max(1)
 lb = {"rank 13": 0.56341, "rank 10": 0.56440, "rank 8": 0.56572, "0.565": 0.565, "0.568": 0.568}
 print(f"now: E[best] {0.55860 + cur.mean():.5f}")
-picked = []
+goal = 0.565 - 0.55860; picked = []
 for step in range(nslots):
-    g, j = max((np.maximum(cur, post[:, j]).mean(), j) for j in range(len(names)) if j not in fam)
+    # chance of reaching the goal, smoothed over 0.0003 so the pick does not chase single splits, plus the expected maximum as tie break
+    g, j = max((ndtr((np.maximum(cur, post[:, j]) - goal) / 0.0003).mean() + np.maximum(cur, post[:, j]).mean(), j) for j in range(len(names)) if j not in fam)
     fam.append(j); cur = np.maximum(cur, post[:, j]); picked.append(names[j])
     if step < 12 or step % 10 == 0 or step == nslots - 1:
-        print(f"+ {names[j]:30s} E[best] {0.55860 + g:.5f}", "  ".join(f"{k} {(cur >= v - 0.55860).mean():.2f}" for k, v in lb.items()))
+        print(f"+ {names[j]:30s} E[best] {0.55860 + cur.mean():.5f}", "  ".join(f"{k} {(cur >= v - 0.55860).mean():.2f}" for k, v in lb.items()))
 ids = pd.read_csv("run_v4_s42/variants/top_mix.csv").application_id
 for i, n in enumerate(picked):
     sub = pd.DataFrame({"application_id": ids, "default_probability": T[n]})

@@ -48,12 +48,11 @@ def cat_lossguide(X, Xt, a, b):
     m.fit(X.iloc[a], y[a], eval_set=(X.iloc[b], y[b]))
     return m.predict_proba(X.iloc[b])[:, 1], m.predict_proba(Xt)[:, 1]
 
-def full_set(fit):
-    # same LightGBM, but the profile and timing fields that the lean set drops are put back
-    def g(X, Xt, a, b):
-        extra = [c for c in noise if c in tr.columns]
-        return fit(pd.concat([X, tr[extra]], axis=1), pd.concat([Xt, te[extra]], axis=1), a, b)
-    return g
+def with_cols(fit, extra):
+    # same model, with some of the profile and timing fields that the lean set drops put back
+    extra = [c for c in extra if c in tr.columns]
+    return lambda X, Xt, a, b: fit(pd.concat([X, tr[extra]], axis=1), pd.concat([Xt, te[extra]], axis=1), a, b)
+full_set = lambda fit: with_cols(fit, noise)
 
 def cat_fit(X, Xt, a, b):
     X, Xt = X.copy(), Xt.copy(); cats = [c for c in X.columns if str(X[c].dtype) == "category"]
@@ -80,6 +79,12 @@ if os.environ.get("PASS5"):
     extra = ("lgb_deep", "lgb_goss", "lgb_ff015", "cat_lossguide")
     configs.update({f"full_{k}": full_set(configs[k]) for k in extra})
     configs.update({f"facfull_{k}": without_v4(configs[f"full_{k}"]) for k in extra})
+# sixth pass, only with PASS6 set: the lean set plus one group of the dropped fields at a time, to find which group the public split rewards
+if os.environ.get("PASS6"):
+    plus = {"prof": ["region", "employment_type", "housing_status", "age", "employment_tenure_months", "dependents", "tenure_to_age", "income_per_dependent", "loan_purpose"],
+            "time": ["decision_lag_h", "app_hour", "app_dow"], "ec": [c for c in noise if c.startswith(("ec_share_", "ec_catqty_"))],
+            "cs": [c for c in noise if c.startswith(("cs_shift", "buh_"))]}
+    configs = {f"plus_{g}_{k}": with_cols(configs[k], c) for g, c in plus.items() for k in ("lgb_extra", "xgb_deep")}
 for seed in (42, 7, 13):
     folds = list(StratifiedKFold(10, shuffle=True, random_state=seed).split(tr, y))
     frames = []
