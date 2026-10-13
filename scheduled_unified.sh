@@ -64,7 +64,13 @@ for item in $queue; do
   while (( $(date +%s) < target )); do sleep 30; done
   echo "$(date '+%F %T') rank before: $(our_rank)"
   if ! valid $f; then echo "invalid file $f, skipped"; continue; fi
-  if ! $K competitions submit -f $f -m "harvest ${f:t:r}"; then echo "submit failed for $f"; continue; fi
+  # a failed submit (no internet after waking up) is retried every 5 minutes for up to 3 hours
+  ok=0
+  for t in {1..36}; do
+    $K competitions submit -f $f -m "harvest ${f:t:r}" && { ok=1; break }
+    echo "$(date '+%F %T') submit failed for $f, retry in 5 minutes"; sleep 300
+  done
+  (( ok )) || continue
   line=""
   for i in {1..60}; do
     line=$($K competitions submissions 2>/dev/null | grep "${f:t}" | head -1)

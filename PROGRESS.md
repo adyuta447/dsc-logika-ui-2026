@@ -3,9 +3,9 @@
 Kaggle: data-science-competition-logika-ui-2026, metrik KS. Deadline 30 Okt 2026 23:59 WIB.
 Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 submit per hari, reset 07:00 WIB.
 
-## Status terakhir (13 Okt 12:30 WIB)
+## Status terakhir (13 Okt 18:50 WIB)
 
-- Rank 21 dari 79, public terbaik **0.55931** (13 Okt 12:01, LightGBM fitur lengkap, 3 fold seed). Rank 13: 0.56275, rank 8: 0.56553. Antrean 46 submit otomatis berjalan (`scheduled_unified.sh`, file `variants/qc_*.csv`), diurutkan ulang 12:25 dengan skor 12:01 (simulasi 20000 potongan public).
+- Rank 18 dari 82, public terbaik **0.56171** (13 Okt 18:43, ekstrapolasi 1.5 v4 dikurangi fac, full_only). Rank 13: 0.56275, rank 8: 0.56553. Antrean 46 submit otomatis berjalan (`scheduled_unified.sh`, file `variants/qc_*.csv`), diurutkan ulang 12:25 dengan skor 12:01 (simulasi 20000 potongan public).
   Peluang dengan 46 slot tersisa terhadap batas sekarang: rank 13 62%, rank 10 25%, rank 8 13%, public 0.565 15%. Batas akan naik karena tim lain juga submit, jadi angka sebenarnya lebih kecil.
 - Notebook final siap di `run_final/notebook.ipynb`: training diulang untuk 3 fold seed (42, 7, 13), lalu blend top_mix dirata rata (`FOLD_SEEDS`, `VARIANT`).
   Bagian blend sudah dicek **bit-identical** dengan file yang disubmit (`variants/bag_run_v4_s42_top_mix_3.csv`) memakai prediksi tersimpan.
@@ -37,6 +37,7 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 | 12 Okt | bag v4 seed 42+7+13 top_mix | AUC 0.84774 | 0.55860 |
 | 13 Okt | ekstrapolasi 1.5 v4 dikurangi fac, trees_only | | 0.55810 |
 | 13 Okt | LightGBM fitur lengkap (v4, 3 fold seed, lr 0.02) | AUC 0.84729 | **0.55931** |
+| 13 Okt | ekstrapolasi 1.5 v4 dikurangi fac, full_only (slot 18:01, terkirim 18:43 karena laptop tidur) | | **0.56171** |
 
 ## CV per versi notebook
 
