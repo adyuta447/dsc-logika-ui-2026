@@ -42,7 +42,7 @@ ref = "v4|top_mix"; names = list(O); P = np.column_stack([O[n] for n in names]);
 def ks_cols(Ps, ys):
     o = np.argsort(-Ps, axis=0); yy = ys[o]
     return np.max(np.cumsum(yy, 0) / ys.sum() - np.cumsum(1 - yy, 0) / (len(ys) - ys.sum()), 0)
-rng = np.random.default_rng(0); B = 3000; D = np.zeros((B, len(names)))
+rng = np.random.default_rng(0); B = int(__import__('os').environ.get('B', '3000')); D = np.zeros((B, len(names)))
 for b in range(B):
     idx = rng.choice(len(y), 9000, replace=False); D[b] = ks_cols(P[idx], y[idx])
 diff = D - D[:, [ir]]
@@ -57,18 +57,18 @@ if os.path.exists("logs/scheduled_harvest.log"):
 nslots = int(os.environ.get("NSLOTS", "37"))
 print("already submitted:", done)
 fam = [names.index(n) for n in done]; cur = np.max(diff[:, fam], 1)
-lb = {"rank 13": 0.56160 - 0.55860, "rank 10": 0.56334 - 0.55860, "rank 8": 0.56441 - 0.55860, "0.565": 0.565 - 0.55860}
+lb = {"rank 13": 0.56275 - 0.55860, "rank 10": 0.56440 - 0.55860, "rank 8": 0.56553 - 0.55860, "0.565": 0.565 - 0.55860}
 print("scheduled family:", f"E[best - ref] {cur.mean():+.5f}", "  ".join(f"{k} {(cur >= v).mean():.2f}" for k, v in lb.items()))
 
 # condition the simulated public splits on the public scores we have actually seen (relative to bag v4 at 0.55860)
-obs = {"fac|top_mix": 0.00005, "fac|linear30": -0.00034, "ext1.5|v4-fac|trees_only": -0.00050}
+obs = {"fac|top_mix": 0.00005, "fac|linear30": -0.00034, "ext1.5|v4-fac|trees_only": -0.00050, "new|lgb_fullset": 0.00071}
 sig = 0.0006
 w = np.exp(-sum((diff[:, names.index(k)] - v) ** 2 for k, v in obs.items()) / (2 * sig ** 2)); w /= w.sum()
 print("effective number of matching splits:", round(1 / (w ** 2).sum(), 1), "of", B)
 done = ["v4|top_mix"] + list(obs)
 fam = [names.index(n) for n in done]; cur = np.max(diff[:, fam], 1)
 wmean = lambda c: (w * c).sum()
-lb = {"rank 13": 0.56160 - 0.55860, "rank 10": 0.56334 - 0.55860, "rank 8": 0.56441 - 0.55860, "0.565": 0.565 - 0.55860}
+lb = {"rank 13": 0.56275 - 0.55860, "rank 10": 0.56440 - 0.55860, "rank 8": 0.56553 - 0.55860, "0.565": 0.565 - 0.55860}
 for label, ww in (("unconditional", np.full(B, 1 / B)), ("conditioned on what we saw", w)):
     print(label, "mean diff of a few candidates:", {k: round(float((ww * diff[:, names.index(k)]).sum()), 5) for k in ["ext1.0|v4-fac|top_mix", "new|lgb_extra", "new|xgb_deep", "mix|cat_deep", "v4|lgb_only", "ext2.0|v4-fac|full_only"] if k in names})
 picked = []
@@ -81,5 +81,5 @@ ids = pd.read_csv("run_v4_s42/variants/top_mix.csv").application_id
 for i, n in enumerate(picked):
     sub = pd.DataFrame({"application_id": ids, "default_probability": T[n]})
     assert len(sub) == 30000 and sub.application_id.is_unique and sub.default_probability.between(0, 1).all()
-    sub.to_csv(f"variants/qb_{i:02d}_{re.sub(r'[^A-Za-z0-9.]+', '_', n)}.csv", index=False)
+    sub.to_csv(f"variants/qc_{i:02d}_{re.sub(r'[^A-Za-z0-9.]+', '_', n)}.csv", index=False)
 print("files:", len(picked))
