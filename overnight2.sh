@@ -11,6 +11,7 @@ requeue() {
   zsh -n scheduled_unified.next || return
   pkill -f "scheduled_unifie[d].sh"; sleep 2
   cp logs/scheduled_unified.log logs/scheduled_unified_before_$1.log
+  chmod +x scheduled_unified.next
   mv scheduled_unified.next scheduled_unified.sh
   (nohup caffeinate -i ./scheduled_unified.sh > logs/scheduled_unified.log 2>&1 &)
   git add scheduled_unified.sh && git commit -q -m "Overnight requeue $1" && git push -q
