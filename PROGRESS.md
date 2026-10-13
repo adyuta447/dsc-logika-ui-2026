@@ -109,3 +109,4 @@ lalu jalankan notebook.
 ## Log submit otomatis
 
 - 2026-10-13 07:02 queue_00_ext1.5_v4_fac_trees_only: public 0.55810, rank 
+- 2026-10-13 12:02 qb_00_new_lgb_fullset: public 0.55931, rank 21
