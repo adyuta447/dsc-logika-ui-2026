@@ -1,0 +1,22 @@
+already submitted: ['v4|top_mix', 'fac|top_mix', 'fac|linear30']
+scheduled family: E[best - ref] +0.00071 rank 13 0.08  rank 10 0.02  rank 8 0.01  0.565 0.01
+effective number of matching splits: 68.7 of 3000
+unconditional mean diff of a few candidates: {'ext1.0|v4-fac|top_mix': 0.00022, 'new|lgb_extra': -0.00123, 'new|xgb_deep': -0.00128, 'mix|cat_deep': -0.00091, 'v4|lgb_only': -0.00052, 'ext2.0|v4-fac|full_only': -0.00153}
+conditioned on what we saw mean diff of a few candidates: {'ext1.0|v4-fac|top_mix': 0.0004, 'new|lgb_extra': -0.00052, 'new|xgb_deep': -0.00068, 'mix|cat_deep': -0.00017, 'v4|lgb_only': 0.00026, 'ext2.0|v4-fac|full_only': -0.00139}
++ new|lgb_fullset              E[best] 0.56001 rank 13 0.15  rank 10 0.08  rank 8 0.03  0.565 0.03
++ ext1.0|v4-fac|top_mix        E[best] 0.56071 rank 13 0.26  rank 10 0.09  rank 8 0.05  0.565 0.03
++ ext0.5|v4-fac|trees_only     E[best] 0.56122 rank 13 0.34  rank 10 0.13  rank 8 0.07  0.565 0.06
++ new|lgb_shallow              E[best] 0.56154 rank 13 0.41  rank 10 0.19  rank 8 0.13  0.565 0.06
++ ext0.5|v4-fac|top_only       E[best] 0.56178 rank 13 0.44  rank 10 0.21  rank 8 0.13  0.565 0.06
++ ext1.5|v4-fac|full_only      E[best] 0.56200 rank 13 0.49  rank 10 0.27  rank 8 0.15  0.565 0.07
++ v4|lgb_only                  E[best] 0.56216 rank 13 0.52  rank 10 0.30  rank 8 0.17  0.565 0.08
++ mix|lgb_extra                E[best] 0.56229 rank 13 0.55  rank 10 0.30  rank 8 0.17  0.565 0.08
++ new|lgb_extra31              E[best] 0.56240 rank 13 0.56  rank 10 0.30  rank 8 0.19  0.565 0.10
++ fac|top_only                 E[best] 0.56250 rank 13 0.58  rank 10 0.30  rank 8 0.19  0.565 0.10
++ new|xgb_shallow              E[best] 0.56259 rank 13 0.62  rank 10 0.30  rank 8 0.20  0.565 0.10
++ ext1.0|v4-fac|main           E[best] 0.56267 rank 13 0.64  rank 10 0.33  rank 8 0.20  0.565 0.10
++ ext2.0|v4-fac|full_only      E[best] 0.56312 rank 13 0.71  rank 10 0.43  rank 8 0.28  0.565 0.14
++ mix|lgb_shallow              E[best] 0.56338 rank 13 0.77  rank 10 0.49  rank 8 0.29  0.565 0.18
++ mix|cat_lossguide            E[best] 0.56354 rank 13 0.83  rank 10 0.51  rank 8 0.30  0.565 0.19
++ ext0.5|v4-fac|linear30       E[best] 0.56360 rank 13 0.85  rank 10 0.52  rank 8 0.31  0.565 0.19
+files: 47

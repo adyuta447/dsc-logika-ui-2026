@@ -1,0 +1,4 @@
+2026-10-13 07:01:57 rank before: 
+Using competition: data-science-competition-logika-ui-2026
+  0%|          | 0.00/0.98M [00:00<?, ?B/s]  2%|▏         | 16.0k/0.98M [00:00<00:09, 108kB/s] 52%|█████▏    | 528k/0.98M [00:00<00:00, 792kB/s]  59%|█████▉    | 592k/0.98M [00:00<00:00, 721kB/s] 65%|██████▌   | 656k/0.98M [00:01<00:00, 576kB/s] 83%|████████▎ | 832k/0.98M [00:01<00:00, 558kB/s]100%|██████████| 0.98M/0.98M [00:02<00:00, 430kB/s]
+Successfully submitted to Data Science Competition (DSC) LOGIKA UI 20262026-10-13 07:02:49 queue_00_ext1.5_v4_fac_trees_only.csv public 0.55810 rank after: 

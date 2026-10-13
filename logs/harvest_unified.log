@@ -1,0 +1,85 @@
+                               cv_auc  rho_oof  rho_test  mean_diff  sd_diff
+mix|lgb_extra                 0.84795  0.99915   0.99931   -0.00050  0.00215
+mix|lgb_extra31               0.84782  0.99888   0.99910   -0.00063  0.00232
+mix|lgb_fullset               0.84778  0.99890   0.99908   -0.00036  0.00226
+ext0.5|v4-fac|top_mix         0.84773  0.99937   0.99943    0.00019  0.00202
+mix|xgb_deep                  0.84772  0.99903   0.99921   -0.00037  0.00218
+mix|lgb_mc800                 0.84770  0.99903   0.99919   -0.00044  0.00217
+new|lgb_extra                 0.84768  0.99660   0.99724   -0.00144  0.00321
+ext0.5|v4-fac|linear30        0.84768  0.99918   0.99923   -0.00019  0.00206
+mix|xgb_shallow               0.84761  0.99932   0.99944   -0.00064  0.00209
+mix|lgb_shallow               0.84761  0.99917   0.99927   -0.00056  0.00219
+mix|lgb_ff06                  0.84759  0.99876   0.99890   -0.00091  0.00221
+ext0.5|v4-fac|main            0.84758  0.99894   0.99917   -0.00030  0.00229
+mix|lgb_ff015                 0.84756  0.99900   0.99917   -0.00082  0.00228
+ext0.5|v4-fac|full_only       0.84752  0.99791   0.99824   -0.00095  0.00279
+ext0.5|v4-fac|trees_only      0.84751  0.99858   0.99868    0.00007  0.00251
+ext0.5|v4-fac|lean_only       0.84750  0.99813   0.99844   -0.00119  0.00277
+mix|lgb_deep                  0.84748  0.99840   0.99867   -0.00102  0.00258
+ext0.5|v4-fac|top_only        0.84744  0.99829   0.99852    0.00017  0.00281
+ext0.5|v4-fac|xgb_only        0.84740  0.99669   0.99700   -0.00082  0.00304
+mix|lgb_goss                  0.84739  0.99873   0.99907   -0.00113  0.00246
+ext1.0|v4-fac|top_mix         0.84738  0.99750   0.99772    0.00004  0.00309
+ext0.5|v4-fac|lgb_only        0.84738  0.99611   0.99631   -0.00070  0.00329
+mix|cat_deep                  0.84736  0.99833   0.99881   -0.00091  0.00256
+ext1.0|v4-fac|linear30        0.84735  0.99734   0.99753   -0.00053  0.00302
+ext1.0|v4-fac|main            0.84730  0.99738   0.99789   -0.00023  0.00306
+new|lgb_fullset               0.84729  0.99562   0.99633   -0.00099  0.00345
+new|lgb_extra31               0.84726  0.99553   0.99641   -0.00197  0.00350
+ext0.5|lgb_extra-v4|lgb_only  0.84720  0.99425   0.99563   -0.00259  0.00379
+ext1.0|v4-fac|full_only       0.84719  0.99619   0.99685   -0.00070  0.00331
+new|lgb_mc800                 0.84719  0.99612   0.99675   -0.00129  0.00325
+already submitted: ['v4|top_mix', 'fac|top_mix', 'fac|linear30']
+scheduled family: E[best - ref] +0.00070 rank 13 0.07  rank 10 0.03  rank 8 0.01  0.565 0.01
++ ext1.5|v4-fac|trees_only E[best - ref] +0.00182 rank 13 0.25  rank 10 0.14  rank 8 0.07  0.565 0.05
++ ext0.5|v4-fac|top_only E[best - ref] +0.00232 rank 13 0.33  rank 10 0.18  rank 8 0.09  0.565 0.06
++ v4|lgb_only            E[best - ref] +0.00270 rank 13 0.40  rank 10 0.21  rank 8 0.11  0.565 0.07
++ ext2.0|v4-fac|full_only E[best - ref] +0.00300 rank 13 0.44  rank 10 0.25  rank 8 0.14  0.565 0.10
++ ext1.0|v4-fac|main     E[best - ref] +0.00322 rank 13 0.48  rank 10 0.27  rank 8 0.15  0.565 0.11
++ new|lgb_fullset        E[best - ref] +0.00337 rank 13 0.51  rank 10 0.28  rank 8 0.16  0.565 0.12
++ mix|cat_deep           E[best - ref] +0.00348 rank 13 0.54  rank 10 0.29  rank 8 0.17  0.565 0.12
++ ext1.0|lgb_extra-v4|lgb_only E[best - ref] +0.00357 rank 13 0.55  rank 10 0.30  rank 8 0.17  0.565 0.13
++ ext1.5|v4-fac|top_mix  E[best - ref] +0.00366 rank 13 0.56  rank 10 0.32  rank 8 0.18  0.565 0.14
++ fac|top_only           E[best - ref] +0.00374 rank 13 0.58  rank 10 0.33  rank 8 0.19  0.565 0.14
++ ext1.0|v4-fac|lgb_only E[best - ref] +0.00382 rank 13 0.59  rank 10 0.34  rank 8 0.20  0.565 0.15
++ v4|cat_only            E[best - ref] +0.00388 rank 13 0.60  rank 10 0.35  rank 8 0.20  0.565 0.15
++ v4|top_only            E[best - ref] +0.00395 rank 13 0.61  rank 10 0.36  rank 8 0.20  0.565 0.15
++ ext1.5|v4-fac|full_only E[best - ref] +0.00401 rank 13 0.62  rank 10 0.37  rank 8 0.21  0.565 0.16
++ new|xgb_deep           E[best - ref] +0.00406 rank 13 0.63  rank 10 0.37  rank 8 0.22  0.565 0.17
++ ext1.0|v4-fac|trees_only E[best - ref] +0.00411 rank 13 0.64  rank 10 0.38  rank 8 0.23  0.565 0.17
++ ext1.5|v4-fac|main     E[best - ref] +0.00415 rank 13 0.65  rank 10 0.38  rank 8 0.23  0.565 0.18
++ new|lgb_ff015          E[best - ref] +0.00419 rank 13 0.66  rank 10 0.38  rank 8 0.23  0.565 0.18
++ new|cat_lossguide      E[best - ref] +0.00423 rank 13 0.66  rank 10 0.39  rank 8 0.24  0.565 0.18
++ v4|xgb_only            E[best - ref] +0.00427 rank 13 0.67  rank 10 0.39  rank 8 0.24  0.565 0.19
++ ext1.5|v4-fac|xgb_only E[best - ref] +0.00430 rank 13 0.68  rank 10 0.40  rank 8 0.25  0.565 0.19
++ new|lgb_extra31        E[best - ref] +0.00433 rank 13 0.68  rank 10 0.40  rank 8 0.25  0.565 0.19
++ ext2.0|v4-fac|top_only E[best - ref] +0.00437 rank 13 0.68  rank 10 0.41  rank 8 0.26  0.565 0.20
++ fac|trees_only         E[best - ref] +0.00440 rank 13 0.69  rank 10 0.41  rank 8 0.26  0.565 0.20
++ new|lgb_mc800          E[best - ref] +0.00442 rank 13 0.70  rank 10 0.41  rank 8 0.26  0.565 0.20
++ fac|linear_only        E[best - ref] +0.00445 rank 13 0.70  rank 10 0.42  rank 8 0.26  0.565 0.21
++ new|lgb_shallow        E[best - ref] +0.00448 rank 13 0.71  rank 10 0.42  rank 8 0.27  0.565 0.21
++ ext0.5|v4-fac|main     E[best - ref] +0.00450 rank 13 0.71  rank 10 0.43  rank 8 0.27  0.565 0.21
++ ext1.5|v4-fac|lgb_only E[best - ref] +0.00453 rank 13 0.71  rank 10 0.43  rank 8 0.27  0.565 0.21
++ mix|lgb_deep           E[best - ref] +0.00455 rank 13 0.72  rank 10 0.44  rank 8 0.27  0.565 0.21
++ mix|lgb_goss           E[best - ref] +0.00457 rank 13 0.72  rank 10 0.44  rank 8 0.27  0.565 0.21
++ ext1.0|v4-fac|xgb_only E[best - ref] +0.00459 rank 13 0.72  rank 10 0.44  rank 8 0.28  0.565 0.22
++ ext2.0|v4-fac|trees_only E[best - ref] +0.00461 rank 13 0.73  rank 10 0.44  rank 8 0.28  0.565 0.22
++ ext1.0|v4-fac|top_only E[best - ref] +0.00463 rank 13 0.73  rank 10 0.45  rank 8 0.28  0.565 0.22
++ new|cat_deep           E[best - ref] +0.00465 rank 13 0.73  rank 10 0.45  rank 8 0.28  0.565 0.23
++ fac|lgb_only           E[best - ref] +0.00467 rank 13 0.74  rank 10 0.45  rank 8 0.29  0.565 0.23
++ ext1.0|v4-fac|top_mix  E[best - ref] +0.00468 rank 13 0.74  rank 10 0.45  rank 8 0.29  0.565 0.23
++ new|lgb_goss           E[best - ref] +0.00470 rank 13 0.74  rank 10 0.45  rank 8 0.29  0.565 0.23
++ fac|lean_only          E[best - ref] +0.00472 rank 13 0.74  rank 10 0.46  rank 8 0.29  0.565 0.23
++ new|lgb_extra          E[best - ref] +0.00473 rank 13 0.75  rank 10 0.46  rank 8 0.30  0.565 0.24
++ ext0.5|v4-fac|cat_only E[best - ref] +0.00475 rank 13 0.75  rank 10 0.47  rank 8 0.30  0.565 0.24
++ v4|main                E[best - ref] +0.00476 rank 13 0.75  rank 10 0.47  rank 8 0.30  0.565 0.24
++ ext2.0|v4-fac|top_mix  E[best - ref] +0.00478 rank 13 0.75  rank 10 0.47  rank 8 0.30  0.565 0.24
++ v4|linear30            E[best - ref] +0.00479 rank 13 0.75  rank 10 0.47  rank 8 0.30  0.565 0.24
++ ext2.0|v4-fac|xgb_only E[best - ref] +0.00480 rank 13 0.76  rank 10 0.47  rank 8 0.30  0.565 0.24
++ mix|cat_lossguide      E[best - ref] +0.00481 rank 13 0.76  rank 10 0.47  rank 8 0.30  0.565 0.24
++ v4|linear_only         E[best - ref] +0.00483 rank 13 0.76  rank 10 0.47  rank 8 0.30  0.565 0.24
++ v4|trees_only          E[best - ref] +0.00484 rank 13 0.76  rank 10 0.48  rank 8 0.30  0.565 0.24
+files: 48
+fresh splits: E[best] 0.56336 rank 13 0.74  rank 10 0.48  rank 8 0.31  0.565 0.22 | quantiles 10/50/90: 0.56041 0.56325 0.56654
+48 files queued from 2026-10-13 07:01
+unified scheduler started Tue 13 Oct 2026 01:33:53 WIB
