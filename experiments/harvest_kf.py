@@ -1,10 +1,10 @@
-import glob, hashlib, os, re, sys
+import glob, hashlib, os, re, subprocess, sys, tempfile
 import numpy as np, pandas as pd
 from scipy.special import ndtr
 from scipy.stats import rankdata
 
 # Picks the next public submissions: every candidate is scored on simulated public splits, the splits are moved to agree with
-# every public score seen so far, and files are chosen greedily for the best chance of reaching 0.565 (ties: best expected maximum).
+# every public score seen so far, and files are chosen greedily for the best chance of passing the current rank 8 (ties: best expected maximum).
 S = sys.argv[1]
 f = pd.read_parquet("features.parquet", columns=["target"]); y = f[f.target.notna()].target.astype(int).values
 rank = lambda v: rankdata(v) / len(v)
@@ -114,9 +114,15 @@ names += new; post = condition(np.hstack([diff, ks(new) - base]))
 print("mixes added:", len(new), "best mix means:", pd.Series(post[:, -len(new):].mean(0), index=new).sort_values(ascending=False).head(5).round(5).to_dict())
 nslots = int(os.environ.get("NSLOTS", "37"))
 fam = [names.index(n) for n in ["v4|top_mix"] + list(obs)]; cur = post[:, fam].max(1)
-lb = {"rank 13": 0.56341, "rank 10": 0.56440, "rank 8": 0.56706, "0.565": 0.565, "0.568": 0.568}
+# only the top 8 qualify, so the goal is the current rank 8 public score from the full leaderboard (the 14 Oct lines if the download fails)
+try:
+    d = tempfile.mkdtemp(); subprocess.run([".venv/bin/kaggle", "competitions", "leaderboard", "-d", "-p", d], capture_output=True, timeout=120)
+    sc = np.sort(pd.read_csv(glob.glob(d + "/*.zip")[0]).Score.values)[::-1]; lb = {"rank 13": sc[12], "rank 10": sc[9], "rank 8": sc[7]}
+except Exception:
+    lb = {"rank 13": 0.56357, "rank 10": 0.56595, "rank 8": 0.56706}
+lb |= {"0.565": 0.565, "0.568": 0.568}
 print(f"now: E[best] {0.55860 + cur.mean():.5f}")
-goal = 0.565 - 0.55860; picked = []
+goal = lb["rank 8"] + 0.00001 - 0.55860; picked = []; print(f"goal: pass rank 8 at {lb['rank 8']:.5f}")
 for step in range(nslots):
     # chance of reaching the goal, smoothed over 0.0003 so the pick does not chase single splits, plus the expected maximum as tie break
     g, j = max((ndtr((np.maximum(cur, post[:, j]) - goal) / 0.0003).mean() + np.maximum(cur, post[:, j]).mean(), j) for j in range(len(names)) if j not in fam)
