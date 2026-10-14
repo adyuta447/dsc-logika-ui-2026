@@ -1,0 +1,49 @@
+{
+  "params": {
+    "folds": 5,
+    "fold_seed": 42,
+    "lr": 0.01,
+    "lgb_seeds": [
+      0,
+      1,
+      2
+    ]
+  },
+  "best_variant": "aggressive_145",
+  "best_metrics": {
+    "auc": 0.8467245051607801,
+    "ks": 0.52698813407317
+  },
+  "all_metrics": {
+    "top_mix": {
+      "auc": 0.8467823761358084,
+      "ks": 0.5266064537620239
+    },
+    "linear30": {
+      "auc": 0.8467396666885356,
+      "ks": 0.5255651709207041
+    },
+    "trees_only": {
+      "auc": 0.8465339284344695,
+      "ks": 0.5254883573820689
+    },
+    "extra31_mix": {
+      "auc": 0.8465864308428434,
+      "ks": 0.5259718152841453
+    },
+    "meta_logit": {
+      "auc": 0.8467722102006032,
+      "ks": 0.5264350282561617
+    },
+    "aggressive_145": {
+      "auc": 0.8467245051607801,
+      "ks": 0.52698813407317
+    }
+  },
+  "elapsed_minutes": 37.32971749703089,
+  "files": {
+    "best_submission": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/submission_v57_best.csv",
+    "log": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/train_log_v57.txt",
+    "feature_cache": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/features_cache.pkl"
+  }
+}

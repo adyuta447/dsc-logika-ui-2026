@@ -1,0 +1,56 @@
+start: fold_seeds=[42, 7, 13] folds=5 lr=0.01 lgb_seeds=[0, 1, 2] ext_ratios=[1.0, 1.5, 2.0]
+loaded cache: /Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/features_cache.pkl
+full_cols=308 fac_cols(no v4 extras)=302 dropped=['dec_doy', 'ab_inc_share', 'ab_open_avg', 'pa_gap_mean', 'ec_gap_mean', 'ec_gap_last3']
+=== fold_seed 42 ===
+-- variant v4 (seed 42), 314 cols --
+v4_s42_lgb_s0                auc=0.845750 ks=0.524582
+v4_s42_lgb_s1                auc=0.845806 ks=0.523987
+v4_s42_lgb_s2                auc=0.846027 ks=0.525521
+v4_s42_cat                   auc=0.844747 ks=0.521509
+v4_s42_xgb                   auc=0.846134 ks=0.524941
+v4_s42_trees_full_only       auc=0.846365 ks=0.525112
+-- variant fac (seed 42), 308 cols --
+fac_s42_lgb_s0               auc=0.844988 ks=0.523104
+fac_s42_lgb_s1               auc=0.845004 ks=0.524065
+fac_s42_lgb_s2               auc=0.844945 ks=0.523816
+fac_s42_cat                  auc=0.844320 ks=0.521337
+fac_s42_xgb                  auc=0.845019 ks=0.523121
+fac_s42_trees_full_only      auc=0.845517 ks=0.523455
+=== fold_seed 7 ===
+-- variant v4 (seed 7), 314 cols --
+v4_s7_lgb_s0                 auc=0.846306 ks=0.525432
+v4_s7_lgb_s1                 auc=0.846221 ks=0.526563
+v4_s7_lgb_s2                 auc=0.846053 ks=0.526036
+v4_s7_cat                    auc=0.845478 ks=0.525086
+v4_s7_xgb                    auc=0.846486 ks=0.526665
+v4_s7_trees_full_only        auc=0.846810 ks=0.527556
+-- variant fac (seed 7), 308 cols --
+fac_s7_lgb_s0                auc=0.845295 ks=0.521219
+fac_s7_lgb_s1                auc=0.845237 ks=0.523145
+fac_s7_lgb_s2                auc=0.845300 ks=0.522448
+fac_s7_cat                   auc=0.844507 ks=0.523790
+fac_s7_xgb                   auc=0.845271 ks=0.522899
+fac_s7_trees_full_only       auc=0.845777 ks=0.523752
+=== fold_seed 13 ===
+-- variant v4 (seed 13), 314 cols --
+v4_s13_lgb_s0                auc=0.846212 ks=0.524415
+v4_s13_lgb_s1                auc=0.846145 ks=0.524427
+v4_s13_lgb_s2                auc=0.846004 ks=0.525037
+v4_s13_cat                   auc=0.845126 ks=0.523751
+v4_s13_xgb                   auc=0.846295 ks=0.525392
+v4_s13_trees_full_only       auc=0.846632 ks=0.525195
+-- variant fac (seed 13), 308 cols --
+fac_s13_lgb_s0               auc=0.845162 ks=0.523677
+fac_s13_lgb_s1               auc=0.845255 ks=0.523537
+fac_s13_lgb_s2               auc=0.844974 ks=0.523926
+fac_s13_cat                  auc=0.844682 ks=0.520948
+fac_s13_xgb                  auc=0.845331 ks=0.524817
+fac_s13_trees_full_only      auc=0.845819 ks=0.524404
+v4_full_only (bag of fold seeds) auc=0.847073 ks=0.526265
+fac_full_only (bag of fold seeds) auc=0.846160 ks=0.525122
+ext1_v4_fac_full_only        auc=0.846846 ks=0.527486
+ext1.5_v4_fac_full_only      auc=0.846298 ks=0.527511
+ext2_v4_fac_full_only        auc=0.845463 ks=0.526260
+best ext variant by OOF KS: ext1.5_v4_fac_full_only -> {'auc': 0.8462982548788565, 'ks': 0.5275110037750178}
+summary: /Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/summary_v58ext.json
+elapsed_min: 84.39
