@@ -1,0 +1,36 @@
+start: folds=5 fold_seed=42 lr=0.01
+built features and cached: /Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/features_cache.pkl
+train: LGB full/lean
+lgb_full_s0            auc=0.845750 ks=0.524582
+lgb_full_s1            auc=0.845806 ks=0.523987
+lgb_full_s2            auc=0.846027 ks=0.525521
+lgb_lean_s0            auc=0.845927 ks=0.523766
+lgb_lean_s1            auc=0.845909 ks=0.522857
+lgb_lean_s2            auc=0.845819 ks=0.523790
+train: LGB top
+lgb_top_s0             auc=0.845761 ks=0.525290
+lgb_top_s1             auc=0.845748 ks=0.524570
+lgb_top_s2             auc=0.845797 ks=0.525007
+train: CatBoost full/lean/top
+cat_full               auc=0.844747 ks=0.521509
+cat_lean               auc=0.845308 ks=0.523736
+cat_top                auc=0.844927 ks=0.523541
+train: XGBoost full/lean/top
+xgb_full               auc=0.846134 ks=0.524941
+xgb_lean               auc=0.846094 ks=0.523871
+xgb_top                auc=0.845979 ks=0.525583
+train: extra LGB full/lean
+lgbx_full              auc=0.845411 ks=0.522417
+lgbx_lean              auc=0.845718 ks=0.524351
+train: linear spline
+linear                 auc=0.843307 ks=0.520217
+top_mix                auc=0.846782 ks=0.526606
+linear30               auc=0.846740 ks=0.525565
+trees_only             auc=0.846534 ks=0.525488
+extra31_mix            auc=0.846586 ks=0.525972
+meta_logit             auc=0.846772 ks=0.526435
+aggressive_145         auc=0.846725 ks=0.526988
+best variant: aggressive_145
+best submission: /Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/submission_v57_best.csv
+summary: /Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/summary_v57.json
+elapsed_min: 37.33
