@@ -54,8 +54,8 @@ for k in ("full_only", "lgb_full", "cat_full", "xgb_full"):
     for lo in ("fac", "fac3"):
         for a_ in (4.0, 5.0): ext(f"ext{a_}|v4-{lo}|{k}", f"v4|{k}", f"{lo}|{k}", a_)
 for a_ in (0.5, 1.0, 1.5, 2.0): ext(f"ext{a_}|v4full-faclean", "v4|full_only", "fac|lean_only", a_)
-# lean set plus one group of the dropped fields (sixth pass)
-for k in ("lgb_extra", "xgb_deep"):
+# lean set plus one group of the dropped fields (sixth and eighth pass)
+for k in ("lgb_extra", "xgb_deep", "lgb_extra31", "lgb_shallow", "xgb_shallow", "lgb_mc800"):
     for g in ("prof", "time", "ec", "cs"):
         if f"new|plus_{g}_{k}" in O:
             for a_ in (1.0, 2.0): ext(f"ext{a_}|plus_{g}_{k}-{k}", f"new|plus_{g}_{k}", f"new|{k}", a_)
