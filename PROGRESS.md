@@ -118,3 +118,4 @@ lalu jalankan notebook.
 - 2026-10-13 07:02 queue_00_ext1.5_v4_fac_trees_only: public 0.55810, rank 
 - 2026-10-13 12:02 qb_00_new_lgb_fullset: public 0.55931, rank 21
 - 2026-10-13 18:43 qc_00_ext1.5_v4_fac_full_only: public 0.56171, rank 18
+- 2026-10-14 10:02 p07_00_ext1.0_full_lgb_extra31_facfull_lgb_extra31: public 0.55994, rank 20
