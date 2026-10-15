@@ -59,6 +59,11 @@ for k in ("lgb_extra", "xgb_deep", "lgb_extra31", "lgb_shallow", "xgb_shallow", 
     for g in ("prof", "time", "ec", "cs"):
         if f"new|plus_{g}_{k}" in O:
             for a_ in (1.0, 2.0): ext(f"ext{a_}|plus_{g}_{k}-{k}", f"new|plus_{g}_{k}", f"new|{k}", a_)
+# full set minus one group of the dropped fields (tenth pass)
+for k in ("lgb_extra", "lgb_shallow", "lgb_extra31", "xgb_deep"):
+    for g in ("prof", "time", "ec", "cs"):
+        if f"new|minus_{g}_{k}" in O and f"new|full_{k}" in O:
+            for a_ in (1.0, 2.0): ext(f"ext{a_}|full_{k}-minus_{g}_{k}", f"new|full_{k}", f"new|minus_{g}_{k}", a_)
 
 # public scores relative to bag v4 top_mix (0.55860): two early manual submits, then every scored file in the submit log
 san = lambda n: re.sub(r"[^A-Za-z0-9.]+", "_", n)
@@ -101,7 +106,10 @@ def condition(diff):
     e = np.random.default_rng(2).normal(0, sig, (len(A), len(oi)))
     return diff + (np.array(list(obs.values())) - diff[:, oi] - e) @ K.T
 names = list(O); ir = names.index("v4|top_mix"); print("candidates:", len(names))
-base = ks(["v4|top_mix"]); diff = ks(names) - base
+# test predictions average 30 models but OOF ones a single model per fold seed, so on the test rows a candidate differs less from
+# bag v4 top_mix than on the OOF rows; its simulated difference is shrunk by that ratio (observed scores: log likelihood 37.5 -> 38.4)
+shrink = lambda ns: np.array([np.std(T[n] - T["v4|top_mix"]) / max(np.std(O[n] - O["v4|top_mix"]), 1e-12) for n in ns])
+base = ks(["v4|top_mix"]); diff = (ks(names) - base) * shrink(names)
 m = pd.Series(condition(diff).mean(0), index=names).sort_values(ascending=False)
 print("best conditioned means:", m.head(12).round(5).to_dict())
 # 50/50 mixes of the ten candidates that look best on the conditioned splits
@@ -110,7 +118,7 @@ for i, a in enumerate(top):
     for b in top[i + 1:]:
         n_ = f"mix2|{a}+{b}"
         if n_ not in O: O[n_] = rank((O[a] + O[b]) / 2); T[n_] = rank((T[a] + T[b]) / 2); new.append(n_)
-names += new; post = condition(np.hstack([diff, ks(new) - base]))
+names += new; post = condition(np.hstack([diff, (ks(new) - base) * shrink(new)]))
 print("mixes added:", len(new), "best mix means:", pd.Series(post[:, -len(new):].mean(0), index=new).sort_values(ascending=False).head(5).round(5).to_dict())
 nslots = int(os.environ.get("NSLOTS", "37"))
 fam = [names.index(n) for n in ["v4|top_mix"] + list(obs)]; cur = post[:, fam].max(1)
