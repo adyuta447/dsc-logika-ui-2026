@@ -59,8 +59,8 @@ for k in ("lgb_extra", "xgb_deep", "lgb_extra31", "lgb_shallow", "xgb_shallow", 
     for g in ("prof", "time", "ec", "cs"):
         if f"new|plus_{g}_{k}" in O:
             for a_ in (1.0, 2.0): ext(f"ext{a_}|plus_{g}_{k}-{k}", f"new|plus_{g}_{k}", f"new|{k}", a_)
-# full set minus one group of the dropped fields (tenth pass)
-for k in ("lgb_extra", "lgb_shallow", "lgb_extra31", "xgb_deep"):
+# full set minus one group of the dropped fields (tenth and eleventh passes)
+for k in ("lgb_extra", "lgb_shallow", "lgb_extra31", "xgb_deep", "xgb_shallow", "lgb_mc800", "lgb_deep", "lgb_goss", "lgb_ff015", "lgb_ff06"):
     for g in ("prof", "time", "ec", "cs"):
         if f"new|minus_{g}_{k}" in O and f"new|full_{k}" in O:
             for a_ in (1.0, 2.0): ext(f"ext{a_}|full_{k}-minus_{g}_{k}", f"new|full_{k}", f"new|minus_{g}_{k}", a_)
