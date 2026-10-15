@@ -96,12 +96,12 @@ if os.environ.get("PASS5"):
     configs.update({f"full_{k}": full_set(configs[k]) for k in extra})
     configs.update({f"facfull_{k}": without_v4(configs[f"full_{k}"]) for k in extra})
 # sixth pass, only with PASS6 set: the lean set plus one group of the dropped fields at a time, to find which group the public split rewards;
-# the eighth pass (PASS8) does the same for four more model types
-if os.environ.get("PASS6") or os.environ.get("PASS8"):
+# the eighth and ninth passes (PASS8, PASS9) do the same for eight more model types
+if os.environ.get("PASS6") or os.environ.get("PASS8") or os.environ.get("PASS9"):
     plus = {"prof": ["region", "employment_type", "housing_status", "age", "employment_tenure_months", "dependents", "tenure_to_age", "income_per_dependent", "loan_purpose"],
             "time": ["decision_lag_h", "app_hour", "app_dow"], "ec": [c for c in noise if c.startswith(("ec_share_", "ec_catqty_"))],
             "cs": [c for c in noise if c.startswith(("cs_shift", "buh_"))]}
-    ks = ("lgb_extra31", "lgb_shallow", "xgb_shallow", "lgb_mc800") if os.environ.get("PASS8") else ("lgb_extra", "xgb_deep")
+    ks = ("lgb_deep", "lgb_goss", "lgb_ff015", "lgb_ff06") if os.environ.get("PASS9") else ("lgb_extra31", "lgb_shallow", "xgb_shallow", "lgb_mc800") if os.environ.get("PASS8") else ("lgb_extra", "xgb_deep")
     configs = {f"plus_{g}_{k}": with_cols(configs[k], c) for g, c in plus.items() for k in ks}
 # seventh pass, only with PASS7 set: four new model families, each on the lean and the full set, so each adds its own full minus lean direction
 if os.environ.get("PASS7"):

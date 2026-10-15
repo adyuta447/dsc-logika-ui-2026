@@ -5,8 +5,9 @@ S=/private/tmp/claude-501/-Users-yutaaa-Developments-dsc-logikaui/58ebb857-fe45-
 info() { print -- $(grep -c ': public 0\.' PROGRESS.md) $(cat logs/diverse_train*.log logs/nb_v4_s21.log 2>/dev/null | grep -cE 'pass done|v4_s21 exit 0') }
 requeue() {
   NSLOTS=$(.venv/bin/python $S/slots.py count) PREFIX=$1 .venv/bin/python $S/harvest_kf.py $S > logs/harvest_kf_$1.log 2>&1 || { echo "$(date '+%F %T') simulation $1 failed"; return 1 }
-  # never swap the scheduler from 15 minutes before to 40 minutes after a submit slot; a slot passing meanwhile fails the rebuild, and the next loop plans again
-  until .venv/bin/python $S/slots.py busy; do sleep 60; done
+  # never swap the scheduler from 15 minutes before to 40 minutes after a submit slot, nor while it retries a failed submit;
+  # a slot passing meanwhile fails the rebuild, and the next loop plans again
+  until .venv/bin/python $S/slots.py busy && ! tail -1 logs/scheduled_unified.log | grep -q "retry in 5 minutes"; do sleep 60; done
   PREFIX=$1 .venv/bin/python $S/rebuild_qc.py $S scheduled_unified.next || { echo "$(date '+%F %T') rebuild $1 failed"; return 1 }
   zsh -n scheduled_unified.next || return 1
   pkill -f "\./scheduled_unifie[d]\.sh$"; sleep 2
