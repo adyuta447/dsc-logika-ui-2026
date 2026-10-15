@@ -1,0 +1,57 @@
+{
+  "params": {
+    "fold_seeds": [
+      42,
+      7,
+      13
+    ],
+    "folds": 5,
+    "lr": 0.01,
+    "lgb_seeds": [
+      0,
+      1,
+      2
+    ],
+    "ext_ratios": [
+      1.0,
+      1.5,
+      2.0
+    ],
+    "v4_only_cols_dropped_for_fac": [
+      "dec_doy",
+      "ab_inc_share",
+      "ab_open_avg",
+      "pa_gap_mean",
+      "ec_gap_mean",
+      "ec_gap_last3"
+    ]
+  },
+  "metrics": {
+    "v4_full_only": {
+      "auc": 0.8470732359484211,
+      "ks": 0.5262648407808933
+    },
+    "fac_full_only": {
+      "auc": 0.8461599719040781,
+      "ks": 0.5251217803486434
+    },
+    "ext1_v4_fac_full_only": {
+      "auc": 0.8468461016740518,
+      "ks": 0.5274857632524077
+    },
+    "ext1.5_v4_fac_full_only": {
+      "auc": 0.8462982548788565,
+      "ks": 0.5275110037750178
+    },
+    "ext2_v4_fac_full_only": {
+      "auc": 0.8454625338026909,
+      "ks": 0.5262601946885528
+    }
+  },
+  "best_ext_by_oof_ks": "ext1.5_v4_fac_full_only",
+  "proven_reference": {
+    "note": "a=1.5 scored public 0.56171 in the original run (team's best so far)",
+    "file": "agas/qc_00_ext1.5_v4_fac_full_only.csv"
+  },
+  "elapsed_minutes": 84.39310743411382
+}
