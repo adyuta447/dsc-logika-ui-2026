@@ -3,6 +3,13 @@
 Kaggle: data-science-competition-logika-ui-2026, metrik KS. Deadline 30 Okt 2026 23:59 WIB.
 Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 submit per hari, reset 07:00 WIB.
 
+## Status 17 Okt 00:45 WIB
+
+- Laptop restart 16 Okt 20:59: scheduler dan `replan.sh` mati, scratchpad planner di /private/tmp (prediksi model 11 tahap training `div/*.npz`, `ks_cache.pkl`) ikut terhapus. File antrean `variants/p22_*.csv` masih ada.
+- `scheduled_unified.sh` jalan lagi dengan antrean p22 (42 file) di slot `experiments/slots.py` mulai 17 Okt 07:01 (p22_00 dulu, file 18:01 kemarin yang gagal karena kuota). Kalau submit gagal (kuota habis karena submit manual Agas, atau tidak ada internet) file yang sama dicoba lagi di slot berikutnya, tidak dibuang.
+- Re-plan otomatis tidak jalan lagi sampai prediksi `div/` dilatih ulang (berhari hari). Urutan p22 tetap pilihan terbaik dari semua skor yang sudah terlihat.
+- Cek 17 Okt: urutan baris, hash application_id/customer_id, tren waktu: AUC 0.496 sampai 0.501, tidak ada bocoran.
+
 ## Status terakhir (14 Okt 01:15 WIB)
 
 - Rank 18 dari 83, public terbaik **0.56171** (13 Okt 18:43, ekstrapolasi 1.5 v4 dikurangi fac, full_only). Rank 13: 0.56341, rank 10: 0.56440, rank 8: 0.56572, rank 1: 0.57059.
