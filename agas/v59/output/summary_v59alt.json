@@ -1,0 +1,37 @@
+{
+  "params": {
+    "folds": 5,
+    "seed": 2026,
+    "top_features": 120,
+    "out_prefix": "v59alt"
+  },
+  "numeric_features": 304,
+  "selected_features_per_fold": [
+    120,
+    120,
+    120,
+    120,
+    120
+  ],
+  "metrics": {
+    "extra_trees": {
+      "auc": 0.8303207745440726,
+      "ks": 0.4996675079310596
+    },
+    "hist_gradient_boosting": {
+      "auc": 0.830994602254425,
+      "ks": 0.49936054415729014
+    },
+    "rank_blend_65_extra_35_hist": {
+      "auc": 0.832446444383177,
+      "ks": 0.5020179316177313
+    }
+  },
+  "files": {
+    "extra_trees": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/submission_v59alt_extra_trees.csv",
+    "hist_gradient_boosting": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/submission_v59alt_hist_gradient_boosting.csv",
+    "rank_blend_65_extra_35_hist": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/submission_v59alt_rank_blend_65_extra_35_hist.csv"
+  },
+  "elapsed_minutes": 3.09286280075709,
+  "notebook": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/notebook_v59alt.ipynb"
+}

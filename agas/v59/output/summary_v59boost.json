@@ -1,0 +1,29 @@
+{
+  "params": {
+    "folds": 5,
+    "seed": 2026,
+    "top_features": 180,
+    "out_prefix": "v59boost"
+  },
+  "metrics": {
+    "xgb_lossguide": {
+      "auc": 0.8421558001652459,
+      "ks": 0.5199823936748071
+    },
+    "catboost_lossguide": {
+      "auc": 0.8410993001543464,
+      "ks": 0.5161865205833689
+    },
+    "rank_blend_55_xgb_45_cat": {
+      "auc": 0.8426076665520948,
+      "ks": 0.5206370875527812
+    }
+  },
+  "files": {
+    "xgb_lossguide": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/submission_v59boost_xgb_lossguide.csv",
+    "catboost_lossguide": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/submission_v59boost_catboost_lossguide.csv",
+    "rank_blend_55_xgb_45_cat": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/output/submission_v59boost_rank_blend_55_xgb_45_cat.csv"
+  },
+  "elapsed_minutes": 2.134510616461436,
+  "method": "manual fold-safe separation selection + XGBoost/CatBoost Lossguide"
+}

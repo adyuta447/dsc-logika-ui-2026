@@ -1,0 +1,20 @@
+train=70000 test=30000 numeric=304
+fold=0 xgb_auc=0.84467 cat_auc=0.84291
+fold=1 xgb_auc=0.83615 cat_auc=0.83433
+fold=2 xgb_auc=0.84433 cat_auc=0.84327
+fold=3 xgb_auc=0.84158 cat_auc=0.84146
+fold=4 xgb_auc=0.84467 cat_auc=0.84381
+{
+  "xgb_lossguide": {
+    "auc": 0.8421558001652459,
+    "ks": 0.5199823936748071
+  },
+  "catboost_lossguide": {
+    "auc": 0.8410993001543464,
+    "ks": 0.5161865205833689
+  },
+  "rank_blend_55_xgb_45_cat": {
+    "auc": 0.8426076665520948,
+    "ks": 0.5206370875527812
+  }
+}
