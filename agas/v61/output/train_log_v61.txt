@@ -1,0 +1,35 @@
+02:23:51 feature counts: full=542 lean=434 fac=497
+02:23:51 computing factor inputs
+02:24:04 factor inputs ready
+02:34:37 seed 42 fac_full  auc=0.846128 ks=0.522509 | bagged auc=0.846128
+02:46:18 seed 42 lgb_full  auc=0.846234 ks=0.523986 | bagged auc=0.846234
+02:55:23 seed 42 lgb_lean  auc=0.846130 ks=0.524605 | bagged auc=0.846130
+03:00:08 seed 42 lgbx_full auc=0.845670 ks=0.523373 | bagged auc=0.845670
+03:11:36 seed 42 cat_full  auc=0.845000 ks=0.524436 | bagged auc=0.845000
+03:26:13 seed 42 xgb_full  auc=0.846000 ks=0.524414 | bagged auc=0.846000
+03:29:06 seed 42 linear    auc=0.841958 ks=0.521034 | bagged auc=0.841958
+03:29:07 saved partial preds, elapsed 65.26 min
+03:39:43 seed 7 fac_full  auc=0.846413 ks=0.525373 | bagged auc=0.846536
+03:50:46 seed 7 lgb_full  auc=0.846401 ks=0.524600 | bagged auc=0.846574
+03:59:34 seed 7 lgb_lean  auc=0.846276 ks=0.524380 | bagged auc=0.846448
+04:04:15 seed 7 lgbx_full auc=0.845911 ks=0.522966 | bagged auc=0.846234
+04:14:10 seed 7 cat_full  auc=0.844824 ks=0.524106 | bagged auc=0.845559
+04:30:17 seed 7 xgb_full  auc=0.846226 ks=0.525153 | bagged auc=0.846437
+04:33:08 seed 7 linear    auc=0.842169 ks=0.521035 | bagged auc=0.842378
+04:33:08 saved partial preds, elapsed 129.28 min
+04:42:49 seed 13 fac_full  auc=0.846033 ks=0.523168 | bagged auc=0.846542
+04:53:49 seed 13 lgb_full  auc=0.846259 ks=0.523747 | bagged auc=0.846647
+05:02:58 seed 13 lgb_lean  auc=0.846270 ks=0.522939 | bagged auc=0.846566
+05:07:59 seed 13 lgbx_full auc=0.845645 ks=0.521965 | bagged auc=0.846351
+05:19:24 seed 13 cat_full  auc=0.845223 ks=0.523510 | bagged auc=0.845928
+05:34:35 seed 13 xgb_full  auc=0.845878 ks=0.524016 | bagged auc=0.846485
+05:37:24 seed 13 linear    auc=0.842647 ks=0.521776 | bagged auc=0.842667
+05:37:25 saved partial preds, elapsed 193.56 min
+05:37:25 BAG lgb_full  auc=0.846647 ks=0.524615
+05:37:25 BAG lgb_lean  auc=0.846566 ks=0.523214
+05:37:25 BAG lgbx_full auc=0.846351 ks=0.524416
+05:37:25 BAG cat_full  auc=0.845928 ks=0.525236
+05:37:25 BAG xgb_full  auc=0.846485 ks=0.525240
+05:37:25 BAG linear    auc=0.842667 ks=0.522833
+05:37:25 BAG fac_full  auc=0.846542 ks=0.523080
+05:37:25 done in 193.56 min
