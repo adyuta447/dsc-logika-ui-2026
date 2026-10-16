@@ -9,6 +9,12 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 - `scheduled_unified.sh` jalan lagi dengan antrean p22 (42 file) di slot `experiments/slots.py` mulai 17 Okt 07:01 (p22_00 dulu, file 18:01 kemarin yang gagal karena kuota). Kalau submit gagal (kuota habis karena submit manual Agas, atau tidak ada internet) file yang sama dicoba lagi di slot berikutnya, tidak dibuang.
 - Re-plan otomatis tidak jalan lagi sampai prediksi `div/` dilatih ulang (berhari hari). Urutan p22 tetap pilihan terbaik dari semua skor yang sudah terlihat.
 - Cek 17 Okt: urutan baris, hash application_id/customer_id, tren waktu: AUC 0.496 sampai 0.501, tidak ada bocoran.
+- 17 Okt 01:10: file v61 Agas (public 0.56312) plus v57 dan v58ext diunduh dari Kaggle (`experiments/download_sub.py <ref> <out>`, CLI tidak punya perintah ini) ke `agas/output/dl/`.
+  v61 tidak bisa dibuat ulang dari model kita (spearman terbaik 0.9934 dengan ext0.5 v4 linear30 minus lean). `experiments/v61_plan.py`: file tanpa OOF diberi pseudo OOF
+  (proyeksi ke komponen notebook kita plus noise sebesar sisanya), 4000 potongan public simulasi dikondisikan ke 14 skor public. Hasil stabil di 3 seed noise:
+  campuran 70% v61 + 30% file kita paling unggul (peluang di atas 0.565 sekitar 10% per file, antrean p22 maks 5.6%).
+  Antrean sekarang: 17 Okt 07:01 `v61_00_mix0.7_v61_p19_00`, 12:01 `v61_01_mix0.85_v61_qc00`, 18:01 `v61_02_mix0.5_v61_p19_00`, 18 Okt 07:01 `v61_03_mix0.5_v61_p17_00`,
+  lalu p22. Peluang minimal satu dari empat di atas 0.565: sekitar 25%.
 
 ## Status terakhir (14 Okt 01:15 WIB)
 
