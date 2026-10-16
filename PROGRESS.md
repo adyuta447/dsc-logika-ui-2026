@@ -122,3 +122,4 @@ lalu jalankan notebook.
 - 2026-10-14 17:41 p10_00_ext2.0_plus_ec_lgb_extra_lgb_extra: public 0.55763, rank 22
 - 2026-10-15 07:15 p12_00_ext2.0_plus_prof_lgb_mc800_lgb_mc800: public 0.55789, rank 27
 - 2026-10-15 12:02 p17_00_mix2_ext1.0_v4_fac_xgb_full_ext1.5_v4full_faclean: public 0.56083, rank 28
+- 2026-10-16 07:10 p19_00_ext1.0_full_lgb_extra_lgb_extra: public 0.56014, rank 31
