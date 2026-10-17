@@ -115,6 +115,10 @@ model khusus nasabah baru (AUC di kelompok baru 0.8277 vs global 0.8293; dirata 
 harga per kategori x jumlah dan kategori x bulan). Saringan AUC kondisional terhadap OOF v4 top_mix memunculkan `ed_lrel_cancel_gap` (z 6.9), jam belanja dan e-wallet,
 tapi di model penuh (`addtest.py`, 2 seed) 9 fitur teratas +0.00018 dan -0.00015, `ed_lrel_cancel_gap` sendiri +0.00013 dan -0.00040: tidak membantu.
 Gabungan pipeline kita + Agas (stacking LR di dalam fold): AUC OOF 0.84806 vs 0.84774 kita saja, KS 0.52848 vs 0.52786; prior public tertinggi tapi peluang 0.565 cuma 0.6 sampai 3%.
+18 Okt: 30 fitur baru dari tabel lain (`experiments/other_deep.py`, saringan `experiments/cond_screen.py`): skor bureau distandarkan per provider, tren utilisasi,
+selisih suku bunga sekarang vs pinjaman terakhir, pinjaman vs pengajuan terakhir, drawdown saldo, pembayaran sebagian. 8 teratas di model penuh -0.00003 dan -0.00037,
+dua terkuat +0.00007 dan -0.00029: tidak membantu. Fakta data: term_months selalu 12, cicilan = anuitas dibulatkan ke atas (selisih 0 sampai 1 rupiah),
+saldo rekening konsisten persis, semua laporan bureau tersedia sebelum keputusan, tidak ada pembayaran lebih awal.
 `data/ecommerce_transactions.csv` sempat hilang dari laptop (sejak sekitar 15 Okt 21:07), diunduh ulang 18 Okt 00:30 dan dicek identik (jumlah order per nasabah 100% sama dengan features.parquet).
 
 ## Analisis batas skor (12 Okt pagi)
