@@ -1,0 +1,210 @@
+{
+  "anchor": "submission_v61_alt_ext0.5_tm30_lean.csv",
+  "anchor_public": 0.56312,
+  "seeds": [
+    42,
+    7,
+    13,
+    21
+  ],
+  "candidates": [
+    {
+      "name": "two_w0.3_fac0.25_fac61_0.5",
+      "auc": 0.8467841158122258,
+      "ks": 0.5287170994391268,
+      "half_mean": 0.5285223762028002,
+      "half_min": 0.5186819486668257,
+      "file": "submission_v62f_two_w0.3_fac0.25_fac61_0.5.csv",
+      "spearman_anchor": 0.9996525755412012,
+      "problems": []
+    },
+    {
+      "name": "mixA_topwide_r025",
+      "auc": 0.8464239080288911,
+      "ks": 0.528347303873919,
+      "half_mean": 0.5282318493710053,
+      "half_min": 0.5179005082016678,
+      "file": "submission_v62f_mixA_topwide_r025.csv",
+      "spearman_anchor": 0.9997436886794885,
+      "problems": []
+    },
+    {
+      "name": "two_w0.2_fac0.5_fac61_0.5",
+      "auc": 0.8463626576824316,
+      "ks": 0.5282510174355379,
+      "half_mean": 0.5285375564313943,
+      "half_min": 0.5180511091960434,
+      "file": "submission_v62f_two_w0.2_fac0.5_fac61_0.5.csv",
+      "spearman_anchor": 0.9989962365840569,
+      "problems": []
+    },
+    {
+      "name": "mixB_facv61_r05",
+      "auc": 0.8463681983909807,
+      "ks": 0.5281980168589546,
+      "half_mean": 0.5278288092507246,
+      "half_min": 0.5187455876903139,
+      "file": "submission_v62f_mixB_facv61_r05.csv",
+      "spearman_anchor": 0.9989538252395569,
+      "problems": []
+    },
+    {
+      "name": "v61_fac_r025",
+      "auc": 0.846303498251406,
+      "ks": 0.5280476222239228,
+      "half_mean": 0.527835248054032,
+      "half_min": 0.5184810012682521,
+      "file": "submission_v62f_v61_fac_r025.csv",
+      "spearman_anchor": 0.9994757593050719,
+      "problems": []
+    },
+    {
+      "name": "v61_facv62_r05",
+      "auc": 0.8467026874797763,
+      "ks": 0.527992641146151,
+      "half_mean": 0.527387937464157,
+      "half_min": 0.5166289936956466,
+      "file": "submission_v62f_v61_facv62_r05.csv",
+      "spearman_anchor": 0.9982424179030033,
+      "problems": []
+    },
+    {
+      "name": "mixC_facv62_r05",
+      "auc": 0.8464344208560957,
+      "ks": 0.5279162205779009,
+      "half_mean": 0.5282231315043083,
+      "half_min": 0.5188418009346999,
+      "file": "submission_v62f_mixC_facv62_r05.csv",
+      "spearman_anchor": 0.999062390599566,
+      "problems": []
+    },
+    {
+      "name": "v62_fac_r05",
+      "auc": 0.8464881178248879,
+      "ks": 0.527715913487542,
+      "half_mean": 0.5282049972210389,
+      "half_min": 0.5191337029590393,
+      "file": "submission_v62f_v62_fac_r05.csv",
+      "spearman_anchor": 0.998799798413093,
+      "problems": []
+    },
+    {
+      "name": "two_w0.2_fac0.5_fac61_0.25",
+      "auc": 0.8462221359936232,
+      "ks": 0.527599658589416,
+      "half_mean": 0.528184396317875,
+      "half_min": 0.5190853041913673,
+      "file": "submission_v62f_two_w0.2_fac0.5_fac61_0.25.csv",
+      "spearman_anchor": 0.998751279758185,
+      "problems": []
+    },
+    {
+      "name": "two_w0.3_fac0.25_fac61_0.25",
+      "auc": 0.8464473036772597,
+      "ks": 0.5273912243150753,
+      "half_mean": 0.5278928634282141,
+      "half_min": 0.5181264340386876,
+      "file": "submission_v62f_two_w0.3_fac0.25_fac61_0.25.csv",
+      "spearman_anchor": 0.9994215454965383,
+      "problems": []
+    },
+    {
+      "name": "consensus",
+      "auc": 0.8466676783393633,
+      "ks": 0.5272852961918035,
+      "half_mean": 0.5278842306504004,
+      "half_min": 0.518559393638425,
+      "file": "submission_v62f_consensus.csv",
+      "spearman_anchor": 0.9995635033129194,
+      "problems": []
+    },
+    {
+      "name": "two_w0.2_fac0.25_fac61_0.25",
+      "auc": 0.8469944479944218,
+      "ks": 0.5272774020079615,
+      "half_mean": 0.5277736950692784,
+      "half_min": 0.517928310713077,
+      "file": "submission_v62f_two_w0.2_fac0.25_fac61_0.25.csv",
+      "spearman_anchor": 0.9994745260466219,
+      "problems": []
+    },
+    {
+      "name": "two_w0.3_fac0.5_fac61_0.5",
+      "auc": 0.8453436724328516,
+      "ks": 0.527043144710661,
+      "half_mean": 0.527262814554682,
+      "half_min": 0.5181863238618633,
+      "file": "submission_v62f_two_w0.3_fac0.5_fac61_0.5.csv",
+      "spearman_anchor": 0.9975786634967293,
+      "problems": []
+    },
+    {
+      "name": "two_w0.2_fac0.25_fac61_0.5",
+      "auc": 0.8471282578881576,
+      "ks": 0.5268791178286419,
+      "half_mean": 0.5270046073671113,
+      "half_min": 0.5168485897139569,
+      "file": "submission_v62f_two_w0.2_fac0.25_fac61_0.5.csv",
+      "spearman_anchor": 0.9992001854095994,
+      "problems": []
+    },
+    {
+      "name": "mixD_faclean_r05",
+      "auc": 0.8462797757073187,
+      "ks": 0.5265595703085147,
+      "half_mean": 0.5276343983510933,
+      "half_min": 0.518343108602209,
+      "file": "submission_v62f_mixD_faclean_r05.csv",
+      "spearman_anchor": 0.9993127659773071,
+      "problems": []
+    },
+    {
+      "name": "v62_faclean_r025",
+      "auc": 0.8469810278818904,
+      "ks": 0.5265372718473715,
+      "half_mean": 0.5271352231563298,
+      "half_min": 0.5172853958958331,
+      "file": "submission_v62f_v62_faclean_r025.csv",
+      "spearman_anchor": 0.9994283294134202,
+      "problems": []
+    },
+    {
+      "name": "mix_base_w02",
+      "auc": 0.8471727087506546,
+      "ks": 0.5262022419895948,
+      "half_mean": 0.5261457442778612,
+      "half_min": 0.515439036469153,
+      "file": "submission_v62f_mix_base_w02.csv",
+      "spearman_anchor": 0.9988600409408804,
+      "problems": []
+    },
+    {
+      "name": "two_w0.3_fac0.5_fac61_0.25",
+      "auc": 0.8450522353363106,
+      "ks": 0.5258745672854857,
+      "half_mean": 0.5262317035667998,
+      "half_min": 0.5180844137806386,
+      "file": "submission_v62f_two_w0.3_fac0.5_fac61_0.25.csv",
+      "spearman_anchor": 0.9969083723126553,
+      "problems": []
+    },
+    {
+      "name": "anchor25_consensus",
+      "file": "submission_v62f_anchor25_consensus.csv",
+      "spearman_anchor": 0.9999727713511909,
+      "problems": []
+    },
+    {
+      "name": "anchor50_consensus",
+      "file": "submission_v62f_anchor50_consensus.csv",
+      "spearman_anchor": 0.9998909650156496,
+      "problems": []
+    },
+    {
+      "name": "anchor75_consensus",
+      "file": "submission_v62f_anchor75_consensus.csv",
+      "spearman_anchor": 0.9997545409358306,
+      "problems": []
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+feature counts: full=542 lean=434 fac=497
+computing factor inputs
+factor inputs ready
+seed 42 fac_full  auc=0.846128 ks=0.522509 | bagged auc=0.846128
+seed 42 lgb_full  auc=0.846234 ks=0.523986 | bagged auc=0.846234
+seed 42 lgb_lean  auc=0.846130 ks=0.524605 | bagged auc=0.846130
+seed 42 lgbx_full auc=0.845670 ks=0.523373 | bagged auc=0.845670
+seed 42 cat_full  auc=0.845000 ks=0.524436 | bagged auc=0.845000
+seed 42 xgb_full  auc=0.846000 ks=0.524414 | bagged auc=0.846000
+seed 42 linear    auc=0.841958 ks=0.521034 | bagged auc=0.841958
+saved partial preds, elapsed 65.26 min
+seed 7 fac_full  auc=0.846413 ks=0.525373 | bagged auc=0.846536
+seed 7 lgb_full  auc=0.846401 ks=0.524600 | bagged auc=0.846574
+seed 7 lgb_lean  auc=0.846276 ks=0.524380 | bagged auc=0.846448
+seed 7 lgbx_full auc=0.845911 ks=0.522966 | bagged auc=0.846234
+seed 7 cat_full  auc=0.844824 ks=0.524106 | bagged auc=0.845559
+seed 7 xgb_full  auc=0.846226 ks=0.525153 | bagged auc=0.846437
+seed 7 linear    auc=0.842169 ks=0.521035 | bagged auc=0.842378
+saved partial preds, elapsed 129.28 min
+seed 13 fac_full  auc=0.846033 ks=0.523168 | bagged auc=0.846542
+seed 13 lgb_full  auc=0.846259 ks=0.523747 | bagged auc=0.846647
+seed 13 lgb_lean  auc=0.846270 ks=0.522939 | bagged auc=0.846566
+seed 13 lgbx_full auc=0.845645 ks=0.521965 | bagged auc=0.846351
+seed 13 cat_full  auc=0.845223 ks=0.523510 | bagged auc=0.845928
+seed 13 xgb_full  auc=0.845878 ks=0.524016 | bagged auc=0.846485
+seed 13 linear    auc=0.842647 ks=0.521776 | bagged auc=0.842667
+saved partial preds, elapsed 193.56 min
+BAG lgb_full  auc=0.846647 ks=0.524615
+BAG lgb_lean  auc=0.846566 ks=0.523214
+BAG lgbx_full auc=0.846351 ks=0.524416
+BAG cat_full  auc=0.845928 ks=0.525236
+BAG xgb_full  auc=0.846485 ks=0.525240
+BAG linear    auc=0.842667 ks=0.522833
+BAG fac_full  auc=0.846542 ks=0.523080
+done in 193.56 min

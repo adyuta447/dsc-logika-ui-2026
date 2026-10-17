@@ -1,0 +1,30 @@
+{
+  "anchor": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/qc_00_ext1.5_v4_fac_full_only.csv",
+  "anchor_public_score_known": 0.56171,
+  "method": "conservative rank-space perturbations around proven public anchor",
+  "warning": "No public score can be guaranteed without Kaggle submission.",
+  "files": {
+    "anchor_qc": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v60/output/submission_v60_anchor_qc.csv",
+    "qc_98_v58_ext15_2_v58_v4": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v60/output/submission_v60_qc_98_v58_ext15_2_v58_v4.csv",
+    "qc_95_v58_ext15_5_v58_v4": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v60/output/submission_v60_qc_95_v58_ext15_5_v58_v4.csv",
+    "qc_98_v58_ext1_2_v58_v4": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v60/output/submission_v60_qc_98_v58_ext1_2_v58_v4.csv",
+    "qc_95_v58_ext1_5_v58_v4": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v60/output/submission_v60_qc_95_v58_ext1_5_v58_v4.csv",
+    "qc_98_v59_xgb_2": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v60/output/submission_v60_qc_98_v59_xgb_2.csv",
+    "qc_95_v59_xgb_5": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v60/output/submission_v60_qc_95_v59_xgb_5.csv",
+    "mix_v58_ext1_v4": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v60/output/submission_v60_mix_v58_ext1_v4.csv",
+    "mix_qc_v58_ext1": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v60/output/submission_v60_mix_qc_v58_ext1.csv",
+    "mix_qc_v58_v4": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v60/output/submission_v60_mix_qc_v58_v4.csv"
+  },
+  "spearman_to_anchor": {
+    "anchor_qc": 0.9999999999999998,
+    "qc_98_v58_ext15_2_v58_v4": 0.9999979981919972,
+    "qc_95_v58_ext15_5_v58_v4": 0.9999874983075376,
+    "qc_98_v58_ext1_2_v58_v4": 0.9999995557138882,
+    "qc_95_v58_ext1_5_v58_v4": 0.9999972158971072,
+    "qc_98_v59_xgb_2": 0.9999905487702088,
+    "qc_95_v59_xgb_5": 0.9999408042750262,
+    "mix_v58_ext1_v4": 0.9974172069391735,
+    "mix_qc_v58_ext1": 0.999721217058375,
+    "mix_qc_v58_v4": 0.9987425819886415
+  }
+}

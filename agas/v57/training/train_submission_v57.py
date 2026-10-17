@@ -39,17 +39,19 @@ def rank01(values):
 def main():
     args = parse_args()
     here = Path(__file__).resolve().parent
-    root = here.parent
+    sys.path.insert(0, str(here.parents[1] / "shared"))
+    import paths  # noqa: E402
+    root = paths.ROOT
     os.chdir(root)
     sys.path.insert(0, str(root))
     import features as ft  # noqa: E402
 
-    out_dir = here / "output"
+    out_dir = here.parent / "output"
     model_dir = out_dir / "models"
     out_dir.mkdir(parents=True, exist_ok=True)
     model_dir.mkdir(parents=True, exist_ok=True)
 
-    cache_file = out_dir / "features_cache.pkl"
+    cache_file = paths.FEATURES_CACHE
     log_file = out_dir / f"train_log_{args.out_prefix}.txt"
     started = time.time()
 

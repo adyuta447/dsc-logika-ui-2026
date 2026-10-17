@@ -16,6 +16,7 @@ ratio is not guaranteed optimal on the next split.
 Does not touch features.py or any existing file; reads from the existing agas/output
 feature cache if present.
 """
+import sys
 import argparse
 import json
 import time
@@ -55,14 +56,16 @@ def ks_score(y_true, pred):
 def main():
     args = parse_args()
     here = Path(__file__).resolve().parent
-    root = here.parent
+    sys.path.insert(0, str(here.parents[1] / "shared"))
+    import paths  # noqa: E402
+    root = paths.ROOT
     import os
     os.chdir(root)
     import sys
     sys.path.insert(0, str(root))
     import features as ft  # noqa: E402
 
-    out_dir = here / "output"
+    out_dir = here.parent / "output"
     out_dir.mkdir(parents=True, exist_ok=True)
     log_file = out_dir / f"train_log_{args.out_prefix}.txt"
     if log_file.exists():
@@ -79,7 +82,7 @@ def main():
     ext_ratios = [float(x) for x in args.ext_ratios.split(",") if x.strip()]
     log(f"start: fold_seeds={fold_seeds} folds={args.folds} lr={args.lr} lgb_seeds={lgb_seeds} ext_ratios={ext_ratios}")
 
-    cache_file = out_dir / "features_cache.pkl"
+    cache_file = paths.FEATURES_CACHE
     if cache_file.exists():
         f = pd.read_pickle(cache_file)
         log(f"loaded cache: {cache_file}")

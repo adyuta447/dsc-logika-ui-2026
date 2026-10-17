@@ -1,3 +1,8 @@
+WAJIB DOKUMENTASI PROGRESS DI @progress.md dan obsidian vault coding-vault pada note Data Science Logika UI
+
+Rapihkan semua pengerjaan file sesuai format folder
+@agas/ (version(notebook, output, training))
+
 JANGAN PUSH APAPUN KE GITHUB
 
 INFORMASI DATASET

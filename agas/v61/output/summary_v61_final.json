@@ -1,0 +1,79 @@
+{
+  "source": "preds_v61.npz",
+  "candidates": [
+    {
+      "name": "alt_ext0.5_tm30_lean",
+      "auc": 0.8466992324702403,
+      "ks": 0.5286236820323182,
+      "file": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v61/output/submission_v61_alt_ext0.5_tm30_lean.csv",
+      "spearman_anchor": 0.9859170784279819,
+      "problems": []
+    },
+    {
+      "name": "ext0.75_full_fac",
+      "auc": 0.846780268701708,
+      "ks": 0.5279681726538548,
+      "file": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v61/output/submission_v61_ext0.75_full_fac.csv",
+      "spearman_anchor": 0.9865822122842233,
+      "problems": []
+    },
+    {
+      "name": "consensus",
+      "auc": 0.8467747714633344,
+      "ks": 0.5278790953093524,
+      "file": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v61/output/submission_v61_consensus.csv",
+      "spearman_anchor": 0.9864376565170269,
+      "problems": []
+    },
+    {
+      "name": "ext1.5_full_fac",
+      "auc": 0.845661668067719,
+      "ks": 0.5278376299784977,
+      "file": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v61/output/submission_v61_ext1.5_full_fac.csv",
+      "spearman_anchor": 0.9815496655678754,
+      "problems": []
+    },
+    {
+      "name": "ext1.0_full_fac",
+      "auc": 0.8464866111486105,
+      "ks": 0.5276595483193873,
+      "file": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v61/output/submission_v61_ext1.0_full_fac.csv",
+      "spearman_anchor": 0.9851794739728363,
+      "problems": []
+    },
+    {
+      "name": "meta_logit",
+      "auc": 0.847157416812373,
+      "ks": 0.5258698777229699,
+      "file": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v61/output/submission_v61_meta_logit.csv",
+      "spearman_anchor": 0.9893687710153407,
+      "problems": []
+    },
+    {
+      "name": "topmix20",
+      "auc": 0.8471765819432776,
+      "ks": 0.5257907185336732,
+      "file": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v61/output/submission_v61_topmix20.csv",
+      "spearman_anchor": 0.9891211407921676,
+      "problems": []
+    },
+    {
+      "name": "anchor5_consensus",
+      "file": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v61/output/submission_v61_anchor5_consensus.csv",
+      "spearman_anchor": 0.9999663679356192,
+      "problems": []
+    },
+    {
+      "name": "anchor15_consensus",
+      "file": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v61/output/submission_v61_anchor15_consensus.csv",
+      "spearman_anchor": 0.999696208193684,
+      "problems": []
+    },
+    {
+      "name": "anchor35_consensus",
+      "file": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v61/output/submission_v61_anchor35_consensus.csv",
+      "spearman_anchor": 0.9983398522133301,
+      "problems": []
+    }
+  ]
+}
