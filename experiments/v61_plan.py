@@ -25,6 +25,12 @@ for v in ("v61", "v62", "v63", "v64"):
     z = np.load(f"agas/{v}/output/preds_{v}.npz", allow_pickle=False)
     for k in [k[4:] for k in z.keys() if k.startswith("oof_")]:
         n_ = f"a{v}|{k}"; O[n_] = rank(z["oof_" + k]); T[n_] = rank(z["test_" + k]); CO.append(O[n_]); CT.append(T[n_])
+# team stack: logistic regression on the OOF ranks of both pipelines, fit inside folds for the OOF and on all rows for the test (OOF AUC 0.84806 vs 0.84774 ours alone)
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import StratifiedKFold
+ns = [n for n in O if n.startswith(("v4|", "fac|", "av6"))]; X, XS = np.column_stack([O[n] for n in ns]), np.column_stack([T[n] for n in ns]); p = np.zeros(len(y))
+for a, b in StratifiedKFold(5, shuffle=True, random_state=1).split(X, y): p[b] = LogisticRegression(max_iter=2000).fit(X[a], y[a]).decision_function(X[b])
+O["team_stack"] = rank(p); T["team_stack"] = rank(LogisticRegression(max_iter=2000).fit(X, y).decision_function(XS))
 XO = np.column_stack(CO + [np.ones(len(y))]); XT = np.column_stack(CT + [np.ones(len(ids))])
 def ext(n_, hi, lo, a_): O[n_] = rank(O[hi] + a_ * (O[hi] - O[lo])); T[n_] = rank(T[hi] + a_ * (T[hi] - T[lo]))
 def mix(n_, a, b, w): O[n_] = rank(w * O[a] + (1 - w) * O[b]); T[n_] = rank(w * T[a] + (1 - w) * T[b])
@@ -56,6 +62,9 @@ for p in queue: pseudo(p.split("/")[1][:6], p)
 for lo in ("v4|top_mix", "v4|linear30", "v4|lean_only", "fac|top_mix", "ext1.5|v4-fac|full_only", "v58ext", "v57", "p21_00", "v63f"):
     for a_ in (0.25, 0.5, 1.0): ext(f"ext{a_}|v61-{lo}", "v61", lo, a_)
 for b in ("ext1.5|v4-fac|full_only", "p17_00", "p19_00", "qb_00", "v58ext", "v4|full_only", "v4|top_mix", "v4|linear30", "v63f"):
+    for w in (0.3, 0.5, 0.7, 0.85): mix(f"mix{w}|v61+{b}", "v61", b, w)
+mix("team_avg", "v4|top_mix", "av62|lgb_top", 0.5)
+for b in ("team_stack", "team_avg"):
     for w in (0.3, 0.5, 0.7, 0.85): mix(f"mix{w}|v61+{b}", "v61", b, w)
 for b in [n for n in O if n.startswith(("av64|", "av63|sel", "av62|lgb_top"))]:
     for w in (0.5, 0.7, 0.85): mix(f"mix{w}|v61+{b}", "v61", b, w)

@@ -111,6 +111,11 @@ optimasi bobot blend (validasi setengah data: +0.00002 dan +0.0001, bobot manual
 bobot kelas untuk KS (AUC turun ke 0.840), empirical logit sumber biner (0.84505), kalibrasi ulang per kelompok (turun), bobot blend dioptimalkan untuk KS (validasi setengah data: -0.00016 dan +0.00027),
 batasan monoton (0.84522), num_leaves 31 (0.84498), min_child_samples 100 (0.84527), feature_fraction 0.5 (0.84503),
 model khusus nasabah baru (AUC di kelompok baru 0.8277 vs global 0.8293; dirata rata 0.84520 vs 0.84523).
+18 Okt: 44 fitur ecommerce baru (`experiments/ec_deep.py`: pembatalan per metode bayar, harga barang batal vs jadi, jam malam, tanggal gajian, isi keranjang,
+harga per kategori x jumlah dan kategori x bulan). Saringan AUC kondisional terhadap OOF v4 top_mix memunculkan `ed_lrel_cancel_gap` (z 6.9), jam belanja dan e-wallet,
+tapi di model penuh (`addtest.py`, 2 seed) 9 fitur teratas +0.00018 dan -0.00015, `ed_lrel_cancel_gap` sendiri +0.00013 dan -0.00040: tidak membantu.
+Gabungan pipeline kita + Agas (stacking LR di dalam fold): AUC OOF 0.84806 vs 0.84774 kita saja, KS 0.52848 vs 0.52786; prior public tertinggi tapi peluang 0.565 cuma 0.6 sampai 3%.
+`data/ecommerce_transactions.csv` sempat hilang dari laptop (sejak sekitar 15 Okt 21:07), diunduh ulang 18 Okt 00:30 dan dicek identik (jumlah order per nasabah 100% sama dengan features.parquet).
 
 ## Analisis batas skor (12 Okt pagi)
 
