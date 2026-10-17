@@ -1,0 +1,55 @@
+{
+  "as_of_date": "2026-10-18",
+  "label_maturity_cutoff": "2025-10-18T00:00:00",
+  "mature_training_rows": 56127,
+  "excluded_immature_training_rows": 13873,
+  "validation_start_month": "2025-08",
+  "validation_rows": 15184,
+  "validation_default_rate": 0.13362750263435194,
+  "roc_auc": 0.8158889563885425,
+  "pr_auc": 0.4369963209557061,
+  "pr_auc_no_skill_baseline": 0.13362750263435194,
+  "brier_score": 0.09388471259811547,
+  "validation_risk_deciles": [
+    {
+      "applications": 1519,
+      "default_rate": 0.009874917709019092
+    },
+    {
+      "applications": 1518,
+      "default_rate": 0.019104084321475624
+    },
+    {
+      "applications": 1518,
+      "default_rate": 0.030961791831357048
+    },
+    {
+      "applications": 1519,
+      "default_rate": 0.038841342988808425
+    },
+    {
+      "applications": 1518,
+      "default_rate": 0.06587615283267458
+    },
+    {
+      "applications": 1518,
+      "default_rate": 0.09420289855072464
+    },
+    {
+      "applications": 1519,
+      "default_rate": 0.12047399605003292
+    },
+    {
+      "applications": 1518,
+      "default_rate": 0.18972332015810275
+    },
+    {
+      "applications": 1518,
+      "default_rate": 0.2859025032938076
+    },
+    {
+      "applications": 1519,
+      "default_rate": 0.48123765635286375
+    }
+  ]
+}
