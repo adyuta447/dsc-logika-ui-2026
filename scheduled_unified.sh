@@ -3,7 +3,9 @@
 cd /Users/yutaaa/Developments/dsc-logikaui
 K=.venv/bin/kaggle
 files=(
+  variants/v61_09_mix0.7_v61_v63f.csv
   variants/v61_02_mix0.5_v61_p19_00.csv
+  variants/v61_10_mix0.85_v61_v63f.csv
   variants/v61_01_mix0.85_v61_qc00.csv
   variants/v61_06_mix0.85_v61_p19_00.csv
   variants/v61_07_mix0.85_v61_v4full.csv

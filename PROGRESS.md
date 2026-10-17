@@ -19,6 +19,9 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
   Peluang per file turun ke maks 5% (mix0.5 v61+p19_00). Antrean mulai 18 Okt 07:01 (slot 18:01 hari ini gagal karena kuota, file disimpan):
   `v61_02_mix0.5_v61_p19_00`, `v61_01_mix0.85_v61_qc00`, `v61_06_mix0.85_v61_p19_00`, `v61_07_mix0.85_v61_v4full`, `v61_08_ext0.25_v61_p21_00`, lalu v61_05, v61_03, p22.
   Peluang minimal satu dari empat pertama di atas 0.565: sekitar 16 sampai 19%.
+- 17 Okt 23:50: kandidat campuran v61 dengan v63f Agas ditambahkan ke `v61_plan.py`. 70% v61 + 30% v63f peluangnya 8.7% (rata 2 seed), tertinggi; 85/15 7.5%.
+  Ekstrapolasi menjauh dari v63f justru turun (2% ke bawah). Antrean 18 Okt: 07:01 `v61_09_mix0.7_v61_v63f`, 12:01 `v61_02_mix0.5_v61_p19_00`, 18:01 `v61_10_mix0.85_v61_v63f`,
+  lalu v61_01, v61_06, v61_07, v61_08, v61_05, v61_03, p22. Peluang minimal satu dari empat pertama di atas 0.565: sekitar 20 sampai 23%.
 
 ## Status terakhir (14 Okt 01:15 WIB)
 

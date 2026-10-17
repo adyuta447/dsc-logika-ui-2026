@@ -48,10 +48,10 @@ obs = {k: v - 0.55860 for k, v in obs.items()}
 queue = [l.strip() for l in open("scheduled_unified.sh") if l.strip().startswith("variants/p22_")][:int(os.environ.get("NQ", "12"))]
 for p in queue: pseudo(p.split("/")[1][:6], p)
 # candidates around v61: steps past it away from a weaker file, and mixes with the other good files
-for lo in ("v4|top_mix", "v4|linear30", "v4|lean_only", "fac|top_mix", "ext1.5|v4-fac|full_only", "v58ext", "v57", "p21_00"):
+for lo in ("v4|top_mix", "v4|linear30", "v4|lean_only", "fac|top_mix", "ext1.5|v4-fac|full_only", "v58ext", "v57", "p21_00", "v63f"):
     for a_ in (0.25, 0.5, 1.0): ext(f"ext{a_}|v61-{lo}", "v61", lo, a_)
-for b in ("ext1.5|v4-fac|full_only", "p17_00", "p19_00", "qb_00", "v58ext", "v4|full_only", "v4|top_mix", "v4|linear30"):
-    for w in (0.5, 0.7, 0.85): mix(f"mix{w}|v61+{b}", "v61", b, w)
+for b in ("ext1.5|v4-fac|full_only", "p17_00", "p19_00", "qb_00", "v58ext", "v4|full_only", "v4|top_mix", "v4|linear30", "v63f"):
+    for w in (0.3, 0.5, 0.7, 0.85): mix(f"mix{w}|v61+{b}", "v61", b, w)
 
 def ks_cols(Ps, ys):
     o = np.argsort(-Ps, axis=0); yy = ys[o]
