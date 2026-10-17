@@ -3,15 +3,20 @@
 cd /Users/yutaaa/Developments/dsc-logikaui
 K=.venv/bin/kaggle
 files=(
-  variants/v61_09_mix0.7_v61_v63f.csv
-  variants/v61_02_mix0.5_v61_p19_00.csv
-  variants/v61_10_mix0.85_v61_v63f.csv
-  variants/v61_01_mix0.85_v61_qc00.csv
-  variants/v61_06_mix0.85_v61_p19_00.csv
-  variants/v61_07_mix0.85_v61_v4full.csv
-  variants/v61_08_ext0.25_v61_p21_00.csv
-  variants/v61_05_mix0.7_v61_qc00.csv
+  variants/v61_11_mix0.7_v61_av64linear.csv
+  variants/v61_12_mix0.5_v61_qc00.csv
+  variants/p22_08_ext1.0_full_lgb_extra_facfull_lgb_extra.csv
   variants/v61_03_mix0.5_v61_p17_00.csv
+  variants/v61_13_ext0.5_v61_v63f.csv
+  variants/v61_14_mix0.7_v61_av64cat.csv
+  variants/v61_02_mix0.5_v61_p19_00.csv
+  variants/v61_06_mix0.85_v61_p19_00.csv
+  variants/v61_08_ext0.25_v61_p21_00.csv
+  variants/v61_07_mix0.85_v61_v4full.csv
+  variants/v61_01_mix0.85_v61_qc00.csv
+  variants/v61_05_mix0.7_v61_qc00.csv
+  variants/v61_10_mix0.85_v61_v63f.csv
+  variants/v61_09_mix0.7_v61_v63f.csv
   variants/p22_00_new_minus_ec_xgb_deep.csv
   variants/p22_01_new_minus_time_lgb_extra31.csv
   variants/p22_02_mix2_mix2_ext1.0_v4_fac_xgb_full_ext1.5_v4full_faclean_ext0.5_full_lgb_extra_lgb_extra.csv
@@ -20,7 +25,6 @@ files=(
   variants/p22_05_ext1.0_full_lgb_ff015_facfull_lgb_ff015.csv
   variants/p22_06_mix2_ext2.0_v4_fac_full_only_new_minus_time_lgb_extra31.csv
   variants/p22_07_ext1.0_plus_prof_lgb_extra_lgb_extra.csv
-  variants/p22_08_ext1.0_full_lgb_extra_facfull_lgb_extra.csv
   variants/p22_09_ext1.5_v4full_faclean.csv
   variants/p22_10_mix2_new_minus_ec_xgb_deep_ext0.5_full_lgb_extra_lgb_extra.csv
   variants/p22_11_ext1.0_plus_cs_lgb_extra_lgb_extra.csv

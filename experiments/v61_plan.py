@@ -20,6 +20,11 @@ for g, rs in groups.items():
     if g != "fac3":
         co = [comps(r, 0) for r in rs]; ct = [comps(r, 1) for r in rs]
         CO += [np.mean([c[k] for c in co], 0) for k in co[0]]; CT += [np.mean([c[k] for c in ct], 0) for k in ct[0]]
+# Agas's notebook components with real OOF (pushed 17 Oct 23:44, same row order as data/*.csv): candidates, and part of the projection basis
+for v in ("v61", "v62", "v63", "v64"):
+    z = np.load(f"agas/{v}/output/preds_{v}.npz", allow_pickle=False)
+    for k in [k[4:] for k in z.keys() if k.startswith("oof_")]:
+        n_ = f"a{v}|{k}"; O[n_] = rank(z["oof_" + k]); T[n_] = rank(z["test_" + k]); CO.append(O[n_]); CT.append(T[n_])
 XO = np.column_stack(CO + [np.ones(len(y))]); XT = np.column_stack(CT + [np.ones(len(ids))])
 def ext(n_, hi, lo, a_): O[n_] = rank(O[hi] + a_ * (O[hi] - O[lo])); T[n_] = rank(T[hi] + a_ * (T[hi] - T[lo]))
 def mix(n_, a, b, w): O[n_] = rank(w * O[a] + (1 - w) * O[b]); T[n_] = rank(w * T[a] + (1 - w) * T[b])
@@ -52,6 +57,8 @@ for lo in ("v4|top_mix", "v4|linear30", "v4|lean_only", "fac|top_mix", "ext1.5|v
     for a_ in (0.25, 0.5, 1.0): ext(f"ext{a_}|v61-{lo}", "v61", lo, a_)
 for b in ("ext1.5|v4-fac|full_only", "p17_00", "p19_00", "qb_00", "v58ext", "v4|full_only", "v4|top_mix", "v4|linear30", "v63f"):
     for w in (0.3, 0.5, 0.7, 0.85): mix(f"mix{w}|v61+{b}", "v61", b, w)
+for b in [n for n in O if n.startswith(("av64|", "av63|sel", "av62|lgb_top"))]:
+    for w in (0.5, 0.7, 0.85): mix(f"mix{w}|v61+{b}", "v61", b, w)
 
 def ks_cols(Ps, ys):
     o = np.argsort(-Ps, axis=0); yy = ys[o]

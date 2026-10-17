@@ -22,6 +22,11 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 - 17 Okt 23:50: kandidat campuran v61 dengan v63f Agas ditambahkan ke `v61_plan.py`. 70% v61 + 30% v63f peluangnya 8.7% (rata 2 seed), tertinggi; 85/15 7.5%.
   Ekstrapolasi menjauh dari v63f justru turun (2% ke bawah). Antrean 18 Okt: 07:01 `v61_09_mix0.7_v61_v63f`, 12:01 `v61_02_mix0.5_v61_p19_00`, 18:01 `v61_10_mix0.85_v61_v63f`,
   lalu v61_01, v61_06, v61_07, v61_08, v61_05, v61_03, p22. Peluang minimal satu dari empat pertama di atas 0.565: sekitar 20 sampai 23%.
+- 18 Okt 00:15: Agas push `agas/v6x/output/preds_v6x.npz` (OOF dan test asli, urutan baris sama dengan data/*.csv). Komponennya masuk ke `v61_plan.py` sebagai kandidat
+  dan basis proyeksi: v61 dan v63f sekarang terproyeksi dengan korelasi 0.99999 (sebelumnya 0.993). Hasilnya angka 8.7% campuran v63f di atas ternyata dari noise pseudo OOF;
+  dengan OOF asli campuran itu cuma 1.7 sampai 1.9%. Peluang terbaik sekarang sekitar 5% per file, rata 3 seed. Antrean baru mulai 18 Okt 07:01:
+  `v61_11_mix0.7_v61_av64linear` (4.9%), `v61_12_mix0.5_v61_qc00` (4.7%), `p22_08` (3.8%), `v61_03` (4.2%), `v61_13_ext0.5_v61_v63f` (4.6%), `v61_14_mix0.7_v61_av64cat` (4.1%),
+  lalu sisa v61 dan p22. Peluang minimal satu dari empat pertama di atas 0.565: sekitar 15 sampai 19%.
 
 ## Status terakhir (14 Okt 01:15 WIB)
 
