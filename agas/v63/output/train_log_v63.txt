@@ -1,0 +1,67 @@
+05:14:55 ladder: full=554 fac=509 faclean=401
+05:14:55 factor inputs
+05:15:08 factor ready
+05:17:23 seed 42 sel200      auc=0.845943 ks=0.524965
+05:20:40 seed 42 sel300      auc=0.845999 ks=0.525151
+05:23:50 seed 42 sel400      auc=0.845791 ks=0.524227
+05:25:32 seed 42 sel100      auc=0.844425 ks=0.522592
+05:28:14 seed 42 sel200b     auc=0.845920 ks=0.524878
+05:31:12 seed 42 lgb_faclean auc=0.846001 ks=0.522511
+05:34:53 seed 42 lgb_full    auc=0.845807 ks=0.522785
+05:39:35 seed 42 lgbx_full   auc=0.845647 ks=0.522841
+05:49:54 seed 42 cat_full    auc=0.845038 ks=0.524164
+06:06:20 seed 42 xgb_full    auc=0.846076 ks=0.524487
+06:08:55 seed 42 linear      auc=0.842125 ks=0.519830
+06:13:13 seed 42 sel200x2    auc=0.846143 ks=0.525479
+06:13:14 saved after 1/4 fold seeds, elapsed 58.3 min
+06:15:34 seed 7 sel200      auc=0.846791 ks=0.525523
+06:18:42 seed 7 sel300      auc=0.846228 ks=0.524983
+06:22:03 seed 7 sel400      auc=0.846418 ks=0.525564
+06:23:47 seed 7 sel100      auc=0.844791 ks=0.522344
+06:26:30 seed 7 sel200b     auc=0.846319 ks=0.524992
+06:29:15 seed 7 lgb_faclean auc=0.846067 ks=0.524406
+06:33:00 seed 7 lgb_full    auc=0.846224 ks=0.526002
+06:37:44 seed 7 lgbx_full   auc=0.845629 ks=0.524302
+06:48:17 seed 7 cat_full    auc=0.845146 ks=0.524977
+07:03:41 seed 7 xgb_full    auc=0.846347 ks=0.526115
+07:06:16 seed 7 linear      auc=0.842259 ks=0.519107
+07:10:27 seed 7 sel200x2    auc=0.846902 ks=0.526128
+07:10:28 saved after 2/4 fold seeds, elapsed 115.6 min
+07:12:44 seed 13 sel200      auc=0.845873 ks=0.524447
+07:15:40 seed 13 sel300      auc=0.845726 ks=0.522862
+07:18:50 seed 13 sel400      auc=0.845691 ks=0.523381
+07:20:36 seed 13 sel100      auc=0.844699 ks=0.522194
+07:23:06 seed 13 sel200b     auc=0.845780 ks=0.524313
+07:25:55 seed 13 lgb_faclean auc=0.845782 ks=0.522768
+07:29:52 seed 13 lgb_full    auc=0.845954 ks=0.523243
+07:34:43 seed 13 lgbx_full   auc=0.845591 ks=0.522498
+07:44:41 seed 13 cat_full    auc=0.844946 ks=0.521278
+08:01:00 seed 13 xgb_full    auc=0.846233 ks=0.524600
+08:03:32 seed 13 linear      auc=0.842816 ks=0.520294
+08:07:45 seed 13 sel200x2    auc=0.846080 ks=0.524521
+08:07:45 saved after 3/4 fold seeds, elapsed 172.8 min
+08:09:59 seed 21 sel200      auc=0.846156 ks=0.523759
+08:13:12 seed 21 sel300      auc=0.846256 ks=0.523608
+08:16:59 seed 21 sel400      auc=0.846313 ks=0.523845
+08:18:49 seed 21 sel100      auc=0.844464 ks=0.523147
+08:21:39 seed 21 sel200b     auc=0.846096 ks=0.524286
+08:24:15 seed 21 lgb_faclean auc=0.845843 ks=0.522312
+08:27:52 seed 21 lgb_full    auc=0.845704 ks=0.522274
+08:32:38 seed 21 lgbx_full   auc=0.845625 ks=0.521200
+08:42:38 seed 21 cat_full    auc=0.845122 ks=0.524042
+08:58:10 seed 21 xgb_full    auc=0.845874 ks=0.525246
+09:00:44 seed 21 linear      auc=0.842097 ks=0.520091
+09:05:04 seed 21 sel200x2    auc=0.846267 ks=0.523205
+09:05:05 saved after 4/4 fold seeds, elapsed 230.2 min
+09:05:05 BAG sel100      auc=0.845208 ks=0.523120 per-seed ks=[0.52259, 0.52234, 0.52219, 0.52315]
+09:05:05 BAG sel200      auc=0.846981 ks=0.526330 per-seed ks=[0.52548, 0.52613, 0.52452, 0.5232]
+09:05:05 BAG sel200b     auc=0.846783 ks=0.525837 per-seed ks=[0.52488, 0.52499, 0.52431, 0.52429]
+09:05:05 BAG sel300      auc=0.846793 ks=0.524864 per-seed ks=[0.52515, 0.52498, 0.52286, 0.52361]
+09:05:05 BAG sel400      auc=0.846730 ks=0.524526 per-seed ks=[0.52423, 0.52556, 0.52338, 0.52385]
+09:05:05 BAG lgb_full    auc=0.846502 ks=0.523734 per-seed ks=[0.52278, 0.526, 0.52324, 0.52227]
+09:05:05 BAG lgb_faclean auc=0.846444 ks=0.523102 per-seed ks=[0.52251, 0.52441, 0.52277, 0.52231]
+09:05:05 BAG lgbx_full   auc=0.846305 ks=0.523064 per-seed ks=[0.52284, 0.5243, 0.5225, 0.5212]
+09:05:06 BAG cat_full    auc=0.846046 ks=0.524848 per-seed ks=[0.52416, 0.52498, 0.52128, 0.52404]
+09:05:06 BAG xgb_full    auc=0.846639 ks=0.524982 per-seed ks=[0.52449, 0.52612, 0.5246, 0.52525]
+09:05:06 BAG linear      auc=0.842762 ks=0.520747 per-seed ks=[0.51983, 0.51911, 0.52029, 0.52009]
+09:05:06 done in 230.2 min

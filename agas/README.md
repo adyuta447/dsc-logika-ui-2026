@@ -453,3 +453,234 @@ Urutan submit yang disarankan, dengan jangkar `agas/v61/output/submission_v61_al
 Tiga pertama dipilih karena KS-nya tinggi sekaligus cukup berbeda dari jangkar. Nomor 4 punya KS tertinggi tapi praktis identik dengan jangkar, jadi nilai informasinya rendah.
 
 Semua 21 file `submission_v62f_*.csv` lolos validasi: 30000 baris, ID unik dan sama dengan test, probabilitas di [0,1].
+
+---
+
+## 12) v63: feature selection sebagai lever, KS OOF 0.529867
+
+Target run ini KS OOF di atas 0.5299, naik dari rekor 0.528717 milik v62.
+
+### Cara menjalankan
+
+```bash
+# sweep level seleksi dan hyperparameter, sekitar 75 menit
+python3 agas/v63/sweep_v63.py
+
+# ensemble utama, sekitar 3 jam 50 menit
+python3 agas/v63/training/train_submission_v63.py --folds 10 --fold-seeds 42,7,13,21 --lr 0.01 --l2 5 --sel200-seeds 0,1 --out-prefix v63
+
+# pencarian arah lintas run, verifikasi, dan kandidat final
+python3 agas/v63/training/search_multirun_v63.py
+python3 agas/v63/training/verify_v63_consensus.py
+python3 agas/v63/training/final_v63.py
+```
+
+### Temuan sweep
+
+Dua belas konfigurasi, rata-rata tiga fold seed `42`, `7`, `13`.
+
+| Konfigurasi | AUC | KS | sd antar seed |
+|---|---|---|---|
+| tanpa seleksi | 0.846102 | 0.524794 | 0.00064 |
+| **top 200, `feature_fraction` 0.3** | 0.846141 | **0.527077** | **0.00017** |
+| top 200, `feature_fraction` 0.6 | 0.845785 | 0.527346 | 0.00117 |
+| top 300 | 0.846150 | 0.525802 | 0.00036 |
+| top 400 | 0.846195 | 0.525898 | 0.00037 |
+| top 100 | 0.845127 | 0.523984 | 0.00054 |
+
+Seleksi fitur menambah 0.0023 KS secara konsisten dan punya sebaran antar seed terkecil. Hipotesis bahwa `feature_fraction` perlu dinaikkan untuk set terseleksi ternyata salah: menaikkan ke 0.6 menaikkan KS 0.0003 tetapi menurunkan AUC dan memperbesar volatilitas tujuh kali.
+
+### OOF model dasar (rata-rata empat fold seed)
+
+| Model | AUC | KS |
+|---|---|---|
+| `sel200` | 0.846981 | 0.526330 |
+| `sel200b` | 0.846783 | 0.525837 |
+| `sel300` | 0.846793 | 0.524864 |
+| `sel400` | 0.846730 | 0.524526 |
+| `xgb_full` | 0.846639 | 0.524982 |
+| `lgb_full` | 0.846502 | 0.523734 |
+| `lgb_faclean` | 0.846444 | 0.523102 |
+| `sel100` | 0.845208 | 0.523120 |
+| `lgbx_full` | 0.846305 | 0.523064 |
+| `cat_full` | 0.846046 | 0.524848 |
+| `linear` | 0.842762 | 0.520747 |
+
+### Dua sumbu dan base lintas run
+
+Rekor v62 datang dari dua sumbu ekstrapolasi sekaligus. Pola yang sama diterapkan lagi, ditambah:
+
+- **Ketajaman seleksi sebagai sumbu baru.** Kedua arah yang terbukti di leaderboard mendorong model berfitur lebih kaya menjauh dari model berfitur lebih sedikit. Ketajaman seleksi adalah ukuran lain dari quantity yang sama, jadi `sel200` didorong menjauh dari `sel400`.
+- **Base lintas run.** v62 dan v63 memakai empat fold seed yang sama sehingga prediksinya bisa dirata-ratakan sebelum diekstrapolasi, dan karena keduanya menyimpan OOF per fold seed, ketahanan dapat diuji di dalam tiap seed tanpa resampling baris.
+
+Dari 1296 baris grid, 557 atau 43 persen robust, naik dari 8,6 persen di v62.
+
+### Consensus dan verifikasi
+
+| Ukuran | KS OOF | AUC | KS per seed |
+|---|---:|---:|---|
+| **5** | **0.529867** | 0.847204 | 0.52697, 0.52799, 0.52625, 0.52763 |
+| 6 | 0.529827 | 0.847263 | 0.52779, 0.52806, 0.52618, 0.52743 |
+| 12 | 0.529620 | 0.847289 | 0.52812, 0.52824, 0.52640, 0.52768 |
+| 9 | 0.529375 | 0.847289 | 0.52806, 0.52831, 0.52662, 0.52768 |
+
+`verify_v63_consensus.py` membangun ulang consensus dari kode yang sama dan menghasilkan korelasi rank **1.00000000** terhadap file yang ditulis, sehingga angka laporan berasal dari file submission. Selisih consensus terhadap base tanpa ekstrapolasi positif di 3 dari 4 fold seed, mean +0.00089.
+
+### Batas yang jujur
+
+`0.529867` masih `0.00013` di bawah `0.530000`. Pada 70.000 baris OOF galat standar KS sekitar 0.002 sampai 0.003, jadi selisih sebesar itu tidak dapat dibedakan dari noise. Angka ini membulatkan ke 0.53 tetapi tidak melampaui 0.53.
+
+Yang membaik dan bukan noise: base model naik jelas, arah yang konsisten antar seed naik dari 8,6 persen ke 43 persen, dan korelasi kandidat terhadap file public 0.56312 turun ke sekitar 0.995 dari 0.9996, jadi kandidat ini benar-benar menguji hipotesis baru.
+
+### Kandidat final
+
+| Prioritas | Kandidat | KS OOF | Korelasi vs jangkar |
+|---|---|---:|---:|
+| 1 | `submission_v63f_consensus5_best.csv` | 0.529867 | 0.995281 |
+| 2 | `submission_v63f_best_single.csv` | 0.529767 | 0.994953 |
+| 3 | `submission_v63f_consensus12.csv` | 0.529620 | 0.995430 |
+| 4 | `submission_v63d_cand02.csv` s.d. `cand05.csv` | 0.529591 s.d. 0.529267 | 0.993 s.d. 0.996 |
+| 5 | `submission_v63f_anchor35_consensus.csv` | — | 0.999422 |
+
+Jangkar tetap `submission_v61_alt_ext0.5_tm30_lean.csv` dengan public 0.56312. Semua 20 file submission v63 lolos validasi: 30000 baris, ID unik dan sama dengan test, probabilitas di [0,1].
+
+---
+
+## 13) v64: audit korelasi, diagnosis noise, dan perubahan objektif
+
+ dipicu hasil public v63 yang hanya 0.557 padahal KS OOF-nya 0.529867, tertinggi
+sepanjang proyek.
+
+### Apa yang sebenarnya terjadi
+
+Empat file punya kedua angka terukur:
+
+| File | KS OOF | Public |
+|---|---|---|
+| v57 `aggressive_145` | 0.526988 | 0.55700 |
+| v58ext `ext1.5` | 0.527511 | 0.55900 |
+| v61 `alt_ext0.5_tm30_lean` | 0.528624 | **0.56312** |
+| v63 kandidat terbaik | **0.529867** | 0.55700 |
+
+Pearson r pada empat pasangan itu +0.019. Pair yang menentukan: `v58ext ext1.5`
+dan `qc_00` memiliki vektor rank dengan Spearman 0.9994, hampir identik, tapi
+skor public-nya berbeda 0.0027.
+
+### Kenapa KS OOF tidak bisa dipakai sebagai kriteria
+
+KS adalah maksimum atas ambang dari jumlah kumulatif, jadi noisy. Diukur dengan
+mengambil ulang baris dari satu vektor prediksi yang tetap:
+
+| Ukuran sampel | SD sampling KS |
+|---|---|
+| 70000 baris (ukuran OOF) | 0.0036 |
+| 30000 baris (ukuran public) | **0.0053** |
+| 9000 baris (mesin harvest lama) | 0.0113 |
+
+Akibatnya:
+
+- Peningkatan v61 ke v63 sebesar 0.001243 adalah **0.34 sampling sd**.
+- Memilih kandidat dari 1300 titik grid dengan KS OOF maksimum memberi kenaikan
+  terukur sekitar **0.012 secara gratis**, sepuluh kali dari yang dikejar.
+- Jarak ke 0.57 adalah **1.30 public sd**.
+
+### Objektif baru
+
+v64 memakai AUC, bukan KS maksimum. AUC adalah rata-rata halus atas seluruh
+pasangan, bukan ambang terburuk, sehingga ia menjawab perbaikan model sungguhan.
+KS tetap dilaporkan dengan SD sampling-nya, tidak pernah sebagai kunci pengurutan.
+
+### Hasil negatif yang dicatat
+
+Seleksi stabil diuji dan ditolak sebelum run utama:
+
+| Seleksi, 10 fold, seed sama | AUC | KS |
+|---|---|---|
+| satu probe, top 200 | 0.845506 | 0.522678 |
+| stabil, 5 probe, top 200 | 0.845148 | 0.522046 |
+| tanpa seleksi, 554 kolom | 0.845951 | 0.523256 |
+
+Seleksi stabil turun 0.000358, dan kedua himpunan tumpang tindih 169 dari 200
+kolom, jadi probe tambahan sebagian besar sepakat tanpa menambah informasi.
+
+### Cara menjalankan
+
+```bash
+# diagnosis, sekitar 5 menit
+python3 agas/v64/audit_public_vs_oof.py
+python3 agas/v64/diagnose_selection_noise.py
+
+# uji seleksi stabil yang ditolak, sekitar 13 menit
+python3 agas/v64/check_stability_selection.py
+
+# ensemble utama, enam fold seed
+python3 agas/v64/training/train_submission_v64.py --folds 10 --fold-seeds 42,7,13,21,5,101 --lr 0.01 --l2 5 --top-n 200 --out-prefix v64
+
+# kandidat berbasis keragaman
+python3 agas/v64/make_submission_v64.py
+```
+
+### Perbaikan alat
+
+`shared/bootstrap.py` ditambahkan karena versi folder ada dua kedalaman, sehingga
+indeks `parents[n]` yang dipatok salah untuk salah satunya. Enam perbaikan
+berturutan diperlukan, dan setiap tahap ditemukan lewat verifikasi. Script yang
+rusak dipulihkan, lalu `verify_all_scripts.py` menjalankan seluruh script untuk
+memastikan `import paths` benar-benar berhasil. Angka metrik v61 dan v62
+diverifikasi ulang setelah perbaikan dan tidak berubah.
+
+### Prinsip pemilihan kandidat
+
+Builder v64 mengumpulkan semua vektor prediksi dari v61, v62, v63, v64,
+membuang yang korelasinya di atas 0.998, lalu mengurutkan dengan AUC. Dua file
+yang nyaris identik memberi leaderboard draw yang sama, jadi keragaman memberi
+nilai sementara duplikasi tidak.
+
+### Hasil run utama, enam fold seed
+
+Selesai dalam 340.7 menit, 10 fold, seed `42,7,13,21,5,101`:
+
+| Model | AUC | KS |
+|---|---|---|
+| `xgb_full` | **0.846749** | 0.525485 |
+| `lgb_full` | 0.846705 | 0.524327 |
+| `sel400` | 0.846607 | 0.524095 |
+| `lgb_faclean` | 0.846528 | 0.524096 |
+| `lgbx_full` | 0.846477 | 0.524037 |
+| `sel200` | 0.846316 | 0.525290 |
+| `cat_full` | 0.846193 | 0.525368 |
+| `linear` | 0.842875 | 0.522065 |
+
+Dua hal yang perlu dicatat.
+
+`sel400` mengalahkan `sel200`, sedangkan di v63 urutannya terbalik. Kunci pengurutan diganti ke AUC, dan KS menghargai prediksi yang lebih ekstrem, sementara `sel400` lebih baik rata-ratanya. Kalau masih memakai KS sebagai kunci, pilihan ini akan terbalik dan salah.
+
+KS `sel200` turun dari 0.529867 di v63 ke 0.525290 di v64 sementara AUC-nya naik. Dua seed tambahan membuat prediksi lebih halus, dan prediksi yang lebih halus menaikkan AUC tapi menurunkan KS. Bukti kedua bahwa KS dan AUC mengukur hal berbeda.
+
+### Pool kandidat akhir
+
+88 vektor setelah blend, 79 lolos lantai AUC, 7 lolos deduplikasi korelasi rank 0.998:
+
+| Slot | Nama | AUC | KS dikurangi 1 sd | Spearman ke anchor |
+|---|---|---|---|---|
+| 1 | `ext0.25|v62|lgb_top-v62|lgb_faclean` | 0.847485 | 0.522275 | 0.9913 |
+| 2 | `avg_sel_lean` | 0.847043 | 0.522881 | 0.9918 |
+| 3 | `v64|xgb_full` | 0.846749 | 0.521876 | 0.9946 |
+| 4 | `ext0.5|v63|sel200-v62|lgb_fac` | 0.846461 | 0.522349 | 0.9866 |
+| 5 | `ext0.75|v61|lgb_full-v61|lgb_lean` | 0.846210 | 0.520026 | 0.9929 |
+| 6 | `v64|cat_full` | 0.846193 | 0.521759 | 0.9905 |
+| 7 | `v63|sel100` | 0.845208 | 0.519511 | 0.9841 |
+
+Kolom KS dikurangi satu sampling sd sengaja ditampilkan. Begitu dikurangi, kandidat 2 tidak lagi yang terbaik dan urutannya tidak lagi sama dengan urutan KS mentah. Itulah alasan angka KS tidak pernah dipakai sebagai kunci.
+
+Nilai maksimum harapan atas 7 submit diverse adalah **+0.0072 public (1.35 sd)**, hanya batas atas dengan asumsi draw independen. Kandidat terpilih saling berkorelasi 0.984 sampai 0.995, jadi gain sesungguhnya lebih kecil dan tidak dapat dihitung: butuh korelasi noise public itu sendiri, yang butuh beberapa pasangan ranking independen, sedangkan proyek hanya punya satu pasangan.
+
+### Dua bug yang ditemukan lewat verifikasi
+
+**Slot output bertabrakan.** Tiga kali builder dijalankan tanpa menghapus file lama, nomor slot dipakai ulang dengan konten berbeda. Slot 3 pernah berisi `v61|lgb_full` dari run pertama dan `v64|xgb_full` dari run ketiga, keduanya valid dan keduanya mengklaim slot 3. Builder sekarang menghapus prefix-nya sendiri sebelum menulis.
+
+**Lantai AUC tidak ada di deduplikasi pertama.** Deduplikasi murni korelasi rank menyisakan 9 kandidat, tapi ekornya berisi `linear` AUC 0.8427 yang bertahan karena meranking berbeda, sementara blend terkuat saling dianggap duplikat. Itu trade buruk, karena semua kandidat punya sebaran public yang sama sehingga kandidat dengan rata-rata lebih buruk hanya bisa menurunkan nilai maksimum harapan. Lantai AUC 0.0025 di bawah terbaik menutupnya.
+
+### Status
+
+Tujuh file submission tervalidasi: 30000 baris, `application_id` unik dan cocok dengan `data/test_applications.csv`, probabilitas di rentang [0, 1] tanpa NaN. Seluruh script diverifikasi ulang, 32 fine, 0 broken. Notebook `notebook/notebook_v64.ipynb` ada dengan `RUN_TRAINING = False`. Belum ada submission Kaggle dan belum ada push GitHub.

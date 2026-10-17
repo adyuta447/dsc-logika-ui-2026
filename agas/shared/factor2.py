@@ -11,10 +11,26 @@ between/within decomposition, so the combination step and the per-fold loading
 fit stay identical to the original factor model. No label is used here.
 """
 
+import sys
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
-import features as ft
+# `features.py` lives at the repository root and this module is imported by
+# version scripts that only guarantee `agas/shared` on the path, so the root is
+# added here rather than at every call site.
+_ROOT = None
+for _p in Path(__file__).resolve().parents:
+    if (_p / "features.py").exists():
+        _ROOT = _p
+        if str(_p) not in sys.path:
+            sys.path.insert(0, str(_p))
+        break
+if _ROOT is None:
+    raise RuntimeError("features.py not found above shared/factor2.py")
+
+import features as ft  # noqa: E402
 
 
 def _new_items(app):

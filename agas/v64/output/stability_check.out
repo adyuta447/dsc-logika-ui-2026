@@ -1,0 +1,18 @@
+  fold 0: single probe kept 200, stable kept 200, columns in 80%+ of probes 166, in any probe 275
+  fold 1: single probe kept 200, stable kept 200, columns in 80%+ of probes 165, in any probe 282
+  fold 2: single probe kept 200, stable kept 200, columns in 80%+ of probes 162, in any probe 279
+  fold 3: single probe kept 200, stable kept 200, columns in 80%+ of probes 168, in any probe 274
+  fold 4: single probe kept 200, stable kept 200, columns in 80%+ of probes 160, in any probe 283
+  fold 5: single probe kept 200, stable kept 200, columns in 80%+ of probes 163, in any probe 274
+  fold 6: single probe kept 200, stable kept 200, columns in 80%+ of probes 165, in any probe 279
+  fold 7: single probe kept 200, stable kept 200, columns in 80%+ of probes 171, in any probe 274
+  fold 8: single probe kept 200, stable kept 200, columns in 80%+ of probes 162, in any probe 278
+  fold 9: single probe kept 200, stable kept 200, columns in 80%+ of probes 166, in any probe 271
+
+mean overlap between single and stable selection: 169.1 of 200 (85 percent)
+single_top200    auc=0.845506 ks=0.522678
+stable_top200    auc=0.845148 ks=0.522046
+full             auc=0.845951 ks=0.523256
+
+verdict: stability selection changes AUC by -0.000358 against a single-probe selection at the same size.
+elapsed 12.5 min

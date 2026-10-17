@@ -1,0 +1,26 @@
+{
+  "tag": "sweep_t250_ff07_lv23_fs13",
+  "n_features": 494,
+  "top_n": 250,
+  "auc": 0.8457111119145558,
+  "ks": 0.5250591815573448,
+  "params": {
+    "folds": 5,
+    "fold_seed": 13,
+    "lr": 0.01,
+    "tag": "sweep_t250_ff07_lv23_fs13",
+    "seeds": "0",
+    "no_factor": false,
+    "drop": "gn_",
+    "oof_out": "",
+    "ff": 0.7,
+    "leaves": 23,
+    "mcs": 120,
+    "l2": 5.0,
+    "bag": 0.8,
+    "maxbin": 127,
+    "factor": 1,
+    "top_n": 250
+  },
+  "minutes": 2.342178746064504
+}

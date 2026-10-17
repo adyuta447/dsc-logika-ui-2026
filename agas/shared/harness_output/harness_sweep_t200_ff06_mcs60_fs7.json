@@ -1,0 +1,26 @@
+{
+  "tag": "sweep_t200_ff06_mcs60_fs7",
+  "n_features": 494,
+  "top_n": 200,
+  "auc": 0.8459571565846019,
+  "ks": 0.5255496746725984,
+  "params": {
+    "folds": 5,
+    "fold_seed": 7,
+    "lr": 0.01,
+    "tag": "sweep_t200_ff06_mcs60_fs7",
+    "seeds": "0",
+    "no_factor": false,
+    "drop": "gn_",
+    "oof_out": "",
+    "ff": 0.6,
+    "leaves": 15,
+    "mcs": 60,
+    "l2": 5.0,
+    "bag": 0.8,
+    "maxbin": 127,
+    "factor": 1,
+    "top_n": 200
+  },
+  "minutes": 1.9468711654345194
+}

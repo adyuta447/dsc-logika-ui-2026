@@ -1,0 +1,87 @@
+{
+  "objective": "AUC; KS reported with its sampling sd",
+  "sigma_oof": 0.0036092589485426075,
+  "sigma_public": 0.005285123316645254,
+  "dedupe_threshold": 0.998,
+  "auc_floor_gap": 0.0025,
+  "best_auc": 0.8474848698185878,
+  "pool_size": 88,
+  "eligible": 79,
+  "kept": 7,
+  "candidates": [
+    {
+      "slot": 1,
+      "name": "ext0.25|v62|lgb_top-v62|lgb_faclean",
+      "auc": 0.847485,
+      "ks": 0.525884,
+      "ks_minus_sd": 0.522275,
+      "spearman_anchor": 0.991293,
+      "file": "submission_v64_01_ext025_v62_lgb_top-v62_lgb_faclean.csv",
+      "valid": true
+    },
+    {
+      "slot": 2,
+      "name": "avg_sel_lean",
+      "auc": 0.847043,
+      "ks": 0.52649,
+      "ks_minus_sd": 0.522881,
+      "spearman_anchor": 0.991832,
+      "file": "submission_v64_02_avg_sel_lean.csv",
+      "valid": true
+    },
+    {
+      "slot": 3,
+      "name": "v64|xgb_full",
+      "auc": 0.846749,
+      "ks": 0.525485,
+      "ks_minus_sd": 0.521876,
+      "spearman_anchor": 0.994649,
+      "file": "submission_v64_03_v64_xgb_full.csv",
+      "valid": true
+    },
+    {
+      "slot": 4,
+      "name": "ext0.5|v63|sel200-v62|lgb_fac",
+      "auc": 0.846461,
+      "ks": 0.525958,
+      "ks_minus_sd": 0.522349,
+      "spearman_anchor": 0.986615,
+      "file": "submission_v64_04_ext05_v63_sel200-v62_lgb_fac.csv",
+      "valid": true
+    },
+    {
+      "slot": 5,
+      "name": "ext0.75|v61|lgb_full-v61|lgb_lean",
+      "auc": 0.84621,
+      "ks": 0.523636,
+      "ks_minus_sd": 0.520026,
+      "spearman_anchor": 0.992886,
+      "file": "submission_v64_05_ext075_v61_lgb_full-v61_lgb_lean.csv",
+      "valid": true
+    },
+    {
+      "slot": 6,
+      "name": "v64|cat_full",
+      "auc": 0.846193,
+      "ks": 0.525368,
+      "ks_minus_sd": 0.521759,
+      "spearman_anchor": 0.990477,
+      "file": "submission_v64_06_v64_cat_full.csv",
+      "valid": true
+    },
+    {
+      "slot": 7,
+      "name": "v63|sel100",
+      "auc": 0.845208,
+      "ks": 0.52312,
+      "ks_minus_sd": 0.519511,
+      "spearman_anchor": 0.984077,
+      "file": "submission_v64_07_v63_sel100.csv",
+      "valid": true
+    }
+  ],
+  "expected_max_over_3_submits_sd_upper_bound": 0.8489556563026487,
+  "expected_max_over_3_submits_public_upper_bound": 0.004486835333923004,
+  "expected_max_over_7_submits_sd_upper_bound": 1.354142277010423,
+  "expected_max_over_7_submits_public_upper_bound": 0.0071568089222828835
+}

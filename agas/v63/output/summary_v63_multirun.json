@@ -1,0 +1,104 @@
+{
+  "anchor_public": 0.56312,
+  "record_before": 0.528717,
+  "seeds": [
+    42,
+    7,
+    13,
+    21
+  ],
+  "candidates": [
+    {
+      "name": "consensus",
+      "auc": 0.8472036873364099,
+      "ks": 0.5298674419951499,
+      "file": "submission_v63m_consensus.csv",
+      "spearman_anchor": 0.9952810627934578,
+      "problems": []
+    },
+    {
+      "name": "cand01",
+      "auc": 0.847304144303413,
+      "ks": 0.5297670189348833,
+      "file": "submission_v63m_cand01.csv",
+      "spearman_anchor": 0.9949534634381882,
+      "problems": []
+    },
+    {
+      "name": "cand02",
+      "auc": 0.8469336010511894,
+      "ks": 0.5295910638367507,
+      "file": "submission_v63m_cand02.csv",
+      "spearman_anchor": 0.9934358745170232,
+      "problems": []
+    },
+    {
+      "name": "cand03",
+      "auc": 0.8473371407747078,
+      "ks": 0.5294283480152199,
+      "file": "submission_v63m_cand03.csv",
+      "spearman_anchor": 0.9953237226472793,
+      "problems": []
+    },
+    {
+      "name": "consensus3",
+      "auc": 0.8472375227820886,
+      "ks": 0.5294257554539625,
+      "file": "submission_v63m_consensus3.csv",
+      "spearman_anchor": 0.9946963013748412,
+      "problems": []
+    },
+    {
+      "name": "cand04",
+      "auc": 0.8464563246080467,
+      "ks": 0.5293527429474593,
+      "file": "submission_v63m_cand04.csv",
+      "spearman_anchor": 0.9955801623786836,
+      "problems": []
+    },
+    {
+      "name": "cand05",
+      "auc": 0.8474838786985901,
+      "ks": 0.5292674527246324,
+      "file": "submission_v63m_cand05.csv",
+      "spearman_anchor": 0.9956724626872233,
+      "problems": []
+    },
+    {
+      "name": "cand06",
+      "auc": 0.8474686345775014,
+      "ks": 0.5291617280417812,
+      "file": "submission_v63m_cand06.csv",
+      "spearman_anchor": 0.9961876360131708,
+      "problems": []
+    },
+    {
+      "name": "cand07",
+      "auc": 0.8473192188908181,
+      "ks": 0.5290836034426578,
+      "file": "submission_v63m_cand07.csv",
+      "spearman_anchor": 0.9956456198820048,
+      "problems": []
+    },
+    {
+      "name": "cand08",
+      "auc": 0.8472485555125902,
+      "ks": 0.5290745442581166,
+      "file": "submission_v63m_cand08.csv",
+      "spearman_anchor": 0.9958208041740374,
+      "problems": []
+    },
+    {
+      "name": "anchor35_consensus",
+      "file": "submission_v63m_anchor35_consensus.csv",
+      "spearman_anchor": 0.9994220133946796,
+      "problems": []
+    },
+    {
+      "name": "anchor60_consensus",
+      "file": "submission_v63m_anchor60_consensus.csv",
+      "spearman_anchor": 0.9982985359417146,
+      "problems": []
+    }
+  ]
+}
