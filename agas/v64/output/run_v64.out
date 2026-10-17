@@ -1,0 +1,72 @@
+ladder: full=554 fac=509 lean=446 faclean=401
+factor inputs
+factor ready
+seed 42 selection: 200 and 400 column sets overlap by 200 columns
+seed 42 sel200       auc=0.845545 ks=0.523740
+seed 42 sel400       auc=0.845751 ks=0.523388
+seed 42 lgb_full     auc=0.846028 ks=0.523048
+seed 42 lgb_faclean  auc=0.846001 ks=0.522511
+seed 42 lgbx_full    auc=0.845647 ks=0.522841
+seed 42 cat_full     auc=0.845038 ks=0.524164
+seed 42 xgb_full     auc=0.846076 ks=0.524487
+seed 42 linear       auc=0.841985 ks=0.519886
+saved after 1/6 fold seeds, elapsed 55.8 min
+seed 7 selection: 200 and 400 column sets overlap by 200 columns
+seed 7 sel200       auc=0.845693 ks=0.525120
+seed 7 sel400       auc=0.845913 ks=0.524548
+seed 7 lgb_full     auc=0.846220 ks=0.525163
+seed 7 lgb_faclean  auc=0.846067 ks=0.524406
+seed 7 lgbx_full    auc=0.845629 ks=0.524302
+seed 7 cat_full     auc=0.845146 ks=0.524977
+seed 7 xgb_full     auc=0.846347 ks=0.526115
+seed 7 linear       auc=0.842229 ks=0.521389
+saved after 2/6 fold seeds, elapsed 115.3 min
+seed 13 selection: 200 and 400 column sets overlap by 200 columns
+seed 13 sel200       auc=0.845678 ks=0.525005
+seed 13 sel400       auc=0.845945 ks=0.522750
+seed 13 lgb_full     auc=0.845952 ks=0.522901
+seed 13 lgb_faclean  auc=0.845782 ks=0.522768
+seed 13 lgbx_full    auc=0.845591 ks=0.522498
+seed 13 cat_full     auc=0.844946 ks=0.521278
+seed 13 xgb_full     auc=0.846233 ks=0.524600
+seed 13 linear       auc=0.842639 ks=0.521486
+saved after 3/6 fold seeds, elapsed 175.9 min
+seed 21 selection: 200 and 400 column sets overlap by 200 columns
+seed 21 sel200       auc=0.845295 ks=0.522145
+seed 21 sel400       auc=0.845516 ks=0.523433
+seed 21 lgb_full     auc=0.845740 ks=0.521997
+seed 21 lgb_faclean  auc=0.845843 ks=0.522312
+seed 21 lgbx_full    auc=0.845625 ks=0.521200
+seed 21 cat_full     auc=0.845122 ks=0.524042
+seed 21 xgb_full     auc=0.845874 ks=0.525246
+seed 21 linear       auc=0.842142 ks=0.521969
+saved after 4/6 fold seeds, elapsed 229.9 min
+seed 5 selection: 200 and 400 column sets overlap by 200 columns
+seed 5 sel200       auc=0.845348 ks=0.524484
+seed 5 sel400       auc=0.845861 ks=0.523931
+seed 5 lgb_full     auc=0.846227 ks=0.523896
+seed 5 lgb_faclean  auc=0.846114 ks=0.524312
+seed 5 lgbx_full    auc=0.845879 ks=0.524050
+seed 5 cat_full     auc=0.845248 ks=0.525121
+seed 5 xgb_full     auc=0.846465 ks=0.526229
+seed 5 linear       auc=0.842473 ks=0.521310
+saved after 5/6 fold seeds, elapsed 285.1 min
+seed 101 selection: 200 and 400 column sets overlap by 200 columns
+seed 101 sel200       auc=0.845298 ks=0.523691
+seed 101 sel400       auc=0.846112 ks=0.524853
+seed 101 lgb_full     auc=0.846232 ks=0.524635
+seed 101 lgb_faclean  auc=0.845948 ks=0.524947
+seed 101 lgbx_full    auc=0.846051 ks=0.523848
+seed 101 cat_full     auc=0.844946 ks=0.523123
+seed 101 xgb_full     auc=0.846093 ks=0.524331
+seed 101 linear       auc=0.842649 ks=0.520541
+saved after 6/6 fold seeds, elapsed 340.6 min
+BAG sel200       auc=0.846316 ks=0.525290 per-seed auc=[0.84554, 0.84569, 0.84568, 0.8453, 0.84535, 0.8453]
+BAG sel400       auc=0.846607 ks=0.524095 per-seed auc=[0.84575, 0.84591, 0.84594, 0.84552, 0.84586, 0.84611]
+BAG lgb_full     auc=0.846705 ks=0.524327 per-seed auc=[0.84603, 0.84622, 0.84595, 0.84574, 0.84623, 0.84623]
+BAG lgb_faclean  auc=0.846528 ks=0.524096 per-seed auc=[0.846, 0.84607, 0.84578, 0.84584, 0.84611, 0.84595]
+BAG lgbx_full    auc=0.846477 ks=0.524037 per-seed auc=[0.84565, 0.84563, 0.84559, 0.84563, 0.84588, 0.84605]
+BAG cat_full     auc=0.846193 ks=0.525368 per-seed auc=[0.84504, 0.84515, 0.84495, 0.84512, 0.84525, 0.84495]
+BAG xgb_full     auc=0.846749 ks=0.525485 per-seed auc=[0.84608, 0.84635, 0.84623, 0.84587, 0.84647, 0.84609]
+BAG linear       auc=0.842875 ks=0.522065 per-seed auc=[0.84198, 0.84223, 0.84264, 0.84214, 0.84247, 0.84265]
+done in 340.7 min

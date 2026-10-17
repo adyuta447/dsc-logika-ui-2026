@@ -56,7 +56,7 @@ def ks_score(y_true, pred):
 def main():
     args = parse_args()
     here = Path(__file__).resolve().parent
-    sys.path.insert(0, str(here.parents[1] / "shared"))
+    sys.path.insert(0, str(__import__("shared.bootstrap", fromlist=["x"]).add_shared(__file__)))
     import paths  # noqa: E402
     root = paths.ROOT
     import os

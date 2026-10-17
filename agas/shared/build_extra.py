@@ -9,7 +9,22 @@ from pathlib import Path
 import pandas as pd
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE))
+def _add_shared():
+    """Load agas/shared/bootstrap.py by path; agas is not an importable package."""
+    import importlib.util as _il
+    _here = Path(__file__).resolve().parent
+    for _p in _here.parents:
+        _c = _p / "shared" / "bootstrap.py"
+        if _c.exists():
+            _spec = _il.spec_from_file_location("_agas_bootstrap", _c)
+            _m = _il.module_from_spec(_spec)
+            _spec.loader.exec_module(_m)
+            if str(_c.parent) not in sys.path:
+                sys.path.insert(0, str(_c.parent))
+            return _p
+    raise RuntimeError(f"shared/bootstrap.py not found above {_here}")
+
+_SHARED = _add_shared()
 import paths  # noqa: E402
 ROOT = paths.ROOT
 sys.path.insert(0, str(ROOT))

@@ -21,7 +21,22 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE))
+def _add_shared():
+    """Load agas/shared/bootstrap.py by path; agas is not an importable package."""
+    import importlib.util as _il
+    _here = Path(__file__).resolve().parent
+    for _p in _here.parents:
+        _c = _p / "shared" / "bootstrap.py"
+        if _c.exists():
+            _spec = _il.spec_from_file_location("_agas_bootstrap", _c)
+            _m = _il.module_from_spec(_spec)
+            _spec.loader.exec_module(_m)
+            if str(_c.parent) not in sys.path:
+                sys.path.insert(0, str(_c.parent))
+            return _p
+    raise RuntimeError(f"shared/bootstrap.py not found above {_here}")
+
+_SHARED = _add_shared()
 import paths  # noqa: E402
 ROOT = paths.ROOT
 OUT = HERE / "harness_output"
@@ -101,6 +116,8 @@ def main():
     ap.add_argument("--bag", type=float, default=0.8)
     ap.add_argument("--maxbin", type=int, default=127)
     ap.add_argument("--factor", type=int, default=1)
+    ap.add_argument("--top-n", type=int, default=0,
+                    help="per-fold gain selection; 0 disables selection")
     args = ap.parse_args()
 
     os.chdir(ROOT)
@@ -136,6 +153,7 @@ def main():
         cols = list(X.columns)
 
     seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
+    gains = [None] * len(folds)
     oof_sum = np.zeros(len(y))
     pred_sum = np.zeros(len(Xte))
     for seed in seeds:
@@ -158,18 +176,30 @@ def main():
         for k, (a, b) in enumerate(folds):
             xk = X if not use_fac else pd.concat(
                 [X.drop(columns=fac_cols), fac[k].iloc[p_tr].reset_index(drop=True)], axis=1)
-            dtr = lgb.Dataset(xk.iloc[a][cols], y[a])
-            dva = lgb.Dataset(xk.iloc[b][cols], y[b])
+            use = cols
+            if args.top_n:
+                if gains[k] is None:
+                    probe = lgb.train(
+                        {**params, "feature_fraction": 1.0, "num_boost_round": 300,
+                         "learning_rate": 0.1},
+                        lgb.Dataset(xk.iloc[a][cols], y[a]),
+                        num_boost_round=300)
+                    g = pd.Series(probe.feature_importance(importance_type="gain"), index=cols)
+                    gains[k] = list(g.sort_values(ascending=False).index[: args.top_n])
+                use = gains[k]
+            dtr = lgb.Dataset(xk.iloc[a][use], y[a])
+            dva = lgb.Dataset(xk.iloc[b][use], y[b])
             m = lgb.train(params, dtr, num_boost_round=8000, valid_sets=[dva],
                           callbacks=[lgb.early_stopping(300, verbose=False)])
-            oof_sum[b] += m.predict(xk.iloc[b][cols]) / len(seeds)
+            oof_sum[b] += m.predict(xk.iloc[b][use]) / len(seeds)
             xk_t = Xte if not use_fac else pd.concat(
                 [Xte.drop(columns=fac_cols), fac[k].iloc[p_te].reset_index(drop=True)], axis=1)
-            pred_sum += m.predict(xk_t[cols]) / (len(seeds) * len(folds))
+            pred_sum += m.predict(xk_t[use]) / (len(seeds) * len(folds))
 
     res = {
         "tag": args.tag,
         "n_features": len(cols),
+        "top_n": args.top_n,
         "auc": float(roc_auc_score(y, oof_sum)),
         "ks": float(ks_score(y, oof_sum)),
         "params": vars(args),
