@@ -15,5 +15,4 @@ features.parquet
 *.csv
 *.pkl
 *.parquet
-*.npz
 old_deliverables/ 
