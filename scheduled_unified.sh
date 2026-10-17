@@ -3,11 +3,13 @@
 cd /Users/yutaaa/Developments/dsc-logikaui
 K=.venv/bin/kaggle
 files=(
-  variants/v61_04_mix0.7_v61_p17_00.csv
-  variants/v61_05_mix0.7_v61_qc00.csv
-  variants/v61_01_mix0.85_v61_qc00.csv
-  variants/v61_03_mix0.5_v61_p17_00.csv
   variants/v61_02_mix0.5_v61_p19_00.csv
+  variants/v61_01_mix0.85_v61_qc00.csv
+  variants/v61_06_mix0.85_v61_p19_00.csv
+  variants/v61_07_mix0.85_v61_v4full.csv
+  variants/v61_08_ext0.25_v61_p21_00.csv
+  variants/v61_05_mix0.7_v61_qc00.csv
+  variants/v61_03_mix0.5_v61_p17_00.csv
   variants/p22_00_new_minus_ec_xgb_deep.csv
   variants/p22_01_new_minus_time_lgb_extra31.csv
   variants/p22_02_mix2_mix2_ext1.0_v4_fac_xgb_full_ext1.5_v4full_faclean_ext0.5_full_lgb_extra_lgb_extra.csv

@@ -34,7 +34,7 @@ def pseudo(n_, path):
     print(f"pseudo {n_:12s} projection corr {np.corrcoef(t, XT @ b)[0, 1]:.5f}")
 dl = "agas/output/dl/"
 for n_, p in [("v61", dl + "submission_v61_alt_ext0.5_tm30_lean.csv"), ("v58ext", dl + "submission_v58ext_ext1.5_v4_fac_full_only.csv"),
-              ("v57", dl + "submission_v57_best.csv"), ("qb_00", "variants/qb_00_new_lgb_fullset.csv"),
+              ("v57", dl + "submission_v57_best.csv"), ("v63f", dl + "submission_v63f_consensus5_best.csv"), ("qb_00", "variants/qb_00_new_lgb_fullset.csv"),
               ("p07_00", "variants/p07_00_ext1.0_full_lgb_extra31_facfull_lgb_extra31.csv"), ("p10_00", "variants/p10_00_ext2.0_plus_ec_lgb_extra_lgb_extra.csv"),
               ("p12_00", "variants/p12_00_ext2.0_plus_prof_lgb_mc800_lgb_mc800.csv"), ("p19_00", "variants/p19_00_ext1.0_full_lgb_extra_lgb_extra.csv"),
               ("p21_00", "variants/p21_00_ext1.5_full_lgb_shallow_facfull_lgb_shallow.csv")]:
@@ -42,7 +42,7 @@ for n_, p in [("v61", dl + "submission_v61_alt_ext0.5_tm30_lean.csv"), ("v58ext"
 # public scores minus bag v4 top_mix (0.55860)
 obs = {"fac|top_mix": 0.55865, "fac|linear30": 0.55826, "ext1.5|v4-fac|trees_only": 0.55810, "qb_00": 0.55931, "ext1.5|v4-fac|full_only": 0.56171,
        "p07_00": 0.55994, "p10_00": 0.55763, "p12_00": 0.55789, "p17_00": 0.56083, "p19_00": 0.56014, "p21_00": 0.55779,
-       "v57": 0.55765, "v58ext": 0.55963, "v61": 0.56312, "mix0.7|v61+p19_00": 0.56299}
+       "v57": 0.55765, "v63f": 0.55712, "v58ext": 0.55963, "v61": 0.56312, "mix0.7|v61+p19_00": 0.56299, "mix0.7|v61+p17_00": 0.56253}
 obs = {k: v - 0.55860 for k, v in obs.items()}
 # the current queue head, for comparison
 queue = [l.strip() for l in open("scheduled_unified.sh") if l.strip().startswith("variants/p22_")][:int(os.environ.get("NQ", "12"))]

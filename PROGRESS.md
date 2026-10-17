@@ -15,6 +15,10 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
   campuran 70% v61 + 30% file kita paling unggul (peluang di atas 0.565 sekitar 10% per file, antrean p22 maks 5.6%).
   Antrean sekarang: 17 Okt 07:01 `v61_00_mix0.7_v61_p19_00`, 12:01 `v61_01_mix0.85_v61_qc00`, 18:01 `v61_02_mix0.5_v61_p19_00`, 18 Okt 07:01 `v61_03_mix0.5_v61_p17_00`,
   lalu p22. Peluang minimal satu dari empat di atas 0.565: sekitar 25%.
+- 17 Okt 15:50: v61_00 dapat 0.56299, v61_04 (70% v61 + p17_00) 0.56253, v63f Agas (manual 11:35, kuota hari ini habis) 0.55712. Ketiganya masuk ke `v61_plan.py`.
+  Peluang per file turun ke maks 5% (mix0.5 v61+p19_00). Antrean mulai 18 Okt 07:01 (slot 18:01 hari ini gagal karena kuota, file disimpan):
+  `v61_02_mix0.5_v61_p19_00`, `v61_01_mix0.85_v61_qc00`, `v61_06_mix0.85_v61_p19_00`, `v61_07_mix0.85_v61_v4full`, `v61_08_ext0.25_v61_p21_00`, lalu v61_05, v61_03, p22.
+  Peluang minimal satu dari empat pertama di atas 0.565: sekitar 16 sampai 19%.
 
 ## Status terakhir (14 Okt 01:15 WIB)
 
