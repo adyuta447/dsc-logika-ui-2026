@@ -7,6 +7,7 @@ files=(
   variants/v61_14_mix0.7_v61_av64cat.csv
   variants/v61_12_mix0.5_v61_qc00.csv
   variants/v61_06_mix0.85_v61_p19_00.csv
+  variants/team_stack.csv
   variants/p22_07_ext1.0_plus_prof_lgb_extra_lgb_extra.csv
   variants/p22_08_ext1.0_full_lgb_extra_facfull_lgb_extra.csv
   variants/v61_02_mix0.5_v61_p19_00.csv

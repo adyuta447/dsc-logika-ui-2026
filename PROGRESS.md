@@ -30,6 +30,9 @@ Nilai akhir = 45% public + 45% private + 10% reproducibility notebook. Maks 3 su
 - 18 Okt 11:55: v61_11 dapat 0.56086 (perkiraan 0.5615). Dua submit manual lain pagi ini (07:20 `submission_ready.csv` 0.48980, 07:48 `submission_v2.csv` 0.44707)
   menghabiskan kuota, jadi slot 12:01 dan 18:01 gagal. Antrean mulai 19 Okt 07:01: `v61_03_mix0.5_v61_p17_00` (4.5%), `v61_14_mix0.7_v61_av64cat` (4.2%),
   `v61_12_mix0.5_v61_qc00` (4.5%), `v61_06_mix0.85_v61_p19_00`, `p22_07`, `p22_08`, `v61_02`, lalu sisanya.
+- 18 Okt 22:10: seed ke-4 v4 (`run_v4_s21`, selesai 14 Okt) tidak menambah: AUC 0.84772 vs 0.84774, test spearman 0.999998, jadi training seed baru (sekitar 7 jam per seed) tidak dijalankan.
+  `experiments/team_stack.py` menulis `variants/team_stack.csv` (LR di atas 64 komponen kita + Agas, AUC CV 0.84806), kandidat final untuk private.
+  Masuk antrean slot ke-5 (20 Okt 12:01) supaya sudah pernah disubmit dan bisa dipilih sebagai final.
 
 ## Status terakhir (14 Okt 01:15 WIB)
 
