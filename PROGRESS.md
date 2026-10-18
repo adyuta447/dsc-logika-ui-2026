@@ -160,3 +160,4 @@ lalu jalankan notebook.
 - 2026-10-16 12:02 p21_00_ext1.5_full_lgb_shallow_facfull_lgb_shallow: public 0.55779, rank 25
 - 2026-10-17 07:02 v61_00_mix0.7_v61_p19_00: public 0.56299, rank 26
 - 2026-10-17 12:36 v61_04_mix0.7_v61_p17_00: public 0.56253, rank 26
+- 2026-10-18 07:02 v61_11_mix0.7_v61_av64linear: public 0.56086, rank 31
