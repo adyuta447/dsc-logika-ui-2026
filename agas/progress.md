@@ -1051,3 +1051,149 @@ Nilai maksimum dengan asumsi independensi juga sebelumnya dicetak sebagai fakta,
 Tujuh file submission tervalidasi, 30000 baris, `application_id` unik dan cocok dengan `data/test_applications.csv`, probabilitas di rentang [0, 1] tanpa NaN. Seluruh script diverifikasi ulang: 32 fine, 0 broken.
 
 Belum ada submission Kaggle dan belum ada push GitHub. Public score v63 `0.557` dicatat di dokumentasi sebagai hasil, bukan diperbaiki.
+
+## 2026-10-18 — v65: membidik selisih yang tidak bisa ditutup feature engineering
+
+### 1. Pemicu dan koreksi atas kesimpulan sebelumnya
+
+User menambahkan `agas/overview.md` dan `agas/rules.md`, dan melaporkan posisi leaderboard:
+
+- Public score tertinggi saat ini **0.57768**, disusul 0.5753, lalu 0.5717.
+- Skor kita **0.56312**, peringkat 29.
+
+Ini mengoreksi satu kesimpulan yang sebelumnya saya tulis sendiri di v64. Di sana saya menulis bahwa 0.57 mungkin tidak terjangkau, berdasarkan argumen bahwa selisih OOF di bawah 0.002 tidak bisa dibedakan dari noise. Argumen itu benar untuk **mengukur** gain, tapi salah untuk **menilai posisi relatif**, karena ia memperlakukan skor public kita sendiri sebagai satu undian noise dan menyimpulkan batasnya. Leaderboard menunjukkan 0.577 ada. Jadi selisih 0.57768 − 0.56312 = **0.0146** adalah jarak antara dua model, dan jarak itu nyata.
+
+Angka noise yang diukur di v64 tetap berlaku sebagai alat ukur: sebaran sampling KS di 30000 baris public sekitar **0.0053**. Jadi 0.0146 itu **2.75 sebaran**. Model di puncak leaderboard benar-benar lebih baik, dan gap-nya bukan noise. Kesimpulan v65: berhenti mengejar 0.002 KS OOF dan cari kualitas model yang lebih besar.
+
+### 2. Audit apa yang belum pernah dicoba
+
+`features.py` menyumbang 311 kolom, sebelas blok tambahan menyumbang sekitar 240, jadi 554 kandidat kolom sudah ada. Empat ide yang belum diuji:
+
+1. **Kedalaman cakupan dan missingness.** Blok yang ada menghitung jumlah baris per tabel, jadi menangkap **ada atau tidak**, tapi tidak seberapa tidak lengkap. Di data biro, "tidak ada file biro" dan "file biro ada tapi skornya kosong" adalah dua sinyal berbeda.
+2. **Arah bureaus, bukan hanya levelnya.** Blok bureau punya mean, maks, dan dua kolom tren, semuanya untuk score saja. Utilisasi, inquiry, dan delinquency yang **naik** tidak pernah dienkode.
+3. **Beban cicilan terhadap arus kas terukur.** `features.py` punya debt-to-income atas income yang dideklarasikan. Income yang dideklarasikan tidak bisa diverifikasi; arus kas dan cicilan aktif bisa.
+4. **Self-training pada test.** Langkah transduktif standar, dan legal karena hanya memakai data yang diberikan panitia.
+
+### 3. Hasil pengujian blok fitur
+
+Tiap blok diuji dengan tiga fold seed, karena satu fold seed bergerak sekitar 0.0006 AUC dari seed saja, ukuran yang sama dengan efek yang seharusnya diceap blok mana pun. Pipeline `lr 0.01`, `lambda_l2 5`, 5 fold, LightGBM, seleksi top-200.
+
+| Konfigurasi | Kolom | AUC | KS |
+|---|---|---|---|
+| referensi, 554 + 3 blok baru | 625 | 0.845857 ±0.000216 | 0.526100 ±0.000110 |
+| buang `dq_` | 602 | 0.845830 ±0.000221 | 0.525910 ±0.000304 |
+| buang `bd_` | 604 | **0.846120** ±0.000089 | **0.527299** ±0.000632 |
+| buang `af_` | 604 | 0.845914 ±0.000155 | 0.526540 ±0.001433 |
+
+**`burdirection` ditolak.** Membuangnya menaikkan AUC 0.000263 dan KS 0.001199. Alasan yang paling mungkin: blok itu menambahkan 22 kandidat ke probe gain, dan probe gain itu memilih 200 kolom. Kandidat lemah itu tidak pernah terpilih, tapi tetap estatuto kandidat dancrowded lewat kolom yang sebelumnya terpilih.
+
+**`dataquality` diterima**, kontribusinya kecil: +0.000027 AUC dan +0.000190 KS, dengan sebaran antar seed turun dari 0.000304 ke 0.000110.
+
+**`stress` diterima**, nyaris netral: −0.000057 AUC, +0.000440 KS.
+
+### 4. Level seleksi fitur diukur ulang
+
+v63 menemukan 200 kolom sebagai puncak, tapi itu diukur di `lr 0.02 / lambda_l2 20`. Di `lr 0.01 / lambda_l2 5` dengan 604 kandidat jawabannya berbeda, dan yang lebih penting adalah sebaran antar seed, bukan cuma mean.
+
+| Level | AUC | KS | sd KS antar seed |
+|---|---|---|---|
+| tanpa seleksi | **0.846330** ±0.000169 | 0.525506 | 0.001454 |
+| **top 250** | 0.846122 ±0.000129 | **0.526768** | **0.000342** |
+| top 400 | 0.846305 ±0.000188 | 0.525219 | 0.000217 |
+
+Dua ratus lima puluh dipilih: mean KS paling tinggi dan sebaran paling kecil. Tanpa seleksi AUC-nya sedikit lebih tinggi, tapi sebaran KS-nya empat kali lebih lebar, dan justru selection noise itulah yang seharusnya dihilangkan oleh seleksi.
+
+### 5. Self-training diuji lalu ditolak
+
+Pseudo-labeling diukur tanpa menipu diri sendiri. Label semu diambil **hanya dari test**, dan skor dihitung pada validation fold yang tidak pernah masuk training di kedua tahap: fold-train → model A → label semu test → fold-train + test semu → model B → skor fold-val.
+
+| Setelan | AUC sebelum | AUC sesudah | KS sebelum | KS sesudah |
+|---|---|---|---|---|
+| frac 0.20, bobot 0.5 | 0.846005 | 0.845477 | 0.526527 | 0.524218 |
+| frac 0.10, bobot 0.2 | 0.846005 | 0.846012 | 0.526527 | 0.526834 |
+
+Setelan kasar jelas merusak. Setelan halus terlihat positif secara mean, tapi delta KS **per seed** adalah `+0.001346`, `-0.001870`, `+0.001448`. Mean positifnya datang dari dua seed yang menutupi satu seed yang lebih besar. Itu pembatalan, bukan peningkatan.
+
+Penyebabnya baru terlihat setelah dicek: **train dan test berinterleave pada rentang tanggal yang sama.** Keduanya 2025-01-01 sampai 2025-12-28, 100000 nasabah berbeda, dan tidak ada nasabah yang tumpang tindih. Keuntungan self-training datang dari pergeseran distribusi antara data berlabel dan data tanpa label, dan di sini tidak ada yang perlu digeser.
+
+Implikasinya untuk run berikutnya: feature yang tersisa adalah feature yang benar-benar baru, dan eksperimen ini menunjukkan tabel ini sudah mengaburkan sebagian besar informasi yang tersedia.: yang benar-benar baru, dan eksperimen ini menunjukkan tabel ini sudah mengaburkan sebagian besar informasi yang tersedia.
+
+### 6. Run utama v65
+
+```bash
+python3 agas/v65/training/train_submission_v65.py --folds 10 --fold-seeds 42,7,13,21,5,101 --top-n 250 --out-prefix v65
+```
+
+Durasi **86.4 menit**, 10 fold, enam fold seed, 598 kandidat kolom, empat kaki model. Jauh lebih murah dari v64 yang 340.7 menit untuk delapan kaki, karena kaki dikurangi dan tidak ada leg useless.
+
+OOF kaki dasar, dirata-ratakan enam fold seed:
+
+| Kaki | AUC | KS | AUC per seed |
+|---|---|---|---|
+| `xgb` | **0.847474** | 0.526091 | 0.846844, 0.846717, 0.846294, 0.846647, 0.847144, 0.846927 |
+| `sel` | 0.847395 | **0.528338** | 0.846735, 0.847073, 0.846426, 0.846478, 0.846874, 0.846704 |
+| `lean` | 0.847303 | 0.524940 | 0.846533, 0.846922, 0.846690, 0.846563, 0.846986, 0.846743 |
+| `cat` | 0.846855 | 0.525920 | 0.846001, 0.846275, 0.846247, 0.845669, 0.846230, 0.846253 |
+
+Blend:
+
+| Blend | AUC | KS |
+|---|---|---|
+| `consensus_ranks` (rata rank 4 kaki) | **0.847708** | 0.527359 |
+| `mix_all4` | 0.847682 | 0.527676 |
+| `mix_trees` | 0.847667 | 0.527684 |
+| `mix_sel_cat` | 0.847640 | 0.527651 |
+| `mix_sel_xgb` | 0.847497 | 0.527373 |
+
+AUC 0.847708 adalah yang tertinggi sepanjang proyek. Bandingkan kaki terbaik v64 0.846749: **+0.00096**.
+
+### 7. Dua arah sumbu ekstrapolasi
+
+Dua dari tiga public score di atas 0.559 datang dari satu mekanisme: mendorong model berfitur lebih kaya menjauh dari model berfitur lebih sedikit. `qc_00` 0.56171 memakai arah `kaya - miskin`; v61 0.56312 memakai `terpilih - luas`. Keduanya arah yang sama hanya karena di titik operasi v61 lebih banyak fitur berarti lebih baik.
+
+Di titik operasi v65 gradiennya berbalik: kaki `sel` 250 kolom mengalahkan kaki `lean` 576 kolom. Jadi kedua arah dijalankan, tandanya tidak diasumsikan.
+
+| Arah | Rasio | AUC | KS |
+|---|---|---|---|
+| `sel - lean` | 0.25 | 0.847263 | **0.528592** |
+| `sel - lean` | 0.5 | 0.847071 | 0.528105 |
+| `sel - lean` | 0.75 | 0.846815 | 0.527612 |
+| `lean - sel` | 0.25 | 0.847127 | 0.525256 |
+| `lean - sel` | 0.5 | 0.846896 | 0.524605 |
+
+Arah v61 menang lagi. Dan hasil yang paling menarik di run ini: **KS OOF 0.528592 praktis menyamai KS OOF v61 sebesar 0.528624, sementara AUC-nya 0.847263 melawan 0.846699.** Ini kandidat pertama yang secara bersamaan cocok dengan v61 pada KS dan lebih baik pada AUC, dan v61 adalah file yang memberi 0.56312.
+
+### 8. Pool kandidat
+
+61 vektor setelah blend, 56 lolos lantai AUC, 8 lolos deduplikasi korelasi rank 0.998.
+
+| Slot | Nama | AUC | KS | KS dikurangi 1 sd | Spearman ke anchor |
+|---|---|---|---|---|---|
+| 1 | `v65\|consensus_ranks` | 0.847708 | 0.527359 | 0.522074 | 0.9918 |
+| 2 | `v62\|lgb_top` | 0.847419 | 0.525550 | 0.520265 | 0.9919 |
+| 3 | `v63\|sel200` | 0.846981 | 0.526330 | 0.521045 | 0.9904 |
+| 4 | `v65\|lean-sel_r0.5` | 0.846896 | 0.524605 | 0.519320 | 0.9900 |
+| 5 | `v65\|cat` | 0.846855 | 0.525920 | 0.520635 | 0.9879 |
+| 6 | `v65\|sel-lean_r0.75` | 0.846815 | 0.527612 | 0.522327 | 0.9882 |
+| 7 | `v64\|xgb_full` | 0.846749 | 0.525485 | 0.520200 | 0.9946 |
+| 8 | `v64\|cat_full` | 0.846193 | 0.525368 | 0.520083 | 0.9905 |
+
+Kolom KS dikurangi satu sampling sd sengaja ditampilkan: begitu dikurangi, urutannya tidak lagi sama dengan urutan KS mentah.
+
+Nilai maksimum harapan atas 8 submit diverse adalah **+0.0075 public (1.42 sd)**, hanya batas atas dengan asumsi undian independen. Kandidat terpilih saling berkorelasi 0.988 sampai 0.995, jadi gain sesungguhnya lebih kecil.
+
+### 9. Status
+
+Delapan file submission tervalidasi, 30000 baris, `application_id` unik dan cocok dengan `data/test_applications.csv`, probabilitas di [0, 1] tanpa NaN. Jumlah file di disk sama persis dengan jumlah entri di `summary_v65_candidates.json`. Seluruh script diverifikasi ulang: 37 fine, 0 broken. Notebook `agas/v65/notebook/notebook_v65.ipynb` dieksekusi penuh dengan `RUN_TRAINING = False`, 18 cell, nol error.
+
+### 10. Apa yang sebenarnya diketahui, dan apa yang tidak
+
+**Diketahui.** Model v65 lebih baik dari v64 pada AUC, +0.00096 pada kaki terbaik. Blend empat mencapai 0.847708, tertinggi sepanjang proyek. Kandidat sumbunya punya KS OOF yang praktis menyamai v61 dengan AUC yang lebih baik. Seleksi 250 kolom memberi sebaran antar seed paling kecil dari semua konfigurasi yang diuji.
+
+**Tidak diketahui.** Apakah itu masuk leaderboard. Yang diketahui: selisih public antara kita dan puncak leaderboard adalah 0.0146, atau 2.75 sebaran sampling, jadi gap-nya nyata dan model di puncak memang lebih baik. Yang belum ditemukan di sini: apa yang mereka pakai.
+
+**Kemungkinan besar sudah habis.** Eksperimen ini menunjukkan feature engineering manual di dataset ini mendekati batasnya. Dua blok baru menambah 0.00003 AUC. Sembilan blok yang sudah ada mengaburkan sebagian besar informasi yang tersedia. Kalau v65 tidak menutup gap, eksperimen berikutnya sebaiknya mengarahkan energi ke dua hal: lebih banyak fold seed pada model terkuat, dan mencari sumber informasi yang sama sekali belum dipakai.
+
+
+
+Rekomendasi jujur: perlakukan 0.57768 sebagai bukti bahwa gap bisa ditutup, bukan sebagai target yang bisa dikejar dengan satu run. Yang dilakukan run ini adalah menaikkan lantai model dan mengembalikan kandidat yang bisa menyamai v61 pada KS dengan AUC lebih baik. Catat public score aktual setiap file, karena itu satu-satunya ukuran yang benar, dan kirim kandidat yang saling berbeda.

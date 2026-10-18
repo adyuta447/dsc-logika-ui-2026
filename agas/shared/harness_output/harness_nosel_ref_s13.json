@@ -1,0 +1,26 @@
+{
+  "tag": "nosel_ref_s13",
+  "n_features": 625,
+  "top_n": 0,
+  "auc": 0.8462727830949136,
+  "ks": 0.52506366767944,
+  "params": {
+    "folds": 5,
+    "fold_seed": 13,
+    "lr": 0.01,
+    "tag": "nosel_ref_s13",
+    "seeds": "0,1",
+    "no_factor": false,
+    "drop": "",
+    "oof_out": "",
+    "ff": 0.3,
+    "leaves": 15,
+    "mcs": 200,
+    "l2": 5.0,
+    "bag": 0.8,
+    "maxbin": 127,
+    "factor": 1,
+    "top_n": 0
+  },
+  "minutes": 5.5130884647369385
+}

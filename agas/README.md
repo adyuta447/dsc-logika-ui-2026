@@ -684,3 +684,114 @@ Nilai maksimum harapan atas 7 submit diverse adalah **+0.0072 public (1.35 sd)**
 ### Status
 
 Tujuh file submission tervalidasi: 30000 baris, `application_id` unik dan cocok dengan `data/test_applications.csv`, probabilitas di rentang [0, 1] tanpa NaN. Seluruh script diverifikasi ulang, 32 fine, 0 broken. Notebook `notebook/notebook_v64.ipynb` ada dengan `RUN_TRAINING = False`. Belum ada submission Kaggle dan belum ada push GitHub.
+
+---
+
+## 14) v65: membidik selisih yang tidak bisa ditutup feature engineering
+
+### Pemicu, dan koreksi atas kesimpulan v64
+
+Leaderboard dibaca user: puncak **0.57768**, lalu 0.5753, lalu 0.5717. Kita di **0.56312**, peringkat 29.
+
+Ini mengoreksi kesimpulan v64. Di sana saya menulis bahwa 0.57 mungkin tidak terjangkau, karena selisih OOF di bawah 0.002 tidak bisa dibedakan dari noise. Argumen itu benar untuk mengukur gain, tapi salah untuk menilai posisi relatif, karena ia memperlakukan skor public kita sendiri sebagai satu undian noise lalu menyimpulkan batasnya. Leaderboard menunjukkan 0.577 ada.
+
+Selisih 0.57768 − 0.56312 = **0.0146**. Sebaran sampling KS di 30000 baris public, yang diukur di v64, adalah **0.0053**. Jadi gap itu **2.75 sebaran**: model di puncak benar-benar lebih baik. Run ini berhenti mengejar 0.002 KS OOF dan mengarahkan energi ke kualitas model yang lebih besar.
+
+### Blok fitur baru, dua diterima satu ditolak
+
+Tiap blok diuji dengan tiga fold seed, karena satu fold seed bergerak sekitar 0.0006 AUC, ukuran yang sama dengan efek yang seharusnya diceap blok mana pun.
+
+| Blok | Isi | Hasil |
+|---|---|---|
+| `dataquality` (`dq_`) | kedalaman cakupan, fraksi missingness per tabel, pola cakupan bersama | **diterima**, +0.000027 AUC, +0.000190 KS, sebaran antar seed turun 0.000304 ke 0.000110 |
+| `stress` (`af_`) | beban cicilan terhadap arus kas terukur dan cicilan aktif, bukan income dideklarasikan | **diterima**, nyaris netral |
+| `burdirection` (`bd_`) | arah bureaus, utilisasi, inquiry, delinquency; volatilitas momentum | **ditolak**, membuangnya menaikkan AUC 0.000263 dan KS 0.001199 |
+
+`burdirection` ditolak karena menambah 22 kandidat lemah ke probe gain yang hanya memilih 200 kolom. Kandidat lemah tidak pernah terpilih, tapi tetap menyingkirkan kolom yang sebelumnya terpilih.
+
+### Level seleksi diukur ulang
+
+v63 menemukan 200 kolom sebagai puncak, diukur di `lr 0.02 / lambda_l2 20`. Di `lr 0.01 / lambda_l2 5` jawabannya berbeda, dan yang lebih penting adalah sebaran antar seed.
+
+| Level | AUC | KS | sd KS antar seed |
+|---|---|---|---|
+| tanpa seleksi | 0.846330 | 0.525506 | 0.001454 |
+| **top 250** | 0.846122 | **0.526768** | **0.000342** |
+| top 400 | 0.846305 | 0.525219 | 0.000217 |
+
+### Self-training ditolak, dan alasannya
+
+Pseudo-labeling diukur tanpa menipu diri sendiri: label semu hanya dari test, skor dihitung pada validation fold yang tidak pernah masuk training di kedua tahap.
+
+| Setelan | AUC sebelum | sesudah | KS sebelum | sesudah |
+|---|---|---|---|---|
+| frac 0.20, bobot 0.5 | 0.846005 | 0.845477 | 0.526527 | 0.524218 |
+| frac 0.10, bobot 0.2 | 0.846005 | 0.846012 | 0.526527 | 0.526834 |
+
+Setelan halus terlihat positif secara mean, tapi delta KS **per seed** adalah `+0.001346`, `-0.001870`, `+0.001448`. Mean positifnya datang dari dua seed yang menutupi satu seed yang lebih besar.
+
+Penyebabnya terlihat setelah dicek: **train dan test berinterleave pada rentang tanggal yang sama**, keduanya 2025-01-01 sampai 2025-12-28, 100000 nasabah berbeda, tanpa tumpang tindih. Keuntungan self-training datang dari pergeseran distribusi, dan di sini tidak ada yang perlu digeser.
+
+### Cara menjalankan
+
+```bash
+# bangun blok fitur baru (harus memuat semua blok, cache ditimpa)
+python3 agas/shared/build_extra.py bureau,repayment,previous,account,ecommerce,interactions,gradenorm,rxtra,bxtra,axtra,ecommerce2,consistency,dataquality,stress
+
+# pengukuran cepat per blok, tiga fold seed
+python3 agas/v65/training/cv3.py s250 folds=5 lr=0.01 l2=5 seeds=0,1 top_n=250
+python3 agas/v65/training/cv3.py s0   folds=5 lr=0.01 l2=5 seeds=0,1
+
+# uji self-training
+python3 agas/v65/training/study_pseudo_v65.py 0.10 0.2
+
+# run utama, 86 menit
+python3 agas/v65/training/train_submission_v65.py --folds 10 --fold-seeds 42,7,13,21,5,101 --top-n 250 --out-prefix v65
+
+# kandidat
+python3 agas/v65/make_submission_v65.py
+```
+
+### Hasil run utama
+
+10 fold, enam fold seed, 598 kandidat kolom, empat kaki, 86.4 menit.
+
+| Kaki | AUC | KS |
+|---|---|---|
+| `xgb` | **0.847474** | 0.526091 |
+| `sel` (250 kolom) | 0.847395 | **0.528338** |
+| `lean` (semua kolom) | 0.847303 | 0.524940 |
+| `cat` | 0.846855 | 0.525920 |
+| `consensus_ranks` | **0.847708** | 0.527359 |
+| `mix_all4` | 0.847682 | 0.527676 |
+
+AUC 0.847708 adalah yang tertinggi sepanjang proyek, +0.00096 di atas kaki terbaik v64.
+
+### Dua arah sumbu ekstrapolasi, bukan satu
+
+`qc_00` 0.56171 memakai arah `kaya - miskin`; v61 0.56312 memakai `terpilih - luas`. Keduanya arah yang sama hanya karena di titik operasi v61 lebih banyak fitur berarti lebih baik. Di v65 gradiennya berbalik, kaki 250 kolom mengalahkan kaki 576 kolom, jadi kedua arah dijalankan dan tandanya tidak diasumsikan.
+
+| Arah | Rasio | AUC | KS |
+|---|---|---|---|
+| `sel - lean` | 0.25 | 0.847263 | **0.528592** |
+| `sel - lean` | 0.5 | 0.847071 | 0.528105 |
+| `lean - sel` | 0.25 | 0.847127 | 0.525256 |
+
+Arah v61 menang lagi. Hasil paling menarik: **KS OOF 0.528592 praktis menyamai KS OOF v61 0.528624, dengan AUC 0.847263 melawan 0.846699.** Kandidat pertama yang cocok dengan v61 pada KS sekaligus lebih baik pada AUC, dan v61 adalah file yang memberi 0.56312.
+
+### Kandidat final
+
+| Slot | Nama | AUC | KS dikurangi 1 sd | Spearman ke anchor |
+|---|---|---|---|---|
+| 1 | `v65\|consensus_ranks` | 0.847708 | 0.522074 | 0.9918 |
+| 2 | `v62\|lgb_top` | 0.847419 | 0.520265 | 0.9919 |
+| 3 | `v63\|sel200` | 0.846981 | 0.521045 | 0.9904 |
+| 4 | `v65\|lean-sel_r0.5` | 0.846896 | 0.519320 | 0.9900 |
+| 5 | `v65\|cat` | 0.846855 | 0.520635 | 0.9879 |
+| 6 | `v65\|sel-lean_r0.75` | 0.846815 | 0.522327 | 0.9882 |
+| 7 | `v64\|xgb_full` | 0.846749 | 0.520200 | 0.9946 |
+| 8 | `v64\|cat_full` | 0.846193 | 0.520083 | 0.9905 |
+
+### Status
+
+Delapan file tervalidasi, 37 script fine, notebook 18 cell tanpa error. Belum ada submission Kaggle dan belum ada push GitHub. Public score file mana pun di run ini belum diketahui, dan itulah satu-satunya ukuran yang benar.

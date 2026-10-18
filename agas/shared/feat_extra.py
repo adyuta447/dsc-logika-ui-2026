@@ -6,6 +6,8 @@ leaks. Nothing here modifies `features.py`.
 """
 
 import sys
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
@@ -572,6 +574,35 @@ def block_consistency(app):
     out["cx_recent_app_pressure"] = pa_recent.groupby("customer_id").size()
     out["cx_bureau_known_but_no_apps"] = (bu_score_min.notna()).astype(float) - (pa_n_approved > 0).astype(float)
     return out.reset_index().rename(columns={"index": "customer_id"})
+
+
+def _load_v65_blocks():
+    """Register the v65 blocks from agas/v65/training/feat_v65.py.
+
+    They live in the version folder rather than in this shared module because
+    they were written for one run and have not earned a place in the shared
+    vocabulary yet. Registering them here keeps `build_extra.py` and the CV
+    harness working without either knowing where the code sits.
+    """
+    import importlib.util as _il
+    here = Path(__file__).resolve().parent
+    for p in here.parents:
+        cand = p / "v65" / "training" / "feat_v65.py"
+        if cand.exists():
+            spec = _il.spec_from_file_location("feat_v65", cand)
+            mod = _il.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            return mod
+    return None
+
+
+_v65 = _load_v65_blocks()
+if _v65 is not None:
+    BLOCKS.update({
+        "dataquality": _v65.block_dataquality,
+        "burdirection": _v65.block_burdirection,
+        "stress": _v65.block_stress,
+    })
 
 
 BLOCKS.update({

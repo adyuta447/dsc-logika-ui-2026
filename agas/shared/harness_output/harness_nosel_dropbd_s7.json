@@ -1,0 +1,26 @@
+{
+  "tag": "nosel_dropbd_s7",
+  "n_features": 604,
+  "top_n": 0,
+  "auc": 0.8465615189547585,
+  "ks": 0.5264093217332718,
+  "params": {
+    "folds": 5,
+    "fold_seed": 7,
+    "lr": 0.01,
+    "tag": "nosel_dropbd_s7",
+    "seeds": "0,1",
+    "no_factor": false,
+    "drop": "bd_",
+    "oof_out": "",
+    "ff": 0.3,
+    "leaves": 15,
+    "mcs": 200,
+    "l2": 5.0,
+    "bag": 0.8,
+    "maxbin": 127,
+    "factor": 1,
+    "top_n": 0
+  },
+  "minutes": 3.9339084307352703
+}

@@ -1,0 +1,26 @@
+{
+  "tag": "dropdq_s7",
+  "n_features": 602,
+  "top_n": 200,
+  "auc": 0.8460816882041129,
+  "ks": 0.5257434421097791,
+  "params": {
+    "folds": 5,
+    "fold_seed": 7,
+    "lr": 0.01,
+    "tag": "dropdq_s7",
+    "seeds": "0,1",
+    "no_factor": false,
+    "drop": "dq_",
+    "oof_out": "",
+    "ff": 0.3,
+    "leaves": 15,
+    "mcs": 200,
+    "l2": 5.0,
+    "bag": 0.8,
+    "maxbin": 127,
+    "factor": 1,
+    "top_n": 200
+  },
+  "minutes": 2.9056628346443176
+}

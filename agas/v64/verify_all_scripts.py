@@ -6,6 +6,7 @@ import shows up as a failure rather than as a surprise four hours into a run.
 """
 
 import ast
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -31,9 +32,16 @@ for f in SCRIPTS:
         bad.append((f, f"syntax: {e}"))
         continue
 
+    env = dict(os.environ)
+    # Scripts without argparse ignore --help and start real work. The 90 second
+    # timeout catches most of them, but a full CV study can finish inside it and
+    # then overwrite its own output, so the study scripts opt out by name.
+    if any(k in f for k in ("study_", "train_submission_v65", "train_submission_v64",
+                            "final_v63", "make_submission")):
+        env["V65_NO_STUDY"] = "1"
     try:
         r = subprocess.run([sys.executable, f, *ARGPARSE], cwd=ROOT,
-                           capture_output=True, text=True, timeout=90)
+                           capture_output=True, text=True, timeout=90, env=env)
         err = (r.stderr or "").strip()
     except subprocess.TimeoutExpired as e:
         # a script without argparse ignores --help and starts real work, which is

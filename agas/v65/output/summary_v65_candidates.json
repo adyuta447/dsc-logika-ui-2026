@@ -1,0 +1,85 @@
+{
+  "sigma_public": 0.005285123316645254,
+  "dedupe_threshold": 0.998,
+  "auc_floor_gap": 0.0025,
+  "best_auc": 0.8477084404079824,
+  "pool_size": 61,
+  "eligible": 56,
+  "kept": 8,
+  "candidates": [
+    {
+      "slot": 1,
+      "name": "v65|consensus_ranks",
+      "auc": 0.847708,
+      "ks": 0.527359,
+      "spearman_anchor": 0.991776,
+      "file": "submission_v65_01_v65_consensus_ranks.csv",
+      "valid": true
+    },
+    {
+      "slot": 2,
+      "name": "v62|lgb_top",
+      "auc": 0.847419,
+      "ks": 0.52555,
+      "spearman_anchor": 0.991892,
+      "file": "submission_v65_02_v62_lgb_top.csv",
+      "valid": true
+    },
+    {
+      "slot": 3,
+      "name": "v63|sel200",
+      "auc": 0.846981,
+      "ks": 0.52633,
+      "spearman_anchor": 0.990422,
+      "file": "submission_v65_03_v63_sel200.csv",
+      "valid": true
+    },
+    {
+      "slot": 4,
+      "name": "v65|lean-sel_r0.5",
+      "auc": 0.846896,
+      "ks": 0.524605,
+      "spearman_anchor": 0.989963,
+      "file": "submission_v65_04_v65_lean-sel_r05.csv",
+      "valid": true
+    },
+    {
+      "slot": 5,
+      "name": "v65|cat",
+      "auc": 0.846855,
+      "ks": 0.52592,
+      "spearman_anchor": 0.987895,
+      "file": "submission_v65_05_v65_cat.csv",
+      "valid": true
+    },
+    {
+      "slot": 6,
+      "name": "v65|sel-lean_r0.75",
+      "auc": 0.846815,
+      "ks": 0.527612,
+      "spearman_anchor": 0.988174,
+      "file": "submission_v65_06_v65_sel-lean_r075.csv",
+      "valid": true
+    },
+    {
+      "slot": 7,
+      "name": "v64|xgb_full",
+      "auc": 0.846749,
+      "ks": 0.525485,
+      "spearman_anchor": 0.994649,
+      "file": "submission_v65_07_v64_xgb_full.csv",
+      "valid": true
+    },
+    {
+      "slot": 8,
+      "name": "v64|cat_full",
+      "auc": 0.846193,
+      "ks": 0.525368,
+      "spearman_anchor": 0.990477,
+      "file": "submission_v65_08_v64_cat_full.csv",
+      "valid": true
+    }
+  ],
+  "expected_max_over_3_public_upper_bound": 0.004486835333923004,
+  "expected_max_over_8_public_upper_bound": 0.007528946019659584
+}

@@ -1,0 +1,26 @@
+{
+  "tag": "s400_s42",
+  "n_features": 604,
+  "top_n": 400,
+  "auc": 0.8460598661760914,
+  "ks": 0.5255154914655171,
+  "params": {
+    "folds": 5,
+    "fold_seed": 42,
+    "lr": 0.01,
+    "tag": "s400_s42",
+    "seeds": "0,1",
+    "no_factor": false,
+    "drop": "",
+    "oof_out": "",
+    "ff": 0.3,
+    "leaves": 15,
+    "mcs": 200,
+    "l2": 5.0,
+    "bag": 0.8,
+    "maxbin": 127,
+    "factor": 1,
+    "top_n": 400
+  },
+  "minutes": 3.4375134984652203
+}

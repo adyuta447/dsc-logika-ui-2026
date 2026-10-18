@@ -1,0 +1,51 @@
+03:09:07 features: 598 candidates, train 70000, test 30000
+03:23:16 seed 42 sel   auc=0.846735 ks=0.527846
+03:23:17 seed 42 lean  auc=0.846533 ks=0.526185
+03:23:17 seed 42 xgb   auc=0.846844 ks=0.527894
+03:23:17 seed 42 cat   auc=0.846001 ks=0.525786
+03:23:17 saved after 1/6 fold seeds, elapsed 14.2 min
+03:38:04 seed 7 sel   auc=0.847073 ks=0.527604
+03:38:04 seed 7 lean  auc=0.846922 ks=0.526354
+03:38:05 seed 7 xgb   auc=0.846717 ks=0.526620
+03:38:05 seed 7 cat   auc=0.846275 ks=0.524786
+03:38:05 saved after 2/6 fold seeds, elapsed 29.0 min
+03:52:01 seed 13 sel   auc=0.846426 ks=0.526618
+03:52:01 seed 13 lean  auc=0.846690 ks=0.525736
+03:52:01 seed 13 xgb   auc=0.846294 ks=0.524743
+03:52:01 seed 13 cat   auc=0.846247 ks=0.527629
+03:52:02 saved after 3/6 fold seeds, elapsed 42.9 min
+04:06:58 seed 21 sel   auc=0.846478 ks=0.524313
+04:06:58 seed 21 lean  auc=0.846563 ks=0.524484
+04:06:58 seed 21 xgb   auc=0.846647 ks=0.525551
+04:06:58 seed 21 cat   auc=0.845669 ks=0.524307
+04:06:58 saved after 4/6 fold seeds, elapsed 57.9 min
+04:21:28 seed 5 sel   auc=0.846874 ks=0.528095
+04:21:28 seed 5 lean  auc=0.846986 ks=0.524966
+04:21:28 seed 5 xgb   auc=0.847144 ks=0.527070
+04:21:28 seed 5 cat   auc=0.846230 ks=0.524062
+04:21:29 saved after 5/6 fold seeds, elapsed 72.4 min
+04:35:28 seed 101 sel   auc=0.846704 ks=0.526155
+04:35:28 seed 101 lean  auc=0.846743 ks=0.524080
+04:35:28 seed 101 xgb   auc=0.846927 ks=0.525892
+04:35:28 seed 101 cat   auc=0.846253 ks=0.525361
+04:35:29 saved after 6/6 fold seeds, elapsed 86.4 min
+04:35:29 axis sel_minus_lean r=0.25 auc=0.847263 ks=0.528592
+04:35:29 axis sel_minus_lean r=0.5  auc=0.847071 ks=0.528105
+04:35:29 axis sel_minus_lean r=0.75 auc=0.846815 ks=0.527612
+04:35:29 axis sel_minus_lean r=1.0  auc=0.846497 ks=0.527336
+04:35:29 axis sel_minus_lean r=1.5  auc=0.845661 ks=0.526211
+04:35:29 axis lean_minus_sel r=0.25 auc=0.847127 ks=0.525256
+04:35:29 axis lean_minus_sel r=0.5  auc=0.846896 ks=0.524605
+04:35:29 axis lean_minus_sel r=0.75 auc=0.846595 ks=0.524059
+04:35:29 axis lean_minus_sel r=1.0  auc=0.846235 ks=0.522985
+04:35:29 axis lean_minus_sel r=1.5  auc=0.845332 ks=0.521452
+04:35:29 mix_trees                auc=0.847667 ks=0.527684
+04:35:29 mix_all4                 auc=0.847682 ks=0.527676
+04:35:29 mix_sel_xgb              auc=0.847497 ks=0.527373
+04:35:29 mix_sel_cat              auc=0.847640 ks=0.527651
+04:35:29 consensus_ranks          auc=0.847708 ks=0.527359
+04:35:29 BAG sel                    auc=0.847395 ks=0.528338 per-seed auc=[0.846735, 0.847073, 0.846426, 0.846478, 0.846874, 0.846704]
+04:35:29 BAG lean                   auc=0.847303 ks=0.524940 per-seed auc=[0.846533, 0.846922, 0.84669, 0.846563, 0.846986, 0.846743]
+04:35:29 BAG xgb                    auc=0.847474 ks=0.526091 per-seed auc=[0.846844, 0.846717, 0.846294, 0.846647, 0.847144, 0.846927]
+04:35:29 BAG cat                    auc=0.846855 ks=0.525920 per-seed auc=[0.846001, 0.846275, 0.846247, 0.845669, 0.84623, 0.846253]
+04:35:30 done in 86.4 min
