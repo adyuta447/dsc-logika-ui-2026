@@ -1197,3 +1197,124 @@ Delapan file submission tervalidasi, 30000 baris, `application_id` unik dan coco
 
 
 Rekomendasi jujur: perlakukan 0.57768 sebagai bukti bahwa gap bisa ditutup, bukan sebagai target yang bisa dikejar dengan satu run. Yang dilakukan run ini adalah menaikkan lantai model dan mengembalikan kandidat yang bisa menyamai v61 pada KS dengan AUC lebih baik. Catat public score aktual setiap file, karena itu satu-satunya ukuran yang benar, dan kirim kandidat yang saling berbeda.
+
+## 2026-10-19 — v66: resep v61, dilatih lebih berat
+
+### 1. Pemicu
+
+User melaporkan kandidat v65 hanya mendapat public **0.559**, turun dari **0.56312** milik v61. Permintaan: pakai model yang sama dengan v61, tapi lebih kuat dan lebih baik dilatih.
+
+### 2. Diagnosis: v65 menyimpang dari arsitektur v61
+
+Membandingkan kedua run, selisihnya bukan hyper-parameter. Ada tiga perubahan struktural di v65, dan ketiganya menjauh dari satu-satunya mekanisme yang pernah menghasilkan public tinggi.
+
+**1. v61 tidak memakai feature selection sama sekali.** Setiap kaki dilatih pada himpunan kolom yang didefinisikan tangan: `full`, `lean` (buang 12 kolom noise eksak dan prefix `ec_share_`, `ec_catqty_`, `cs_shift`, `buh_`, `gn_`), dan `fac` (buang prefix putaran dua `r2_`, `b2_`, `a2_`, `e2_`). v62 memperkenalkan seleksi gain per fold, dan v62–v65 semuanya memakainya.
+
+**2. v65 tidak pernah membangun rantai blend v61.** Pemenang v61 adalah:
+
+```text
+trees4 = mean(rank(lgb_full), rank(lgb_lean), rank(cat_full), rank(xgb_full))
+core   = (2 * trees4 + rank(lgbx_full)) / 3
+tm30   = 0.7 * core + 0.3 * rank(linear)
+alt    = rank01(tm30 + 0.5 * (tm30 - rank(lgb_lean)))
+```
+
+v65 tidak pernah membangun `tm30`. Dia mengekstrapolasi kaki terpilih (250 kolom) menjauhi kaki tidak terpilih (576 kolom), lalu merata-ratakan. Itu objek berbeda, dan arah gambarnya juga berbeda: di v65 kaki 250 kolom mengalahkan kaki 576 kolom, sedangkan di v61 `lgb_lean` yang himpunan kolomnya lebih kecil justru menjadi kaki yang didorong menjauh.
+
+**3. `lgbx` dan `linear` hilang di v65.** Keduanya bagian dari rantai pemenang. `lgbx_full` punya konfigurasi LightGBM yang benar-benar berbeda (`num_leaves 31`, `lambda_l2 ×2.4`, `max_bin 255`, `feature_fraction 0.35`), dan `linear` adalah satu-satunya kaki non-tree. v66 hanya empat kaki dan tidak punya keduanya.
+
+v61 juga merata-ratakan tiga LightGBM seed per kaki; v65 memakai satu.
+
+### 3. Resep diverifikasi lebih dulu
+
+Sebelum training apa pun, `alt_ext0.5_tm30_lean` dibangun ulang dari prediksi v61 yang tersimpan:
+
+```
+rebuilt  KS=0.5286237  AUC=0.8466992
+target   KS=0.5286237  AUC=0.8466992
+```
+
+Cocok sampai tujuh desimal. Jadi rumusnya sudah diketahui benar sebelum ada training baru, dan perbandingan v66 dengan v61 jadi bersih.
+
+### 4. Cacat nyata yang ditemukan saat smoke test
+
+Kaki `linear` gagal dengan `ValueError: Input X contains NaN values and SplineTransformer is configured to error`. Penyebabnya bukan kode v66: dua kolom dari blok v65, yaitu **`af_loan_to_hist_max` dan `af_loan_to_hist_mean`, sepenuhnya NaN**. `median()` dari kolom kosong menghasilkan NaN, lalu `fillna(NaN)` tidak mengisi apa pun.
+
+v61 tidak punya kedua kolom itu, jadi tidak pernah kena. Di v66 keduanya dibuang dari kaki linear lewat filter `X[c].notna().any()`, sekaligus mengembalikan kaki itu ke himpunan kolom yang sama dengan v61. Bug yang sama sudah pernah muncul sebagai bug path di `check_stability_selection.py` dan `make_submission_v64.py`: hal yang salah berakhir di tempat yang tidak diharapkan, dan tidak akan terlihat tanpa eksekusi.
+
+### 5. Run utama
+
+```bash
+python3 agas/v66/training/train_submission_v66.py --folds 10 --fold-seeds 42,7,13,21,5,101 --lgb-seeds 0,1 --out-prefix v66
+```
+
+Durasi **378.8 menit**, 10 fold, enam fold seed, dua LightGBM seed, tujuh kaki.
+
+Kenapa enam fold seed dan dua LightGBM seed, bukan lima LightGBM seed: jumlah fold seed adalah satu-satunya lever yang efeknya monoton di seluruh proyek (0.845897 satu seed, 0.846647 tiga seed, 0.847419 dengan seleksi di atasnya). Lima LightGBM seed dikali enam fold seed akan memakan sekitar 15 jam; kombinasi enam dan dua masuk dalam 6,3 jam.
+
+OOF kaki, dibandingkan v61 yang memakai tiga fold seed dan tiga LightGBM seed:
+
+| Kaki | AUC v66 | AUC v61 | Δ AUC | KS v66 | KS v61 |
+|---|---|---|---|---|---|
+| `xgb_full` | **0.846756** | 0.846485 | +0.000271 | 0.525536 | 0.525240 |
+| `lgb_lean` | **0.846721** | 0.846566 | +0.000155 | **0.525311** | 0.524615 |
+| `lgb_full` | 0.846682 | 0.846647 | +0.000035 | 0.524974 | 0.524615 |
+| `fac_full` | 0.846662 | 0.846542 | +0.000120 | 0.524205 | 0.523080 |
+| `lgbx_full` | 0.846550 | 0.846351 | +0.000199 | 0.524089 | 0.524416 |
+| `cat_full` | 0.846311 | 0.845928 | +0.000383 | 0.525234 | 0.525236 |
+| `linear` | 0.842771 | 0.842667 | +0.000104 | 0.522712 | 0.522833 |
+
+Tujuh kaki naik, tanpa kecuali. `xgb_full` naik paling besar (+0.000271), `cat_full` paling besar di relatif (+0.000383). Kenaan kecil dan konsisten dengan pengurangan varians partisi, bukan peningkatan kapasitas model: tidak ada parameter yang diubah.
+
+### 6. Rantai blend, v66 lawan v61
+
+| Rantai | KS v66 | AUC v66 | KS v61 | AUC v61 |
+|---|---|---|---|---|
+| `trees4` | 0.525693 | 0.847142 | 0.525406 | 0.846986 |
+| `core` | 0.525719 | 0.847072 | 0.525263 | 0.846930 |
+| `tm20` | **0.526970** | **0.847312** | 0.525791 | 0.847177 |
+| `tm30` | **0.528476** | 0.847223 | 0.526567 | 0.847088 |
+
+Resep SBS winner, kedua arah ekstruoplasi:
+
+| Resep | KS v66 | AUC v66 | KS v61 | AUC v61 |
+|---|---|---|---|---|
+| `ext0.5\|tm30\|lgb_lean` | **0.528713** | 0.846840 | 0.528624 | 0.846699 |
+| `ext0.75\|tm30\|fac_full` | **0.529078** | 0.846403 | 0.527689 | 0.846166 |
+| `ext0.25\|tm30\|lgb_lean` | 0.528338 | 0.847085 | 0.527972 | 0.846947 |
+| `ext0.5\|tm30\|fac_full` | 0.528889 | 0.846797 | 0.527099 | 0.846600 |
+
+Resep v61 yang persis, yaitu `ext0.5|tm30|lgb_lean`, di v66 memberi KS 0.528713 melawan 0.528624. Naik 0.000089, kecil, tapi positif dan ini perbandingan apples-to-apples: model identik, partisi berbeda.
+
+### 7. Kandidat
+
+35 vektor, 32 lolos lantai AUC, 13 lolos deduplikasi korelasi rank 0.9995.
+
+| Slot | Nama | AUC | KS | KS dikurangi 1 sd | Spearman ke v61 |
+|---|---|---|---|---|---|
+| 1 | `tm20` | **0.847312** | 0.526970 | 0.523370 | 0.9979 |
+| 2 | `plateau\|tm20\|fac_full` | 0.847200 | 0.528463 | 0.524863 | 0.9988 |
+| 3 | `trees4` | 0.847142 | 0.525693 | 0.522093 | 0.9949 |
+| 4 | `ext0.5\|tm30\|lgb_lean` | 0.846840 | **0.528713** | **0.525113** | 0.9995 |
+| 5 | `ext1.0\|tm20\|fac_full` | 0.846793 | **0.529873** | 0.526273 | 0.9986 |
+| 6 | `leg\|xgb_full` | 0.846756 | 0.525536 | 0.521936 | 0.9945 |
+| 7 | `leg\|lgb_lean` | 0.846721 | 0.525311 | 0.521711 | 0.9928 |
+| 11 | `ext1.5\|tm20\|lgb_lean` | 0.846174 | 0.528163 | 0.524563 | 0.9983 |
+
+Slot 5 punya KS OOF tertinggi di pool, 0.529873, tapi slot 4 punya KS dikurangi satu sampling sd tertinggi, 0.525113. Keduanya di atas 0.525 setelah pengurangan noise. Perbedaannya illustrates why KS mentah tidak pernah dipakai sebagai kunci.
+
+Ambang deduplikasi dilonggarkan ke 0.9995, dan `ext0.5|tm30|lgb_lean` dipaksa masuk. Pada ambang 0.995 kandidat utama justru terbuang karena peringkatnya di bawah dua yang hampir identik pada AUC — ambang yang terlalu ketat menghapus kandidat yang justru ingin dikirim.
+
+### 8. Status
+
+Tiga belas file tervalidasi, 30000 baris, `application_id` unik dan cocok dengan `data/test_applications.csv`, probabilitas di [0, 1] tanpa NaN. Jumlah file di disk sama persis dengan jumlah entri di `summary_v66_candidates.json`. Seluruh script diverifikasi ulang: 39 fine, 0 broken. Notebook `agas/v66/notebook/notebook_v66.ipynb` dieksekusi penuh dengan `RUN_TRAINING = False`, 16 cell, nol error.
+
+### 9. Apa yang diketahui, dan apa yang tidak
+
+**Diketahui.** Resep v61 bisa direproduksi tepat, jadi perbandingan v66 dengan v61 bersih. Tujuh kaki naik tanpa kecuali. Resep winner di v66 memberi KS 0.528713 melawan 0.528624, dan ada kandidat dengan KS dikurangi noise tertinggi di pool.
+
+**Tidak diketahui.** Apakah itu masuk leaderboard. Yang jelas dari data proyek ini: OOF KS dan public score hampir tidak berkorelasi. Rekor KS OOF adalah v63 0.529867 dan public-nya 0.557; v61 0.528624 memberi 0.56312. Jadi kemajuan OOF di run ini **bukan** bukti kemajuan public.
+
+**Kalau v66 masih di bawah 0.56312**, kesimpulannya bukan "lebih banyak fold seed tidak berguna", tapi "v61 adalah titik lokal yang sulit dikalahkan dengan perubahan arsitektur". Dan itu yang sebenarnya terjadi di v65: perubahan arsitektur, bukan tambahan training. v66 mengembalikannya ke arsitektur v61 persis dan hanya menambah training, jadi perbandingan akhirnya adil.
+
+Belum ada submission Kaggle dan belum ada push GitHub.

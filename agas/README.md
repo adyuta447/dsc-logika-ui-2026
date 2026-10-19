@@ -795,3 +795,87 @@ Arah v61 menang lagi. Hasil paling menarik: **KS OOF 0.528592 praktis menyamai K
 ### Status
 
 Delapan file tervalidasi, 37 script fine, notebook 18 cell tanpa error. Belum ada submission Kaggle dan belum ada push GitHub. Public score file mana pun di run ini belum diketahui, dan itulah satu-satunya ukuran yang benar.
+
+---
+
+## 15) v66: resep v61, dilatih lebih berat
+
+### Pemicu
+
+User melaporkan kandidat v65 hanya mendapat public **0.559**, turun dari **0.56312** milik v61. Permintaannya: model yang sama dengan v61, tapi lebih kuat dan lebih baik dilatih.
+
+### Diagnosa: v65 menyimpang dari arsitektur v61
+
+Selisihnya bukan hyper-parameter. Tiga perubahan struktural, dan ketiganya menjauh dari satu-satunya mekanisme yang pernah menghasilkan public tinggi.
+
+**v61 tidak memakai feature selection sama sekali.** Setiap kaki dilatih pada himpunan kolom yang didefinisikan tangan: `full`, `lean` (buang 12 kolom noise eksak dan prefix `ec_share_`, `ec_catqty_`, `cs_shift`, `buh_`, `gn_`), dan `fac` (buang prefix putaran dua). v62 memperkenalkan seleksi gain per fold, dan v62 sampai v65 semuanya memakainya.
+
+**v65 tidak pernah membangun rantai blend v61.** Pemenang v61 adalah:
+
+```text
+trees4 = mean(rank(lgb_full), rank(lgb_lean), rank(cat_full), rank(xgb_full))
+core   = (2 * trees4 + rank(lgbx_full)) / 3
+tm30   = 0.7 * core + 0.3 * rank(linear)
+alt    = rank01(tm30 + 0.5 * (tm30 - rank(lgb_lean)))
+```
+
+v65 mengekstrapolasi kaki terpilih 250 kolom menjauhi kaki tidak terpilih 576 kolom, lalu merata-ratakan. Arah gambarnya juga berbeda: di v65 kaki 250 kolom mengalahkan kaki 576 kolom, sedangkan di v61 kaki dengan himpunan kolom lebih kecil justru yang didorong menjauh.
+
+**`lgbx` dan `linear` hilang di v65.** `lgbx_full` punya konfigurasi LightGBM berbeda (`num_leaves 31`, `lambda_l2 ×2.4`, `max_bin 255`), dan `linear` satu-satunya kaki non-tree. Keduanya bagian dari rantai pemenang.
+
+v61 juga merata-ratakan tiga LightGBM seed per kaki; v65 memakai satu.
+
+### Resep diverifikasi sebelum training
+
+`alt_ext0.5_tm30_lean` dibangun ulang dari prediksi v61 yang tersimpan, memberi KS **0.5286237** dan AUC **0.8466992**, cocok sampai tujuh desimal dengan `summary_v61_final.json`. Rumusnya diketahui benar sebelum ada training baru.
+
+### Cacat nyata yang ditemukan saat smoke test
+
+Kaki `linear` gagal karena dua kolom dari blok v65, `af_loan_to_hist_max` dan `af_loan_to_hist_mean`, **sepenuhnya NaN**. `median()` dari kolom kosong menghasilkan NaN, lalu `fillna(NaN)` tidak mengisi apa pun, dan `SplineTransformer` menolak. v61 tidak punya kedua kolom itu. Di v66 keduanya dibuang lewat filter `X[c].notna().any()`.
+
+### Cara menjalankan
+
+```bash
+python3 agas/v66/training/train_submission_v66.py --folds 10 --fold-seeds 42,7,13,21,5,101 --lgb-seeds 0,1 --out-prefix v66
+python3 agas/v66/make_submission_v66.py
+```
+
+Enam fold seed dan dua LightGBM seed, bukan lima LightGBM seed: jumlah fold seed adalah satu-satunya lever yang monoton di seluruh proyek, dan lima kali enam akan memakan sekitar 15 jam.
+
+### Hasil: semua kaki naik
+
+| Kaki | AUC v66 | AUC v61 | Δ AUC |
+|---|---|---|---|
+| `xgb_full` | 0.846756 | 0.846485 | +0.000271 |
+| `lgb_lean` | 0.846721 | 0.846566 | +0.000155 |
+| `lgb_full` | 0.846682 | 0.846647 | +0.000035 |
+| `fac_full` | 0.846662 | 0.846542 | +0.000120 |
+| `lgbx_full` | 0.846550 | 0.846351 | +0.000199 |
+| `cat_full` | 0.846311 | 0.845928 | +0.000383 |
+| `linear` | 0.842771 | 0.842667 | +0.000104 |
+
+Tujuh kaki naik tanpa kecuali. Tidak ada parameter yang diubah, jadi kenaannya konsisten dengan pengurangan varians partisi.
+
+### Resep winner, apples-to-apples
+
+| Resep | KS v66 | KS v61 |
+|---|---|---|
+| `ext0.5\|tm30\|lgb_lean` | **0.528713** | 0.528624 |
+| `ext0.75\|tm30\|fac_full` | **0.529078** | 0.527689 |
+| `ext0.5\|tm30\|fac_full` | 0.528889 | 0.527099 |
+
+Resep v61 yang persis, di v66, memberi KS 0.528713. Naik 0.000089 dari 0.528624.
+
+### Kandidat
+
+| Slot | Nama | AUC | KS dikurangi 1 sd |
+|---|---|---|---|
+| 1 | `tm20` | 0.847312 | 0.523370 |
+| 4 | `ext0.5\|tm30\|lgb_lean` | 0.846840 | **0.525113** |
+| 5 | `ext1.0\|tm20\|fac_full` | 0.846793 | 0.526273 |
+
+Ambang deduplikasi dilonggarkan ke 0.9995 dan kandidat utama dipaksa masuk. Pada ambang 0.995 kandidat itu justru terbuang karena peringkatnya di bawah dua yang hampir identik pada AUC.
+
+### Status
+
+Tiga belas file tervalidasi, 39 script fine, notebook 16 cell tanpa error. Belum ada submission Kaggle dan belum ada push GitHub. Public score kandidat mana pun di run ini belum diketahui.

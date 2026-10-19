@@ -16,3 +16,4 @@ features.parquet
 *.pkl
 *.parquet
 old_deliverables/ 
+combined_objs.npz
