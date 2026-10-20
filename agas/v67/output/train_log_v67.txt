@@ -1,0 +1,16 @@
+09:02:15 loaded v61: 16 arrays
+09:02:15 loaded v62: 63 arrays
+09:02:15 loaded v63: 69 arrays
+09:02:15 loaded v64: 67 arrays
+09:02:15 loaded v65: 24 arrays
+09:02:15 loaded v66: 16 arrays
+09:02:15 meta feature matrix: (70000, 49), test (30000, 49), names=49
+09:02:16 fold 0 logit auc=0.849637
+09:02:17 fold 1 logit auc=0.843248
+09:02:17 fold 2 logit auc=0.850431
+09:02:18 fold 3 logit auc=0.847249
+09:02:19 fold 4 logit auc=0.850207
+09:02:19 CV logit AUC=0.848116 KS=0
+09:02:19 CV logit KS=0.528510
+09:02:19 CV lgb   AUC=0.847078 KS=0.525840
+09:02:21 done in 0.1 min; features=49

@@ -879,3 +879,45 @@ Ambang deduplikasi dilonggarkan ke 0.9995 dan kandidat utama dipaksa masuk. Pada
 ### Status
 
 Tiga belas file tervalidasi, 39 script fine, notebook 16 cell tanpa error. Belum ada submission Kaggle dan belum ada push GitHub. Public score kandidat mana pun di run ini belum diketahui.
+
+---
+
+## 16) v67: stacking of proven pipelines
+
+### Pemicu
+
+User melaporkan dua public score dari v66:
+- `submission_v66_02_plateau_tm20_fac_full.csv`: **0.55877**
+- `submission_v66_04_ext0.5_tm30_lgb_lean.csv`: **0.56424**
+
+Arah `lgb_lean` sebagai kaki yang didorong menjauh terbukti lebih baik di public. Saran konsultasi adalah stacking beberapa pipeline dan banyak model dalam satu submission, jadi v67 dibuat sebagai meta-model di atas semua prediksi out-of-fold dari v61 sampai v66.
+
+### Cara menjalankan
+
+```bash
+python3 agas/v67/training/train_submission_v67.py --out-prefix v67
+python3 agas/v67/make_submission_v67.py
+```
+
+### Metode
+
+- 49 fitur meta: semua kaki mentah dari v61, v62, v63, v64, v65, v66, ditambah `tm20` dan `tm30` turunan v66.
+- Meta-model: `LogisticRegression(C=0.5)` dan LightGBM dangkal, dilatih pada rank fitur.
+- Estimasi jujur dengan 5-fold CV: logit AUC **0.848116**, KS **0.528510**; lgb AUC **0.847078**, KS **0.525840**.
+- Kandidat: meta mentah, blend dengan anchor v66_04, dan consensus meta-anchor.
+
+### Hasil OOF
+
+| Kandidat | AUC | KS |
+|---|---|---|
+| `meta_logit` | 0.848116 | 0.528510 |
+| `consensus_meta_anchor` | 0.847753 | 0.529476 |
+| `blend_anchor_meta_w0.50` | 0.847600 | 0.529414 |
+| `blend_anchor_meta_w0.25` | 0.847267 | 0.528859 |
+| `meta_lgb` | 0.847078 | 0.525840 |
+| `blend_anchor_meta_w0.10` | 0.847026 | 0.528215 |
+| `anchor` (v66_04) | 0.846840 | 0.528713 |
+
+### Status
+
+Tujuh file tervalidasi, notebook 3 cell tanpa error. Belum ada submission Kaggle dan belum ada push GitHub. Public score v67 belum diketahui.

@@ -1318,3 +1318,40 @@ Tiga belas file tervalidasi, 30000 baris, `application_id` unik dan cocok dengan
 **Kalau v66 masih di bawah 0.56312**, kesimpulannya bukan "lebih banyak fold seed tidak berguna", tapi "v61 adalah titik lokal yang sulit dikalahkan dengan perubahan arsitektur". Dan itu yang sebenarnya terjadi di v65: perubahan arsitektur, bukan tambahan training. v66 mengembalikannya ke arsitektur v61 persis dan hanya menambah training, jadi perbandingan akhirnya adil.
 
 Belum ada submission Kaggle dan belum ada push GitHub.
+
+## 2026-10-20 — v67: stacking pipeline, 0.56424 sebagai jangkar baru
+
+### Pemicu
+
+User melaporkan dua public score dari v66:
+- `submission_v66_02_plateau_tm20_fac_full.csv`: **0.55877**
+- `submission_v66_04_ext0.5_tm30_lgb_lean.csv`: **0.56424**
+
+Jangkar public bergeser lagi ke `v66_04`. Arah `lgb_lean` sebagai kaki yang didorong menjauh terbukti lebih baik. Saran eksternal: stacking beberapa pipeline dan banyak model dalam satu submission.
+
+### Metode
+
+v67 memakai semua prediksi out-of-fold dari v61 sampai v66 sebagai fitur meta: 49 kolom, termasuk `tm20` dan `tm30` turunan v66. Meta-model: `LogisticRegression(C=0.5)` dan LightGBM dangkal, dilatih pada rank fitur. Estimasi jujur dengan 5-fold CV.
+
+### Hasil
+
+| Kandidat | AUC CV | KS CV |
+|---|---|---|
+| `meta_logit` | **0.848116** | 0.528510 |
+| `consensus_meta_anchor` | 0.847753 | 0.529476 |
+| `blend_anchor_meta_w0.50` | 0.847600 | 0.529414 |
+| `blend_anchor_meta_w0.25` | 0.847267 | 0.528859 |
+| `meta_lgb` | 0.847078 | 0.525840 |
+| `anchor` (v66_04) | 0.846840 | 0.528713 |
+
+### Status
+
+Tujuh file tervalidasi, notebook 3 cell tanpa error. Belum ada submission Kaggle dan belum ada push GitHub. Public score v67 belum diketahui.
+
+### Perbedaan submission v67
+
+- `01_anchor`: vektor public terbaik sebelumnya (`v66_04`, ext0.5 tm30 lgb_lean), dipakai sebagai kontrol.
+- `02/03/04_blend_anchor_meta_w0.10/0.25/0.50`: campuran anchor dan meta_logit dengan bobot meta 10%, 25%, 50%.
+- `05_consensus_meta_anchor`: rata-rata rank meta_logit dan anchor (50/50).
+- `06_meta_lgb`: meta-model LightGBM dangkal pada 49 fitur rank.
+- `07_meta_logit`: meta-model logistik pada 49 fitur rank, AUC CV tertinggi.
