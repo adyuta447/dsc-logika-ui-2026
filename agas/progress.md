@@ -1355,3 +1355,79 @@ Tujuh file tervalidasi, notebook 3 cell tanpa error. Belum ada submission Kaggle
 - `05_consensus_meta_anchor`: rata-rata rank meta_logit dan anchor (50/50).
 - `06_meta_lgb`: meta-model LightGBM dangkal pada 49 fitur rank.
 - `07_meta_logit`: meta-model logistik pada 49 fitur rank, AUC CV tertinggi.
+
+
+## 2026-10-20 — v68: resep v61/v66 dengan sepuluh fold seed
+
+### Pemicu
+
+Public terbaik sekarang `submission_v66_04_ext0.5_tm30_lgb_lean.csv` dengan **0.56424**. User meminta model yang lebih kuat lagi dari v66 dengan cara yang sama seperti v66 dan v61, bukan arsitektur baru dan bukan stacking.
+
+### Metode
+
+v68 memakai tujuh kaki, himpunan kolom, parameter, faktor per fold, dan rantai blend yang identik dengan v61/v66. Yang ditambah hanya partisi: empat fold seed baru, `3, 17, 11, 23`, sehingga totalnya sepuluh.
+
+Enam partisi v66 tidak dilatih ulang. `preds_v66.npz` menyimpan rata-rata enam seed, jadi rata-rata sepuluh seed adalah
+
+```text
+(6 * rata-rata_v66 + jumlah_prediksi_seed_baru) / 10
+```
+
+dan skrip menjumlahkan empat seed baru langsung. Ini ekuivalen matematis dengan melatih sepuluh seed dari nol, tetapi memakai 271 menit, bukan sekitar 632 menit. Partial disimpan per seed, jadi run bisa dilanjutkan tanpa mengulang seed yang selesai.
+
+### Run
+
+```bash
+python3 agas/v68/training/train_submission_v68.py --folds 10 --fold-seeds 3,17,11,23 --lgb-seeds 0,1 --base-prefix v66 --base-seed-count 6 --out-prefix v68
+python3 agas/v68/make_submission_v68.py
+```
+
+Durasi **271.5 menit** untuk empat seed baru. Peluncuran pertama dihentikan sebelum seed pertama selesai karena versi awal penulis partial menyimpan array OOF di kunci test; run dijalankan ulang dengan kunci OOF dan test terpisah. Tujuh kaki naik di AUC dan KS dibanding v66, tanpa kecuali.
+
+| Kaki | AUC v68 | AUC v66 | Δ AUC | KS v68 | KS v66 | Δ KS |
+|---|---|---|---|---|---|---|
+| `fac_full` | 0.846760 | 0.846662 | +0.000098 | 0.524287 | 0.524205 | +0.000081 |
+| `lgb_full` | 0.846834 | 0.846682 | +0.000153 | 0.525618 | 0.524974 | +0.000644 |
+| `lgb_lean` | **0.846857** | 0.846721 | +0.000136 | **0.526881** | 0.525311 | **+0.001570** |
+| `lgbx_full` | 0.846645 | 0.846550 | +0.000094 | 0.524779 | 0.524089 | +0.000690 |
+| `cat_full` | 0.846523 | 0.846311 | +0.000212 | 0.525501 | 0.525234 | +0.000267 |
+| `xgb_full` | 0.846891 | 0.846756 | +0.000135 | 0.525990 | 0.525536 | +0.000454 |
+| `linear` | 0.842910 | 0.842771 | +0.000139 | 0.524114 | 0.522712 | +0.001401 |
+
+### Rantai blend
+
+| Rantai | KS v68 | KS v66 | AUC v68 | AUC v66 |
+|---|---|---|---|---|
+| `trees4` | 0.526196 | 0.525693 | 0.847283 | 0.847142 |
+| `core` | 0.525385 | 0.525719 | 0.847189 | 0.847072 |
+| `tm20` | **0.527124** | 0.526970 | **0.847427** | 0.847312 |
+| `tm30` | 0.527661 | 0.528476 | 0.847334 | 0.847223 |
+| `ext0.5\|tm30\|lgb_lean` | 0.528390 | 0.528713 | 0.846956 | 0.846840 |
+| `ext0.5\|tm30\|fac_full` | 0.529355 | 0.528889 | 0.846928 | 0.846797 |
+| `ext0.75\|tm20\|lgb_lean` | 0.528832 | 0.528286 | 0.847164 | 0.847053 |
+
+Pola yang penting: semua kaki naik, tetapi `tm30` dan resep winner `ext0.5|tm30|lgb_lean` sedikit turun di KS OOF. AUC-nya naik. Ini bukan kontradiksi: `lgb_lean` membaik lebih cepat daripada `tm30`, sehingga jarak yang diekstrapolasi mengecil. Pada data ini, perbaikan kaki tidak otomatis memperbaiki KS blend.
+
+### Kandidat
+
+63 vektor, 61 lolos lantai AUC, 14 lolos deduplikasi korelasi rank 0.9995. `ext0.5|tm30|lgb_lean` dipaksa masuk.
+
+| Slot | Nama | AUC | KS | KS dikurangi 1 sd | Spearman ke v66_04 |
+|---|---|---|---|---|---|
+| 1 | `tm20` | **0.847427** | 0.527124 | 0.523524 | 0.998256 |
+| 2 | `plateau\|tm20\|fac_full` | 0.847328 | 0.528539 | 0.524939 | 0.999154 |
+| 3 | `trees4` | 0.847283 | 0.526196 | 0.522596 | 0.995121 |
+| 4 | `ext0.5\|tm30\|lgb_lean` | 0.846956 | 0.528390 | 0.524790 | **0.999997** |
+| 5 | `ext1\|tm20\|fac_full` | 0.846950 | **0.529867** | **0.526267** | 0.998987 |
+
+`v68_04` adalah versi sepuluh seed dari vektor yang mendapat public 0.56424. Korelasi rank terhadap `v66_04` adalah 0.999997, jadi public-nya kemungkinan hampir sama; ini kontrol yang aman, bukan arah baru. Kandidat yang paling berbeda dan punya KS OOF tertinggi adalah `v68_05_ext1_tm20_fac_full`.
+
+### Status
+
+Empat belas file tervalidasi: 30000 baris, `application_id` unik dan cocok dengan `data/test_applications.csv`, probabilitas di [0, 1] tanpa NaN. Notebook `agas/v68/notebook/notebook_v68.ipynb` dieksekusi penuh dengan `RUN_TRAINING = False`, 13 cell, nol error. Belum ada submission Kaggle, belum ada push GitHub, dan perubahan v68 belum di-commit.
+
+### Apa yang diketahui, dan apa yang tidak
+
+**Diketahui.** Semua tujuh kaki membaik di AUC dan KS ketika partisi ditambah dari enam ke sepuluh. Ini konsisten dengan pengurangan varians, bukan perubahan kapasitas. Kandidat `v68_04` hampir identik dengan `v66_04`; kandidat `v68_05` adalah uji arah yang lebih berbeda dengan KS OOF tertinggi.
+
+**Tidak diketahui.** Apakah public v68 naik. Karena `v68_04` berkorelasi 0.999997 dengan `v66_04`, submit file itu saja tidak membuktikan apa-apa tentang nilai tambah empat seed baru. Uji yang lebih informatif adalah `v68_05`, tetapi arah itu belum punya hasil public.

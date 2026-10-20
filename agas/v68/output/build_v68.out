@@ -1,0 +1,28 @@
+  pool 63, AUC floor 0.0025 below 0.847427: 61
+  after deduplicating at rank correlation 0.9995: 14
+
+=== candidates, ranked by AUC (KS shown with OOF sampling sd removed) ===
+slot name                                   auc        ks     ks-sd    vs v66
+   1 tm20                              0.847427  0.527124  0.523524  0.998256
+   2 plateau|tm20|fac_full             0.847328  0.528539  0.524939  0.999154
+   3 trees4                            0.847283  0.526196  0.522596  0.995121
+   4 ext0.5|tm30|lgb_lean              0.846956  0.528390  0.524790  0.999997
+   5 ext1|tm20|fac_full                0.846950  0.529867  0.526267  0.998987
+   6 leg|xgb_full                      0.846891  0.525990  0.522390  0.994739
+   7 leg|lgb_lean                      0.846857  0.526881  0.523281  0.993050
+   8 leg|lgb_full                      0.846834  0.525618  0.522018  0.993801
+   9 leg|lgbx_full                     0.846645  0.524779  0.521179  0.993123
+  10 leg|cat_full                      0.846523  0.525501  0.521901  0.990684
+  11 ext1.5|tm20|lgb_lean              0.846304  0.528175  0.524575  0.998811
+  12 ext1.5|tm20|fac_full              0.846286  0.528717  0.525117  0.997756
+  13 ext1|tm30|lgb_lean                0.846156  0.527144  0.523544  0.999211
+  14 ext1.5|tm30|lgb_lean              0.844937  0.526290  0.522690  0.996871
+  1 diverse submits: expected maximum +0.00000 public (0.00 sd), independence upper bound
+  3 diverse submits: expected maximum +0.00450 public (0.85 sd), independence upper bound
+  14 diverse submits: expected maximum +0.00902 public (1.70 sd), independence upper bound
+
+saved /Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v68/output/summary_v68_candidates.json
+[NbConvertApp] Converting notebook agas/v68/notebook/notebook_v68.ipynb to notebook
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+[NbConvertApp] Writing 16639 bytes to agas/v68/notebook/notebook_v68.ipynb
+DONE

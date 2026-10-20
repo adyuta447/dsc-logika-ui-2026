@@ -1,0 +1,44 @@
+10:20:59 base=v66 (6 seeds) new=[3, 17, 11, 23] total=10
+10:20:59 feature counts: full=598 lean=490 fac=553
+10:20:59 computing factor inputs
+10:21:13 factor inputs ready
+10:29:43 seed 3 fac_full   auc=0.846308 ks=0.523988
+10:38:26 seed 3 lgb_full   auc=0.846297 ks=0.524475
+10:45:36 seed 3 lgb_lean   auc=0.846511 ks=0.526175
+10:50:50 seed 3 lgbx_full  auc=0.845713 ks=0.522575
+11:02:28 seed 3 cat_full   auc=0.845073 ks=0.525987
+11:20:20 seed 3 xgb_full   auc=0.846397 ks=0.524996
+11:23:55 seed 3 linear     auc=0.842432 ks=0.521196
+11:23:55 saved after 1/4 new fold seeds, elapsed 62.9 min
+11:31:31 seed 17 fac_full   auc=0.846349 ks=0.526857
+11:40:06 seed 17 lgb_full   auc=0.846482 ks=0.526175
+11:47:05 seed 17 lgb_lean   auc=0.846431 ks=0.526875
+11:52:55 seed 17 lgbx_full  auc=0.845986 ks=0.523969
+12:04:24 seed 17 cat_full   auc=0.845851 ks=0.526254
+12:23:44 seed 17 xgb_full   auc=0.846177 ks=0.524832
+12:27:37 seed 17 linear     auc=0.842588 ks=0.523129
+12:27:37 saved after 2/4 new fold seeds, elapsed 126.6 min
+12:36:14 seed 11 fac_full   auc=0.846372 ks=0.524135
+12:46:04 seed 11 lgb_full   auc=0.846537 ks=0.523855
+12:54:06 seed 11 lgb_lean   auc=0.846567 ks=0.523386
+12:59:58 seed 11 lgbx_full  auc=0.845871 ks=0.524004
+13:12:50 seed 11 cat_full   auc=0.845647 ks=0.525389
+13:34:46 seed 11 xgb_full   auc=0.846481 ks=0.524687
+13:38:37 seed 11 linear     auc=0.842600 ks=0.522232
+13:38:38 saved after 3/4 new fold seeds, elapsed 197.6 min
+13:47:45 seed 23 fac_full   auc=0.846463 ks=0.523368
+13:57:38 seed 23 lgb_full   auc=0.846593 ks=0.524963
+14:05:54 seed 23 lgb_lean   auc=0.846591 ks=0.525825
+14:12:10 seed 23 lgbx_full  auc=0.845855 ks=0.524075
+14:26:14 seed 23 cat_full   auc=0.845559 ks=0.525174
+14:47:50 seed 23 xgb_full   auc=0.846589 ks=0.525606
+14:52:25 seed 23 linear     auc=0.842274 ks=0.521199
+14:52:26 saved after 4/4 new fold seeds, elapsed 271.4 min
+14:52:26 BAG fac_full   auc=0.846760 ks=0.524287
+14:52:26 BAG lgb_full   auc=0.846834 ks=0.525618
+14:52:26 BAG lgb_lean   auc=0.846857 ks=0.526881
+14:52:26 BAG lgbx_full  auc=0.846645 ks=0.524779
+14:52:26 BAG cat_full   auc=0.846523 ks=0.525501
+14:52:26 BAG xgb_full   auc=0.846891 ks=0.525990
+14:52:26 BAG linear     auc=0.842910 ks=0.524114
+14:52:26 done in 271.5 min

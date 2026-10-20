@@ -921,3 +921,64 @@ python3 agas/v67/make_submission_v67.py
 ### Status
 
 Tujuh file tervalidasi, notebook 3 cell tanpa error. Belum ada submission Kaggle dan belum ada push GitHub. Public score v67 belum diketahui.
+
+
+---
+
+## 17) v68: resep v61/v66, sepuluh fold seed
+
+### Pemicu
+
+Public terbaik `v66_04_ext0.5_tm30_lgb_lean.csv` adalah **0.56424**. Permintaannya: model yang lebih kuat dari v66 dengan cara yang sama seperti v66 dan v61, bukan stacking dan bukan arsitektur baru.
+
+### Metode
+
+Tujuh kaki, himpunan kolom, parameter, faktor per fold, dan rantai blend disalin dari v61/v66. Yang ditambah hanya partisi: empat fold seed baru, `3, 17, 11, 23`, sehingga totalnya sepuluh.
+
+Enam seed v66 tidak dilatih ulang. Rata-rata sepuluh seed dihitung sebagai `(6 * preds_v66 + jumlah prediksi empat seed baru) / 10`, yang ekuivalen dengan retrain sepuluh seed dari nol. Partial disimpan per seed dan bisa dilanjutkan.
+
+### Cara menjalankan
+
+```bash
+python3 agas/v68/training/train_submission_v68.py --folds 10 --fold-seeds 3,17,11,23 --lgb-seeds 0,1 --base-prefix v66 --base-seed-count 6 --out-prefix v68
+python3 agas/v68/make_submission_v68.py
+```
+
+### Hasil kaki
+
+| Kaki | AUC v68 | AUC v66 | Δ AUC | KS v68 | KS v66 | Δ KS |
+|---|---|---|---|---|---|---|
+| `fac_full` | 0.846760 | 0.846662 | +0.000098 | 0.524287 | 0.524205 | +0.000081 |
+| `lgb_full` | 0.846834 | 0.846682 | +0.000153 | 0.525618 | 0.524974 | +0.000644 |
+| `lgb_lean` | **0.846857** | 0.846721 | +0.000136 | **0.526881** | 0.525311 | **+0.001570** |
+| `lgbx_full` | 0.846645 | 0.846550 | +0.000094 | 0.524779 | 0.524089 | +0.000690 |
+| `cat_full` | 0.846523 | 0.846311 | +0.000212 | 0.525501 | 0.525234 | +0.000267 |
+| `xgb_full` | 0.846891 | 0.846756 | +0.000135 | 0.525990 | 0.525536 | +0.000454 |
+| `linear` | 0.842910 | 0.842771 | +0.000139 | 0.524114 | 0.522712 | +0.001401 |
+
+### Hasil blend dan kandidat
+
+| Rantai | KS v68 | KS v66 | AUC v68 | AUC v66 |
+|---|---|---|---|---|
+| `trees4` | 0.526196 | 0.525693 | 0.847283 | 0.847142 |
+| `core` | 0.525385 | 0.525719 | 0.847189 | 0.847072 |
+| `tm20` | **0.527124** | 0.526970 | **0.847427** | 0.847312 |
+| `tm30` | 0.527661 | 0.528476 | 0.847334 | 0.847223 |
+| `ext0.5\|tm30\|lgb_lean` | 0.528390 | 0.528713 | 0.846956 | 0.846840 |
+| `ext0.5\|tm30\|fac_full` | 0.529355 | 0.528889 | 0.846928 | 0.846797 |
+
+63 vektor, 61 lolos lantai AUC, 14 lolos deduplikasi rank 0.9995. `ext0.5|tm30|lgb_lean` dipaksa masuk dan berada di slot 04. Kandidat dengan AUC tertinggi adalah `tm20` (0.847427); kandidat dengan KS OOF tertinggi adalah `ext1|tm20|fac_full` (0.529867, slot 05).
+
+`v68_04` berkorelasi rank **0.999997** dengan `v66_04`, jadi ini versi sepuluh seed dari vektor yang sudah terbukti, bukan arah baru.
+
+### Status
+
+Empat belas file tervalidasi, 30000 baris, ID unik dan cocok dengan test, probabilitas di [0, 1]. Notebook 13 cell dieksekusi tanpa error. Belum ada submission Kaggle, belum ada push GitHub, dan perubahan v68 belum di-commit.
+
+### Urutan submit yang disarankan
+
+1. `submission_v68_04_ext0.5_tm30_lgb_lean.csv`, kontrol paling aman dan arah yang sudah menghasilkan 0.56424.
+2. `submission_v68_05_ext1_tm20_fac_full.csv`, KS OOF tertinggi dan lebih berbeda; uji apakah KS OOF tinggi kali ini masuk public.
+3. `submission_v68_01_tm20.csv`, AUC OOF tertinggi, untuk menguji apakah `tm20` tanpa ekstrapolasi lebih baik di public.
+4. `submission_v68_12_ext1.5_tm20_fac_full.csv`, KS 0.528717 dan KS dikurangi sd 0.525117, sebagai titik lain di plateau `tm20`.
+5. `submission_v68_03_trees4.csv`, korelasi 0.9951, paling berbeda di keluarga blend.
