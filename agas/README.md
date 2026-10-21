@@ -43,6 +43,25 @@ Aturan path yang berlaku:
 - Semua artefak baru diletakkan di `agas/`.
 - Hanya memakai data kompetisi lokal di folder `data/`.
 
+### Public score ledger
+
+Semua submission yang sudah dilaporkan user, diurutkan berdasarkan tanggal submit. Nama file v63/v65 adalah kandidat prioritas 1 dari dokumentasi masing-masing; file lain di run itu tidak dilaporkan public-nya.
+
+| File | Public | Catatan |
+|---|---:|---|
+| `agas/v57/output/submission_v57_best.csv` | 0.55700 | varian `aggressive_145` |
+| `agas/v58ext/output/submission_v58ext_ext1.5_v4_fac_full_only.csv` | 0.55900 | replikasi arah `qc_00` |
+| `agas/qc_00_ext1.5_v4_fac_full_only.csv` | 0.56171 | file tim, bukan hasil run ini |
+| `agas/v61/output/submission_v61_alt_ext0.5_tm30_lean.csv` | 0.56312 | rekor public sebelumnya |
+| `agas/v63/output/submission_v63f_consensus5_best.csv` | 0.55700 | kandidat prioritas 1 v63 |
+| `agas/v65/output/submission_v65_01_v65_consensus_ranks.csv` | 0.55900 | kandidat prioritas 1 v65 |
+| `agas/v66/output/submission_v66_02_plateau_tm20_fac_full.csv` | 0.55877 | plateau `tm20` |
+| `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv` | **0.56424** | public terbaik |
+| `agas/v67/output/submission_v67_01_anchor.csv` | **0.56424** | kontrol, vektor v66_04 |
+| `agas/v68/output/submission_v68_04_ext0.5_tm30_lgb_lean.csv` | 0.56411 | 10 fold seed, Spearman 0.999997 ke v66_04 |
+
+Public score kandidat v67 selain `01_anchor`, kandidat v68 selain `04`, dan semua kandidat v69 belum diketahui.
+
 ## 2) Metode yang dipakai
 
 Script utama: `agas/v57/training/train_submission_v57.py`
@@ -920,7 +939,7 @@ python3 agas/v67/make_submission_v67.py
 
 ### Status
 
-Tujuh file tervalidasi, notebook 3 cell tanpa error. Belum ada submission Kaggle dan belum ada push GitHub. Public score v67 belum diketahui.
+Tujuh file tervalidasi, notebook 3 cell tanpa error. Tidak ada push GitHub. Public `v67_01_anchor` = **0.56424**; kandidat meta v67 belum dilaporkan.
 
 
 ---
@@ -973,12 +992,117 @@ python3 agas/v68/make_submission_v68.py
 
 ### Status
 
-Empat belas file tervalidasi, 30000 baris, ID unik dan cocok dengan test, probabilitas di [0, 1]. Notebook 13 cell dieksekusi tanpa error. Belum ada submission Kaggle, belum ada push GitHub, dan perubahan v68 belum di-commit.
+Empat belas file tervalidasi, 30000 baris, ID unik dan cocok dengan test, probabilitas di [0, 1]. Notebook 13 cell dieksekusi tanpa error. Perubahan v68 di-commit sebagai `0710fa7`; tidak ada push GitHub. Public `v68_04` = **0.56411**, yaitu 0.00013 di bawah `v66_04`; empat fold seed tambahan tidak memberi gain public yang terukur.
 
 ### Urutan submit yang disarankan
 
-1. `submission_v68_04_ext0.5_tm30_lgb_lean.csv`, kontrol paling aman dan arah yang sudah menghasilkan 0.56424.
+1. `submission_v68_04_ext0.5_tm30_lgb_lean.csv` sudah diukur public **0.56411**, jadi ini kontrol yang gagal menambah nilai; tidak perlu diulang.
 2. `submission_v68_05_ext1_tm20_fac_full.csv`, KS OOF tertinggi dan lebih berbeda; uji apakah KS OOF tinggi kali ini masuk public.
 3. `submission_v68_01_tm20.csv`, AUC OOF tertinggi, untuk menguji apakah `tm20` tanpa ekstrapolasi lebih baik di public.
 4. `submission_v68_12_ext1.5_tm20_fac_full.csv`, KS 0.528717 dan KS dikurangi sd 0.525117, sebagai titik lain di plateau `tm20`.
 5. `submission_v68_03_trees4.csv`, korelasi 0.9951, paling berbeda di keluarga blend.
+
+---
+
+## 18) v69: factor features yang tidak pernah dipakai, blok `repayseq`, dan 15 fold
+
+### Pemicu
+
+Public `v67_01` tetap **0.56424**, sedangkan `v68_04` yang menambah empat fold seed justru **0.56411**. Arah "tambah partisi" sudah mentok. Permintaannya: tambah fitur, tambah fold, dan siapkan lebih banyak variasi `lgb_lean` yang lebih kaku.
+
+### Temuan: factor features dihitung tetapi tidak dilatih
+
+v61-v68 menghitung `factor_z`, `factor_sd`, dan `fs_*` per fold, lalu **tidak memasukkan kolom itu ke daftar fitur training**. Di v61, `fac_names` dibentuk di `agas/v61/training/train_submission_v61.py:157` tetapi tidak pernah dipakai; daftar `full`, `lean`, dan `fac_cols` semuanya dibangun tanpa kolom factor. v57/v58 memakai factor features; v61-v68 tidak.
+
+v69 memperbaiki ini: enam kolom factor fold-safe masuk ke kaki lean. Pada 5 fold seed 42, AUC naik dari **0.845398** ke **0.846035** (+0.000637) dan KS dari **0.523272** ke **0.524932** (+0.001660) tanpa mengubah himpunan fitur lain.
+
+### Blok fitur baru
+
+`agas/v69/training/feat_v69.py` membangun 122 fitur dari riwayat pinjaman dan rekening, semuanya dipotong pada `decision_datetime`:
+
+- `cf_*` (`block_cashflow`): level, variasi, tren, dan drawdown arus kas serta buffer. 52 fitur.
+- `rq_*` (`block_repayseq`): transisi keterlambatan, cure/onset/worsen/improve, streak, dan pinjaman terakhir. 36 fitur.
+- `pv_*` (`block_prevseq`): urutan aplikasi sebelumnya, approval, dan jarak hari. 34 fitur.
+
+`build_features_v69.py` menggabungkan blok itu ke cache v68: **723 kolom**, yaitu 720 fitur model + `application_id` + `customer_id` + `target`. Setelah membuang noise yang sama seperti v68, lean berisi **526 kolom** tanpa `cf_`/`pv_`; dengan factor menjadi **532 kolom** saat training.
+
+### Screening blok
+
+Semua baris memakai 5 fold, fold seed 42, LGB seed 0, dan `jobs=4`.
+
+| Run | AUC | KS | Lean | Factor | Drop |
+|---|---:|---:|---:|---|---|
+| `base_nofactor` | 0.845398 | 0.523272 | 490 | tidak | `cf_,rq_,pv_` |
+| `base_factor` | 0.846035 | 0.524932 | 490 | ya | `cf_,rq_,pv_` |
+| `all_blocks_factor` | 0.846204 | 0.525296 | 612 | ya | - |
+| `cashflow_factor` | 0.845928 | 0.524118 | 542 | ya | `rq_,pv_` |
+| `repayseq_factor` | 0.846140 | 0.524248 | 526 | ya | `cf_,pv_` |
+| `prevseq_factor` | 0.845989 | 0.524229 | 524 | ya | `cf_,rq_` |
+| `repayseq_extra_factor` | **0.846747** | 0.524847 | 526 | ya | `cf_,pv_` |
+| `repayseq_stiff7_factor` | 0.846368 | **0.527178** | 526 | ya | `cf_,pv_` |
+
+Kesimpulan screening: factor features adalah gain yang paling jelas; `repayseq` menambah sedikit; `cashflow` dan `prevseq` tidak lolos. Konfigurasi `extra` memberi AUC tertinggi, `stiff7` memberi KS tertinggi. Hanya `repayseq` + factor yang dibawa ke training utama.
+
+Sweep konfigurasi tanpa factor juga dijalankan pada fitur lama. Di fold seed 42: `base` 0.845531, `l2_20` 0.845629, `stiff7` 0.845599, `wide31` 0.845208, `extra` 0.846127. Di fold seed 7: `base` 0.845737, `l2_20` 0.845667, `stiff7` 0.845782, `wide31` 0.845445, `extra` 0.846422 (baru LGB seed 0). Sweep dihentikan setelah dua fold seed karena urutannya konsisten; tidak ada `summary_v69sweep.json`.
+
+### Training utama
+
+```bash
+python3 agas/v69/training/train_lean_v69.py \
+  --features agas/v69/output/features_v69.pkl \
+  --variants extra,stiff7 --folds 15 \
+  --fold-seeds 42,7,13,21,5,101,3,17,11,23,77,55 \
+  --lgb-seeds 0 --drop-prefixes cf_,pv_ --out-prefix v69
+```
+
+- 15 fold, dua varian, LGB seed 0, factor + `repayseq`.
+- Dari 12 fold seed yang diminta, **6 selesai** (`42,7,13,21,5,101`) dalam 133.6 menit; enam sisanya tidak dijalankan agar CPU bebas. Partial tetap lengkap per seed.
+- `aggregate_partial_v69.py` merata-ratakan seed yang selesai tanpa menunggu 12 seed. Partial menyimpan daftar 12 seed, jadi perintah yang sama bisa dilanjutkan; script akan melewati enam seed yang selesai.
+
+| Seed | `extra` AUC | `extra` KS | `stiff7` AUC | `stiff7` KS |
+|---:|---:|---:|---:|---:|
+| 42 | 0.847640 | 0.528350 | 0.847116 | 0.527321 |
+| 7 | 0.847866 | 0.528276 | 0.847382 | 0.527609 |
+| 13 | 0.847836 | 0.527342 | 0.847418 | 0.526527 |
+| 21 | 0.847715 | 0.526961 | 0.847366 | 0.528883 |
+| 5 | 0.847618 | 0.528057 | 0.847190 | 0.529847 |
+| 101 | 0.847814 | 0.527167 | 0.847442 | 0.528638 |
+| **Bagged** | **0.848132** | **0.527736** | **0.847653** | **0.527933** |
+
+Dibanding `v68_lgb_lean` (0.846857 / 0.526881), bagged `extra` adalah **+0.001275 AUC / +0.000855 KS**. Perbandingan ini tidak setara: v68 memakai 10 fold dan 10 seed, v69 memakai 15 fold dan 6 seed. Tetapi arahnya konsisten di enam seed, bukan satu seed.
+
+### Kandidat
+
+`make_submission_v69.py` mengganti `lgb_lean` di rantai v68, menambah rantai ekstrapolasi, meta logistic, dan blend anchor. Sebelas file lolos deduplikasi rank 0.9995 dan lantai AUC.
+
+| Slot | File | AUC | KS | KS-sd | Spearman vs v66 |
+|---:|---|---:|---:|---:|---:|
+| 01 | `submission_v69_01_leg_extra.csv` | **0.848132** | 0.527736 | 0.524136 | 0.991086 |
+| 02 | `submission_v69_02_stack_logit.csv` | 0.847997 | 0.527692 | 0.524092 | 0.996453 |
+| 03 | `submission_v69_03_stack_anchor_w0.1.csv` | 0.847913 | 0.528224 | 0.524624 | 0.998454 |
+| 04 | `submission_v69_04_trees4_extra.csv` | 0.847765 | 0.526741 | 0.523141 | 0.995292 |
+| 05 | `submission_v69_05_tm20_extra.csv` | 0.847674 | 0.527580 | 0.523980 | 0.998347 |
+| 06 | `submission_v69_06_leg_stiff7.csv` | 0.847653 | 0.527933 | 0.524333 | 0.991371 |
+| 07 | `submission_v69_07_stack_anchor_w0.5.csv` | 0.847566 | 0.528656 | 0.525056 | 0.999729 |
+| 08 | `submission_v69_08_ext0.35_tm20_extra.csv` | 0.847024 | 0.527747 | 0.524147 | 0.998898 |
+| 09 | `submission_v69_09_ext0.65_tm20_stiff7.csv` | 0.846480 | 0.526909 | 0.523309 | 0.998367 |
+| 10 | `submission_v69_10_ext0.5_tm30_extra.csv` | 0.846292 | 0.528254 | 0.524654 | 0.999465 |
+| 11 | `submission_v69_11_ext0.75_tm30_stiff7.csv` | 0.845733 | 0.525744 | 0.522144 | 0.998532 |
+
+`leg|extra` adalah arah paling berbeda yang masih punya AUC tertinggi. `ext0.5|tm30|extra` adalah resep public yang sudah terbukti, tetapi sekarang korelasinya 0.999465 dengan anchor dan AUC-nya lebih rendah dari `leg|extra`; ekstrapolasi justru melemahkan lean yang lebih kuat.
+
+### Status
+
+Sebelas CSV tervalidasi: 30000 baris, ID unik dan cocok dengan test, probabilitas di [0, 1] tanpa NaN. Notebook `agas/v69/notebook/notebook_v69.ipynb` dieksekusi penuh dengan `RUN_TRAINING = False`, 13 cell, nol error. Tidak ada submission Kaggle dan tidak ada push GitHub; perubahan v69 di-commit bersama artefak utamanya.
+
+### Urutan submit yang disarankan
+
+1. `submission_v69_01_leg_extra.csv` — AUC OOF tertinggi dan paling berbeda (Spearman 0.9911); ini uji langsung apakah lean baru lebih baik di public.
+2. `submission_v69_04_trees4_extra.csv` — rantai `trees4` dengan lean baru, Spearman 0.9953; lebih konservatif daripada leg tunggal.
+3. `submission_v69_02_stack_logit.csv` — AUC 0.847997; menguji apakah meta logistic yang kini memakai lean v69 masuk public, setelah stacking v67 tidak terbukti.
+4. `submission_v69_10_ext0.5_tm30_extra.csv` — kontrol arah public 0.56424 dengan lean baru; Spearman 0.9995, jadi perubahannya kecil.
+5. `submission_v69_06_leg_stiff7.csv` — alternatif KS lebih tinggi dan korelasi rendah; berguna kalau public ternyata menghargai ekor lambat.
+
+### Yang belum diketahui
+
+Semua public score v69. OOF v69 lebih tinggi dari v68, tetapi noise public sekitar 0.0053 dan perubahan 0.001 tidak terukur dengan satu submit. Enam seed (bukan 12) dan 15 fold membuat klaim "lebih stabil" hanya berlaku untuk partisi yang benar-benar dijalankan. Jangan menyimpulkan v69 mengalahkan 0.56424 sebelum ada public score.

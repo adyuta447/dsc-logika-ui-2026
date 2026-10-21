@@ -1,0 +1,22 @@
+lean variants: ['extra', 'stiff7']; best=extra auc=0.848132
+pool 91, eligible 77 at AUC 0.848132
+kept 11
+
+=== candidates by AUC ===
+slot name                                               auc        ks     ks-sd    vs v66
+   1 leg|extra                                     0.848132  0.527736  0.524136  0.991086
+   2 stack_logit                                   0.847997  0.527692  0.524092  0.996453
+   3 stack_anchor_w0.1                             0.847913  0.528224  0.524624  0.998454
+   4 trees4|extra                                  0.847765  0.526741  0.523141  0.995292
+   5 tm20|extra                                    0.847674  0.527580  0.523980  0.998347
+   6 leg|stiff7                                    0.847653  0.527933  0.524333  0.991371
+   7 stack_anchor_w0.5                             0.847566  0.528656  0.525056  0.999729
+   8 ext0.35|tm20|extra                            0.847024  0.527747  0.524147  0.998898
+   9 ext0.65|tm20|stiff7                           0.846480  0.526909  0.523309  0.998367
+  10 ext0.5|tm30|extra                             0.846292  0.528254  0.524654  0.999465
+  11 ext0.75|tm30|stiff7                           0.845733  0.525744  0.522144  0.998532
+  1 diverse submits: expected max +0.00000 public (0.00 sd), independence upper bound
+  3 diverse submits: expected max +0.00450 public (0.85 sd), independence upper bound
+  11 diverse submits: expected max +0.00839 public (1.58 sd), independence upper bound
+
+saved /Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v69/output/summary_v69_candidates.json
