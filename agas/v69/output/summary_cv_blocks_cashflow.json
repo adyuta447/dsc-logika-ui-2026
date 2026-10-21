@@ -1,0 +1,31 @@
+{
+  "features": "agas/v69/output/features_v69.pkl",
+  "drops": [
+    "rq_",
+    "pv_"
+  ],
+  "folds": 5,
+  "fold_seeds": [
+    42
+  ],
+  "lgb_seeds": [
+    0
+  ],
+  "config": "base",
+  "n_full": 720,
+  "n_lean": 542,
+  "use_factor": true,
+  "n_factor": 6,
+  "mean_auc": 0.8459277498803871,
+  "sd_auc": 0.0,
+  "mean_ks": 0.5241179288059066,
+  "minutes": 4.587441833813985,
+  "per_fold_seed": {
+    "42": {
+      "auc": 0.8459277498803871,
+      "ks": 0.5241179288059066,
+      "auc_lgb_mean": 0.8459277498803871,
+      "auc_lgb_sd": 0.0
+    }
+  }
+}

@@ -1,0 +1,6 @@
+10:31:33 features=features_v69.pkl rows=70000 full=720 lean=612 drops=() folds=5 config=base
+10:32:03 fold seed 42
+10:32:05   train columns=618 factor=6
+10:36:23   lgb0 auc=0.846204 ks=0.525296
+10:36:23 fs=42 auc=0.846204 ks=0.525296
+10:36:23 SUMMARY auc=0.846204 sd=0.000000 ks=0.525296 in 4.8 min

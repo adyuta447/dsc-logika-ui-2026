@@ -1,0 +1,32 @@
+09:54:00 rows=70000 lean=490 full=598
+09:54:25 factor inputs ready
+09:54:25 fold seed 42
+09:57:17   base   lgb0 auc=0.845398 ks=0.523272
+10:01:20   base   lgb1 auc=0.845356 ks=0.522310
+10:01:20 base   fs=42 auc=0.845531 ks=0.523921 (lgb seed mean=0.845377 sd=0.000021)
+10:04:42   l2_20  lgb0 auc=0.845464 ks=0.522470
+10:07:04   l2_20  lgb1 auc=0.845533 ks=0.523976
+10:07:04 l2_20  fs=42 auc=0.845629 ks=0.523555 (lgb seed mean=0.845499 sd=0.000035)
+10:10:00   stiff7 lgb0 auc=0.845612 ks=0.524991
+10:13:35   stiff7 lgb1 auc=0.845385 ks=0.525738
+10:13:35 stiff7 fs=42 auc=0.845599 ks=0.525383 (lgb seed mean=0.845499 sd=0.000114)
+10:16:49   wide31 lgb0 auc=0.844850 ks=0.521845
+10:19:27   wide31 lgb1 auc=0.845214 ks=0.523670
+10:19:27 wide31 fs=42 auc=0.845208 ks=0.522764 (lgb seed mean=0.845032 sd=0.000182)
+10:22:38   extra  lgb0 auc=0.846029 ks=0.524212
+10:27:10   extra  lgb1 auc=0.845962 ks=0.525760
+10:27:10 extra  fs=42 auc=0.846127 ks=0.525063 (lgb seed mean=0.845996 sd=0.000033)
+10:27:10 fold seed 7
+10:29:45   base   lgb0 auc=0.845621 ks=0.523649
+10:32:19   base   lgb1 auc=0.845530 ks=0.524242
+10:32:19 base   fs=7 auc=0.845737 ks=0.524549 (lgb seed mean=0.845575 sd=0.000045)
+10:35:18   l2_20  lgb0 auc=0.845580 ks=0.524027
+10:38:09   l2_20  lgb1 auc=0.845514 ks=0.525028
+10:38:09 l2_20  fs=7 auc=0.845667 ks=0.523987 (lgb seed mean=0.845547 sd=0.000033)
+10:40:45   stiff7 lgb0 auc=0.845645 ks=0.526161
+10:43:10   stiff7 lgb1 auc=0.845716 ks=0.526989
+10:43:10 stiff7 fs=7 auc=0.845782 ks=0.526451 (lgb seed mean=0.845681 sd=0.000036)
+10:47:07   wide31 lgb0 auc=0.845278 ks=0.522350
+10:51:02   wide31 lgb1 auc=0.845272 ks=0.523163
+10:51:02 wide31 fs=7 auc=0.845445 ks=0.522716 (lgb seed mean=0.845275 sd=0.000003)
+10:55:37   extra  lgb0 auc=0.846422 ks=0.526240
