@@ -1554,6 +1554,105 @@ python3 agas/v69/training/train_lean_v69.py \
 3. Submit `submission_v69_10_ext0.5_tm30_extra.csv` sebagai kontrol arah public 0.56424.
 4. Catat public score di ledger.
 
+## 2026-10-23 — v70: blok lintas sumber, 15 fold, 10 fold seed
+
+### Titik awal
+
+`v69_10` (`ext0.5|tm30|extra`) hanya mendapat **0.55989**; `v66_04` tetap **0.56424**. Pelajarannya: jangan mengganti pivot `lgb_lean` v66. v70 karena itu memakai ulang seluruh leg v66 dari `preds_v66.npz` dan leg v69 dari `preds_v69.npz`, lalu hanya menambah fitur dan training untuk leg baru. Tidak ada model lama yang dilatih ulang, sehingga arah public yang sudah terbukti tidak ikut berubah.
+
+### Probe sumber dan grade
+
+| Sumber | AUC 5-fold |
+|---|---:|
+| app + profile | 0.8308 |
+| e-commerce | 0.7635 |
+| repayment | 0.7462 |
+| bureau | 0.6869 |
+| previous applications | 0.6309 |
+| account behavior | 0.6207 |
+| semua 612 kolom | **0.8459** |
+| rank blend 6 sumber | 0.8138 |
+
+Rank blend per sumber jauh di bawah model gabungan, jadi informasi baru harus datang dari interaksi, bukan dari menambah model per sumber.
+
+Grade probe: global 0.845949, per-grade 0.840175, hybrid `w=0.25` 0.845985 (+0.000036). Tidak dipakai.
+
+### Blok fitur baru
+
+`agas/v70/training/feat_v70.py` membangun empat blok:
+
+| Prefix | Isi | Kolom |
+|---|---|---:|
+| `ms_` | panel bulanan repayment (due/late/unpaid) × cash flow (net, saldo, low-balance days) | 67 |
+| `ls_` | status pinjaman: late/dpd per pinjaman, aktif vs lunas, rasio bayar | 40 |
+| `ed_` | kedalaman e-commerce: keranjang, kategori, tren harga, konsentrasi | 51 |
+| `ss_` | panel 3 arah: late × net cash flow × e-commerce spend | 42 |
+
+Screening memakai 5 fold, fold seed 42/7/13, satu LGB seed, config `extra`, factor aktif:
+
+| Run | Blok | n_lean | AUC | KS |
+|---|---|---:|---:|---:|
+| `s0_base` | v69 lean + factor | 526 | 0.847013 | 0.526286 |
+| `s1_ms` | + `ms_` | 593 | 0.847135 | 0.527648 |
+| `s2_ls` | + `ls_` | 566 | 0.847065 | 0.526527 |
+| `s3_ed` | + `ed_` | 577 | 0.846887 | 0.526514 |
+| `s4_all` | + `ms_` + `ls_` + `ed_` | 684 | **0.847219** | **0.527724** |
+| `s5_ss` | + `ss_` | 568 | 0.846972 | 0.526633 |
+| `s6_allss` | + all + `ss_` | 726 | 0.847023 | 0.526422 |
+
+`ms_` satu-satunya blok yang konsisten positif (+0.000122 AUC, +0.001362 KS di ketiga seed). `ls_` netral, `ed_` negatif sendirian, tetapi `+all` sedikit di atas `+ms` (+0.000084 AUC) dengan sd lebih kecil. `ss_` negatif dan dibuang. Feature set final: `+all`, 684 kolom lean (690 dengan factor).
+
+### Training
+
+15 fold, fold seed `42,7,13,21,5,101,3,17,11,23`, LGB seed 0, dua varian:
+
+| Fold seed | `extra` AUC | `extra` KS | `stiff7` AUC | `stiff7` KS |
+|---:|---:|---:|---:|---:|
+| 42 | 0.847821 | 0.529059 | 0.847238 | 0.527718 |
+| 7 | 0.847880 | 0.528070 | 0.847631 | 0.528471 |
+| 13 | 0.847907 | 0.527917 | 0.847593 | 0.527085 |
+| 21 | 0.847941 | 0.526791 | 0.847500 | 0.526376 |
+| 5 | 0.847984 | 0.528610 | 0.847247 | 0.529096 |
+| 101 | 0.847899 | 0.528304 | 0.847393 | 0.526442 |
+| 3 | 0.848124 | 0.527680 | 0.847844 | 0.528610 |
+| 17 | 0.847923 | 0.527526 | 0.847252 | 0.526168 |
+| 11 | 0.848083 | 0.527341 | 0.847466 | 0.526110 |
+| 23 | 0.847945 | 0.527423 | 0.847547 | 0.529113 |
+| **Bagged** | **0.848369** | **0.528503** | **0.847843** | **0.527944** |
+
+Dibanding `v69_extra` (0.848132 / 0.527736), bagged `v70_extra` adalah **+0.000237 AUC / +0.000767 KS**. Semua 10 seed `extra` di atas 0.8478; `stiff7` tetap di bawah `extra` tetapi menambah diversity.
+
+### Kandidat
+
+`make_submission_v70.py` membangun 195 vektor, 143 lolos lantai AUC 0.0025, 21 lolos deduplikasi Spearman 0.9995:
+
+| Slot | File | AUC | KS | Spearman vs v66_04 |
+|---:|---|---:|---:|---:|
+| 01 | `submission_v70_01_leg_v70_extra.csv` | **0.848369** | 0.528503 | 0.989875 |
+| 02 | `submission_v70_02_leg_x69_extra.csv` | 0.848132 | 0.527736 | 0.991086 |
+| 03 | `submission_v70_03_tm30w7_v70_extra.csv` | 0.847852 | 0.528663 | 0.998486 |
+| 04 | `submission_v70_04_leg_v70_stiff7.csv` | 0.847843 | 0.527944 | 0.990402 |
+| 05 | `submission_v70_05_leg_x69_stiff7.csv` | 0.847653 | 0.527933 | 0.991371 |
+| 06 | `submission_v70_06_plateau_tm30w7_v70_extra_lgb_lean.csv` | 0.847623 | **0.530232** | 0.998421 |
+| 07 | `submission_v70_07_ext0.5_tm30v70_lgb_lean.csv` | 0.847249 | 0.529397 | 0.999670 |
+| 08 | `submission_v70_08_tm30v66.csv` | 0.847223 | 0.528476 | 0.999216 |
+| 09 | `submission_v70_09_ext0.25_tm30w7_v70_stiff7_x69_extra.csv` | 0.847164 | 0.528747 | 0.999052 |
+| 10 | `submission_v70_10_trees4.csv` | 0.847142 | 0.525693 | 0.995111 |
+
+`plateau|tm30w7|v70_extra|lgb_lean` (slot 06) pada dasarnya adalah `ext0.5` dengan bobot 0.7 pada leg terkuat; rata-rata rasio 0.25/0.5/0.75 tidak menaikkan AUC dibanding `ext0.5` (0.847623 vs 0.847623) dan hanya menambah +0.000115 KS. Jadi plateau di sini bukan taruhan pada rasio agresif.
+
+### Rekomendasi submit
+
+1. **Slot 06** — KS OOF tertinggi, AUC 0.847623, Spearman 0.9984 terhadap anchor; keluarga ekstrapolasi yang sama, dengan core yang lebih kuat.
+2. **Slot 07** — paling dekat dengan resep 0.56424 (Spearman 0.99967); pilihan konservatif.
+3. **Slot 01** — AUC tertinggi (0.848369) tanpa ekstrapolasi; kontrol untuk menguji apakah model mentah yang lebih kuat juga menang di public.
+
+Kalau hanya satu: **slot 06**. Kalau dua: **06 + 07**.
+
+### Status
+
+21 CSV tervalidasi: 30000 baris, ID unik dan cocok dengan `data/test_applications.csv`, probabilitas di [0, 1], tanpa NaN. Notebook `agas/v70/notebook/notebook_v70.ipynb` dieksekusi penuh dengan `RUN_TRAINING = False`, nol error. Tidak ada submission Kaggle dan tidak ada push GitHub.
+
 ## Public score ledger
 
 | File | Public | Status |
@@ -1568,5 +1667,6 @@ python3 agas/v69/training/train_lean_v69.py \
 | `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv` | **0.56424** | public terbaik |
 | `agas/v67/output/submission_v67_01_anchor.csv` | **0.56424** | kontrol |
 | `agas/v68/output/submission_v68_04_ext0.5_tm30_lgb_lean.csv` | 0.56411 | 10 fold seed |
+| `agas/v69/output/submission_v69_10_ext0.5_tm30_extra.csv` | 0.55989 | pivot `extra` |
 
-Kandidat v67 selain `01_anchor`, kandidat v68 selain `04`, dan semua kandidat v69 belum disubmit; public score-nya belum diketahui.
+Kandidat v67 selain `01_anchor`, kandidat v68 selain `04`, dan semua kandidat v70 belum disubmit; public score-nya belum diketahui.

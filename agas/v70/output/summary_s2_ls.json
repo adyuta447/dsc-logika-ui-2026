@@ -1,0 +1,47 @@
+{
+  "features": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v70/output/features_v70.pkl",
+  "drops": [
+    "cf_",
+    "pv_",
+    "ms_",
+    "ed_"
+  ],
+  "folds": 5,
+  "fold_seeds": [
+    42,
+    7,
+    13
+  ],
+  "lgb_seeds": [
+    0
+  ],
+  "config": "extra",
+  "n_full": 878,
+  "n_lean": 566,
+  "use_factor": true,
+  "n_factor": 6,
+  "mean_auc": 0.8470650496450007,
+  "sd_auc": 0.0002193487005822132,
+  "mean_ks": 0.5265265862986704,
+  "minutes": 10.364673483371735,
+  "per_fold_seed": {
+    "42": {
+      "auc": 0.8467573486170574,
+      "ks": 0.5249788869270684,
+      "auc_lgb_mean": 0.8467573486170574,
+      "auc_lgb_sd": 0.0
+    },
+    "7": {
+      "auc": 0.8472529712130014,
+      "ks": 0.528122295291124,
+      "auc_lgb_mean": 0.8472529712130014,
+      "auc_lgb_sd": 0.0
+    },
+    "13": {
+      "auc": 0.8471848291049433,
+      "ks": 0.5264785766778187,
+      "auc_lgb_mean": 0.8471848291049433,
+      "auc_lgb_sd": 0.0
+    }
+  }
+}

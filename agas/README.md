@@ -1106,3 +1106,43 @@ Sebelas CSV tervalidasi: 30000 baris, ID unik dan cocok dengan test, probabilita
 ### Yang belum diketahui
 
 Semua public score v69. OOF v69 lebih tinggi dari v68, tetapi noise public sekitar 0.0053 dan perubahan 0.001 tidak terukur dengan satu submit. Enam seed (bukan 12) dan 15 fold membuat klaim "lebih stabil" hanya berlaku untuk partisi yang benar-benar dijalankan. Jangan menyimpulkan v69 mengalahkan 0.56424 sebelum ada public score.
+
+## v70 — blok lintas sumber + training lebih banyak (2026-10-23)
+
+v70 mempertahankan seluruh leg v66 dan v69; yang baru hanya dua varian `lgb_lean`
+di atas feature set `+all` (684 kolom lean, 690 dengan factor), dilatih 15 fold
+dan 10 fold seed. Empat blok fitur diuji lebih dulu dengan 5 fold × 3 seed:
+
+| Blok | n_lean | AUC | KS | Keputusan |
+|---|---:|---:|---:|---|
+| baseline | 526 | 0.847013 | 0.526286 | — |
+| + `ms_` monthstress | 593 | 0.847135 | 0.527648 | dipakai |
+| + `ls_` loanstatus | 566 | 0.847065 | 0.526527 | dipakai (netral, ada di `+all`) |
+| + `ed_` ecomdepth | 577 | 0.846887 | 0.526514 | dipakai hanya di `+all` |
+| + `ms_` + `ls_` + `ed_` | 684 | **0.847219** | **0.527724** | **final** |
+| + `ss_` spendstress | 568 | 0.846972 | 0.526633 | dibuang |
+
+Hasil training final:
+
+| Varian | AUC bagged | KS bagged |
+|---|---:|---:|
+| `v70_extra` | **0.848369** | **0.528503** |
+| `v70_stiff7` | 0.847843 | 0.527944 |
+| `v69_extra` (pembanding) | 0.848132 | 0.527736 |
+
+`v70_extra` adalah **+0.000237 AUC / +0.000767 KS** di atas `v69_extra`. Semua
+10 fold seed berada di atas 0.8478.
+
+`make_submission_v70.py` menghasilkan 21 CSV tervalidasi. Tiga yang paling
+relevan:
+
+| Slot | File | AUC | KS | Spearman vs v66_04 |
+|---:|---|---:|---:|---:|
+| 01 | `submission_v70_01_leg_v70_extra.csv` | **0.848369** | 0.528503 | 0.989875 |
+| 06 | `submission_v70_06_plateau_tm30w7_v70_extra_lgb_lean.csv` | 0.847623 | **0.530232** | 0.998421 |
+| 07 | `submission_v70_07_ext0.5_tm30v70_lgb_lean.csv` | 0.847249 | 0.529397 | 0.999670 |
+
+Urutan submit: **06** (utama, KS OOF tertinggi dan masih keluarga ekstrapolasi
+v66), lalu **07** (paling dekat dengan resep 0.56424), lalu **01** (kontrol AUC
+tanpa ekstrapolasi). Notebook: `agas/v70/notebook/notebook_v70.ipynb`
+(dieksekusi dengan `RUN_TRAINING = False`, nol error).

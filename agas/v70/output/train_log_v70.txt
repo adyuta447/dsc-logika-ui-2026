@@ -1,0 +1,56 @@
+00:17:31 features=features_v70.pkl full=878 lean=684 drops=('cf_', 'pv_') variants=['extra', 'stiff7'] folds=15 seeds=[42, 7, 13, 21, 5, 101, 3, 17, 11, 23] lgb_seeds=[0] factor=True
+00:17:32 computing factor inputs
+00:18:11 factor inputs ready
+00:18:11 fold seed 42
+00:18:17   train columns=690 factor_added=6
+00:40:08   fs=42 extra        auc=0.847821 ks=0.529059
+00:40:08   fs=42 stiff7       auc=0.847238 ks=0.527718
+00:40:08   saved after 1/10 seeds, 22.6 min
+00:40:08 fold seed 7
+00:40:11   train columns=690 factor_added=6
+00:59:08   fs=7 extra        auc=0.847880 ks=0.528070
+00:59:08   fs=7 stiff7       auc=0.847631 ks=0.528471
+00:59:08   saved after 2/10 seeds, 41.6 min
+00:59:08 fold seed 13
+00:59:10   train columns=690 factor_added=6
+01:16:25   fs=13 extra        auc=0.847907 ks=0.527917
+01:16:25   fs=13 stiff7       auc=0.847593 ks=0.527085
+01:16:26   saved after 3/10 seeds, 58.9 min
+01:16:26 fold seed 21
+01:16:28   train columns=690 factor_added=6
+01:33:22   fs=21 extra        auc=0.847941 ks=0.526791
+01:33:22   fs=21 stiff7       auc=0.847500 ks=0.526376
+01:33:22   saved after 4/10 seeds, 75.9 min
+01:33:22 fold seed 5
+01:33:24   train columns=690 factor_added=6
+01:49:47   fs=5 extra        auc=0.847984 ks=0.528610
+01:49:47   fs=5 stiff7       auc=0.847247 ks=0.529096
+01:49:47   saved after 5/10 seeds, 92.3 min
+01:49:47 fold seed 101
+01:49:50   train columns=690 factor_added=6
+02:05:33   fs=101 extra        auc=0.847899 ks=0.528304
+02:05:33   fs=101 stiff7       auc=0.847393 ks=0.526442
+02:05:33   saved after 6/10 seeds, 108.1 min
+02:05:33 fold seed 3
+02:05:35   train columns=690 factor_added=6
+02:21:46   fs=3 extra        auc=0.848124 ks=0.527680
+02:21:46   fs=3 stiff7       auc=0.847844 ks=0.528610
+02:21:46   saved after 7/10 seeds, 124.3 min
+02:21:46 fold seed 17
+02:21:48   train columns=690 factor_added=6
+02:38:44   fs=17 extra        auc=0.847923 ks=0.527526
+02:38:44   fs=17 stiff7       auc=0.847252 ks=0.526168
+02:38:44   saved after 8/10 seeds, 141.2 min
+02:38:44 fold seed 11
+02:38:46   train columns=690 factor_added=6
+02:54:44   fs=11 extra        auc=0.848083 ks=0.527341
+02:54:44   fs=11 stiff7       auc=0.847466 ks=0.526110
+02:54:44   saved after 9/10 seeds, 157.2 min
+02:54:44 fold seed 23
+02:54:46   train columns=690 factor_added=6
+03:10:02   fs=23 extra        auc=0.847945 ks=0.527423
+03:10:02   fs=23 stiff7       auc=0.847547 ks=0.529113
+03:10:02   saved after 10/10 seeds, 172.5 min
+03:10:03 BAG extra        auc=0.848369 ks=0.528503
+03:10:03 BAG stiff7       auc=0.847843 ks=0.527944
+03:10:03 done in 172.5 min

@@ -1,0 +1,56 @@
+23:14:50 features=features_v70.pkl rows=70000 full=878 lean=593 drops=('cf_', 'pv_', 'ls_', 'ed_') folds=5 config=extra
+23:15:04 fold seed 42
+23:15:05   train columns=599 factor=6
+23:18:18   lgb0 auc=0.846830 ks=0.526073
+23:18:18 fs=42 auc=0.846830 ks=0.526073
+23:18:18 fold seed 7
+23:18:20   train columns=599 factor=6
+23:22:04   lgb0 auc=0.847378 ks=0.529253
+23:22:04 fs=7 auc=0.847378 ks=0.529253
+23:22:04 fold seed 13
+23:22:05   train columns=599 factor=6
+23:25:30   lgb0 auc=0.847197 ks=0.527618
+23:25:30 fs=13 auc=0.847197 ks=0.527618
+23:25:30 SUMMARY auc=0.847135 sd=0.000228 ks=0.527648 in 10.7 min
+23:25:32 features=features_v70.pkl rows=70000 full=878 lean=566 drops=('cf_', 'pv_', 'ms_', 'ed_') folds=5 config=extra
+23:25:47 fold seed 42
+23:25:48   train columns=572 factor=6
+23:29:05   lgb0 auc=0.846757 ks=0.524979
+23:29:05 fs=42 auc=0.846757 ks=0.524979
+23:29:05 fold seed 7
+23:29:06   train columns=572 factor=6
+23:32:20   lgb0 auc=0.847253 ks=0.528122
+23:32:20 fs=7 auc=0.847253 ks=0.528122
+23:32:20 fold seed 13
+23:32:21   train columns=572 factor=6
+23:35:54   lgb0 auc=0.847185 ks=0.526479
+23:35:54 fs=13 auc=0.847185 ks=0.526479
+23:35:54 SUMMARY auc=0.847065 sd=0.000219 ks=0.526527 in 10.4 min
+23:35:56 features=features_v70.pkl rows=70000 full=878 lean=577 drops=('cf_', 'pv_', 'ms_', 'ls_') folds=5 config=extra
+23:36:10 fold seed 42
+23:36:11   train columns=583 factor=6
+23:39:50   lgb0 auc=0.846555 ks=0.524958
+23:39:50 fs=42 auc=0.846555 ks=0.524958
+23:39:50 fold seed 7
+23:39:51   train columns=583 factor=6
+23:42:58   lgb0 auc=0.846953 ks=0.526811
+23:42:58 fs=7 auc=0.846953 ks=0.526811
+23:42:58 fold seed 13
+23:42:59   train columns=583 factor=6
+23:46:41   lgb0 auc=0.847153 ks=0.527772
+23:46:42 fs=13 auc=0.847153 ks=0.527772
+23:46:42 SUMMARY auc=0.846887 sd=0.000249 ks=0.526514 in 10.8 min
+23:46:44 features=features_v70.pkl rows=70000 full=878 lean=684 drops=('cf_', 'pv_') folds=5 config=extra
+23:46:58 fold seed 42
+23:46:59   train columns=690 factor=6
+23:50:53   lgb0 auc=0.846960 ks=0.526570
+23:50:53 fs=42 auc=0.846960 ks=0.526570
+23:50:53 fold seed 7
+23:50:54   train columns=690 factor=6
+23:54:43   lgb0 auc=0.847356 ks=0.529619
+23:54:43 fs=7 auc=0.847356 ks=0.529619
+23:54:43 fold seed 13
+23:54:44   train columns=690 factor=6
+23:58:15   lgb0 auc=0.847342 ks=0.526984
+23:58:15 fs=13 auc=0.847342 ks=0.526984
+23:58:15 SUMMARY auc=0.847219 sd=0.000183 ks=0.527724 in 11.5 min

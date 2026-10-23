@@ -1,0 +1,14 @@
+23:14:50 features=features_v70.pkl rows=70000 full=878 lean=593 drops=('cf_', 'pv_', 'ls_', 'ed_') folds=5 config=extra
+23:15:04 fold seed 42
+23:15:05   train columns=599 factor=6
+23:18:18   lgb0 auc=0.846830 ks=0.526073
+23:18:18 fs=42 auc=0.846830 ks=0.526073
+23:18:18 fold seed 7
+23:18:20   train columns=599 factor=6
+23:22:04   lgb0 auc=0.847378 ks=0.529253
+23:22:04 fs=7 auc=0.847378 ks=0.529253
+23:22:04 fold seed 13
+23:22:05   train columns=599 factor=6
+23:25:30   lgb0 auc=0.847197 ks=0.527618
+23:25:30 fs=13 auc=0.847197 ks=0.527618
+23:25:30 SUMMARY auc=0.847135 sd=0.000228 ks=0.527648 in 10.7 min
