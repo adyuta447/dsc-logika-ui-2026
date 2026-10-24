@@ -1,0 +1,38 @@
+{
+  "sequence": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v72/output/sequences_v72.npz",
+  "features": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v70/output/features_v70.pkl",
+  "static": true,
+  "n_static": 770,
+  "folds": 5,
+  "fold_seeds": [
+    42
+  ],
+  "seeds": [
+    0
+  ],
+  "params": {
+    "hidden": 64,
+    "static_hidden": 256,
+    "dropout": 0.25,
+    "static_dropout": 0.35,
+    "lr": 0.001,
+    "wd": 0.0001,
+    "epochs": 30,
+    "batch": 512,
+    "pos_weight": 1.0,
+    "patience": 5,
+    "device": "mps"
+  },
+  "mean_auc": 0.8415270805864421,
+  "sd_auc": 0.0,
+  "mean_ks": 0.5143816006494417,
+  "per_fold_seed": {
+    "42": {
+      "auc": 0.8415270805864421,
+      "ks": 0.5143816006494417,
+      "auc_seed_mean": 0.8415270805864421,
+      "auc_seed_sd": 0.0
+    }
+  },
+  "minutes": 9.114315219720204
+}

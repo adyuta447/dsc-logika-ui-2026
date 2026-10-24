@@ -59,8 +59,16 @@ Semua submission yang sudah dilaporkan user, diurutkan berdasarkan tanggal submi
 | `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv` | **0.56424** | public terbaik |
 | `agas/v67/output/submission_v67_01_anchor.csv` | **0.56424** | kontrol, vektor v66_04 |
 | `agas/v68/output/submission_v68_04_ext0.5_tm30_lgb_lean.csv` | 0.56411 | 10 fold seed, Spearman 0.999997 ke v66_04 |
+| `agas/v69/output/submission_v69_10_ext0.5_tm30_extra.csv` | 0.55989 | pivot `extra`, public turun |
+| `agas/v70/output/submission_v70_06_plateau_tm30w7_v70_extra_lgb_lean.csv` | 0.56040 | OOF KS tertinggi, public turun |
+| `agas/v70/output/submission_v70_07_ext0.5_tm30v70_lgb_lean.csv` | 0.56419 | praktis sama dengan anchor |
+| `agas/v70/output/submission_v70_01_leg_v70_extra.csv` | 0.55801 | OOF AUC tertinggi, public turun |
+| `agas/v71/output/submission_v71_01_core71.csv` | 0.56111 | MLP-heavy; OOF +0.004 KS tidak transfer |
 
-Public score kandidat v67 selain `01_anchor`, kandidat v68 selain `04`, dan semua kandidat v69 belum diketahui.
+Public score kandidat v67 selain `01_anchor`, kandidat v68 selain `04`, kandidat
+v69 selain `10`, kandidat v70 selain `01/06/07`, dan kandidat v71 selain `01`
+belum diketahui. Pola yang terlihat: kandidat yang makin jauh dari rank
+`v66_04` cenderung makin turun di public, meskipun OOF-nya naik.
 
 ## 2) Metode yang dipakai
 
@@ -1241,3 +1249,44 @@ tanpa NaN. Notebook dieksekusi penuh dengan `RUN_TRAINING=False`, nol error.
 Tidak ada submit Kaggle dan tidak ada push GitHub. Target 0.577 belum teruji di
 public; expected score dari pergeseran OOF adalah ~0.568, sehingga 0.577 masih
 ekor noise sekitar 1.6 sd public.
+
+---
+
+## 8) v72: sequence representation (negative result)
+
+Public `core71` = **0.56111**, yaitu −0.00313 dari anchor `v66_04` (0.56424).
+Kenaikan OOF +0.004 KS tidak transfer. Gate v71 karena itu menghentikan ekspansi
+MLP dan memindahkan taruhan ke representasi yang benar-benar berbeda: sequence
+bulanan 24 bulan dari account, repayment, e-commerce, bureau, dan previous
+applications. Semua event dipotong pada `decision_datetime`.
+
+Artefak:
+
+- `agas/v72/training/build_sequences_v72.py` — tensor 100.000 × 24 × 56 + 5
+  mask sumber; `agas/v72/output/sequences_v72.npz`.
+- `agas/v72/training/train_seq_v72.py` — GRU bidirectional kecil + attention
+  pooling; `--static` menambahkan blok tabular v70.
+- `agas/v72/output/preds_seq_v72_pure.npz` dan `preds_seq_v72_static.npz`.
+- `agas/v72/output/sequences_v72.npz` adalah cache 113 MB; tidak di-track
+  (seperti `*.pkl`). Regenerasi dengan `build_sequences_v72.py` (~0,4 menit)
+  sebelum menjalankan notebook dari clone bersih.
+- `agas/v72/training/make_submission_v72.py` — gate kandidat dan bootstrap dKS.
+- `agas/v72/notebook/notebook_v72.ipynb` — audit + hasil, `RUN_TRAINING=False`.
+
+Hasil 5-fold × 1 seed:
+
+| Leg | OOF AUC | OOF KS | Korelasi rank vs anchor |
+|---|---:|---:|---:|
+| sequence murni | 0.783309 | 0.407868 | 0.7598 |
+| sequence + static | 0.841527 | 0.514382 | 0.9494 |
+| anchor `v66_04` | 0.846840 | 0.528713 | 1.0000 |
+
+Sequence murni membawa sinyal, tetapi jauh di bawah keluarga static. Blend
+terbaik secara OOF hanya menambah sekitar +0.0001–0.0011 AUC dan **tidak**
+menambah KS; public-proxy bootstrap `anchor + 5% sequence` memberi dKS
++0.00052 dengan P(dKS>0) = 0.676. Itu di bawah noise floor.
+
+Kandidat yang dibuat: `submission_v72_01_anchor.csv` (kontrol, direkomendasikan),
+`submission_v72_02_anchor_seq05.csv` (diagnostik), dan
+`submission_v72_03_anchor_seqst15.csv` (ditolak). Tidak ada kandidat v72 yang
+dipromosikan di atas anchor. Detail ada di `summary_v72_candidates.json`.

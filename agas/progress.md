@@ -1806,3 +1806,67 @@ Tidak ada XGBoost final: kandidat yang ada sudah cukup kuat dan waktu lebih
 baik dipakai untuk dokumentasi serta validasi. Tidak ada submit Kaggle dan
 tidak ada push GitHub. Notebook `notebook_v71.ipynb` dieksekusi penuh dengan
 `RUN_TRAINING=False`, 22 sel, nol error.
+
+## 2026-10-24 — public v71 dan gate sequence v72
+
+### Public v71
+
+User melaporkan `submission_v71_01_core71.csv` = **0.56111**. Itu **−0.00313**
+dari anchor `v66_04` (0.56424), walaupun OOF-nya +0.00412 KS dan public-proxy
+bootstrap memprediksi sekitar 0.568. Ledger public terbaru:
+
+| Kandidat | Public | OOF KS | Catatan |
+|---|---:|---:|---|
+| `v66_04` | **0.56424** | 0.528713 | anchor |
+| `v70_07` | 0.56419 | 0.529397 | rho ~0.9997 ke anchor |
+| `v68_04` | 0.56411 | — | rho 0.999997 ke anchor |
+| `v70_06` | 0.56040 | 0.530232 | OOF KS tertinggi |
+| `v70_01` | 0.55801 | 0.528503 | OOF AUC tertinggi |
+| `v69_10` | 0.55989 | 0.528254 | pivot `extra` |
+| `v71 core71` | 0.56111 | 0.532834 | MLP-heavy |
+
+Kesimpulan: kenaikan OOF +0.004 tidak transfer ke public. Kandidat yang makin
+jauh dari rank anchor cenderung makin turun, jadi ekspansi MLP dihentikan dan
+pivot v72 diarahkan ke representasi sequence, bukan menambah bobot MLP.
+
+### v72 sequence
+
+`build_sequences_v72.py` membangun tensor 100.000 × 24 × 56 + 5 mask sumber:
+account cash flow, repayment, e-commerce, bureau, dan previous applications.
+Semua event dipotong pada `decision_datetime`; tidak ada due date, transaksi,
+report, atau month setelah cutoff. `train_seq_v72.py` memakai GRU
+bidirectional kecil + attention pooling, dengan opsi blok static v70.
+
+Hasil 5-fold × 1 seed:
+
+| Leg | OOF AUC | OOF KS | Rank corr vs anchor |
+|---|---:|---:|---:|
+| sequence murni | 0.783309 | 0.407868 | 0.7598 |
+| sequence + static | 0.841527 | 0.514382 | 0.9494 |
+| anchor `v66_04` | 0.846840 | 0.528713 | 1.0000 |
+
+Sequence murni memang membawa sinyal baru (korelasi rendah), tetapi terlalu
+lemah. Sequence + static masih di bawah static-only MLP (0.8484). Blend gate:
+
+- `anchor + 5% sequence murni`: OOF AUC 0.846968 (+0.000128), KS 0.528844
+  (+0.000131); bootstrap dKS +0.000519, P(dKS>0)=0.676.
+- `anchor + 15% sequence+static`: OOF AUC 0.847708 (+0.000868), KS 0.528063
+  (−0.000650); bootstrap dKS +0.000287, P(dKS>0)=0.585.
+- `anchor + 25% sequence+static`: OOF AUC 0.847959 (+0.001119), KS 0.528276
+  (−0.000437); tidak lolos gate KS.
+
+Gate v72: **gagal**. Sequence tidak menambah KS di atas noise, dan tidak ada
+kandidat yang lebih layak dari anchor. Kandidat yang dibuat hanya untuk
+diagnostik: `submission_v72_01_anchor.csv` (kontrol, direkomendasikan),
+`submission_v72_02_anchor_seq05.csv` (opsional), dan
+`submission_v72_03_anchor_seqst15.csv` (ditolak). Semua 30.000 baris, ID
+unik/cocok test, [0,1], tanpa NaN. Summary: `summary_v72_candidates.json`.
+
+### Keputusan
+
+Plafon data/model keluarga ini nyata. `0.57768` adalah ~2.75 sd public di atas
+anchor dan tidak punya bukti OOF yang bisa direplikasi; mengejarnya berisiko
+mengorbankan private score. Prioritas v73: freeze anchor, validasi artefak
+final, dan hanya submit kandidat yang secara eksplisit lebih dekat ke anchor
+atau punya bukti baru yang lolos gate. Tidak ada submit dan tidak ada push
+GitHub pada tahap ini.

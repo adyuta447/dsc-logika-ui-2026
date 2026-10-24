@@ -1,25 +1,27 @@
-# Rencana kerja `agas/` — v71 dan setelahnya
+# Rencana kerja `agas/` — v72 dan setelahnya
 
-Dokumen ini adalah rencana eksekusi aktif. Rencana berikutnya setelah v71
-ditulis tepat di bawah rencana v71, di bagian **“Rencana berikutnya setelah
-v71”**. Aturan kompetisi di `agas/limit.md`, `agas/overview.md`, dan
-`agas/rules.md` tetap mengikat.
+Dokumen ini adalah rencana eksekusi aktif. Rencana v72 sudah dijalankan dan
+hasilnya ditulis di bawah rencana v71; rencana v73 untuk tahap berikutnya
+ditulis tepat di bawah rencana v72. Aturan kompetisi di `agas/limit.md`,
+`agas/overview.md`, dan `agas/rules.md` tetap mengikat.
 
 ## Status public yang melatarbelakangi
 
 | Kandidat | OOF AUC | OOF KS | Public | Catatan |
 |---|---:|---:|---:|---|
 | `v66_04` | 0.846840 | 0.528713 | **0.56424** | anchor terbaik |
+| `v68_04` | 0.847427 | — | 0.56411 | fold-seed ulang, rho 0.999997 |
 | `v69_10` | 0.846292 | 0.528254 | 0.55989 | pivot `extra` gagal |
 | `v70_06` | 0.847623 | 0.530232 | 0.56040 | OOF KS tertinggi, public turun |
 | `v70_07` | 0.847249 | 0.529397 | 0.56419 | praktis sama dengan anchor |
 | `v70_01` | 0.848369 | 0.528503 | 0.55801 | AUC tertinggi, public turun |
+| `v71 core71` | 0.850147 | 0.532834 | 0.56111 | MLP-heavy, OOF gain tidak transfer |
 
-Kesimpulan: keluarga fitur/model v66–v70 sudah jenuh. Perbedaan OOF di bawah
-~0.001 tidak memprediksi public. Target 0.577 adalah ~2.5 sd public di atas
-0.56424 dan sebagian besar kemungkinan merupakan ekor noise leaderboard. Karena
-itu v71 fokus pada **informasi baru yang benar-benar berbeda**, bukan menambah
-blok fitur redundan atau mengubah rasio blend.
+Kesimpulan: keluarga fitur/model v66–v71 sudah jenuh. Perbedaan OOF di bawah
+~0.001 tidak memprediksi public; kandidat yang jauh dari rank anchor justru
+turun. Target 0.577 adalah ~2.5 sd public di atas 0.56424 dan sebagian besar
+kemungkinan merupakan ekor noise leaderboard. Karena itu v72 menguji
+**representasi sequence** sebagai informasi baru, bukan menambah bobot MLP.
 
 ## Prinsip yang tidak boleh dilanggar
 
@@ -150,101 +152,169 @@ blok fitur redundan atau mengubah rasio blend.
   diversity/sequence seperti pada rencana v72 di bawah.
 
 ---
+# Rencana v72 — sequence representation (SUDAH DIEKSEKUSI)
 
-# Rencana berikutnya setelah v71 — v72: MLP-first, lalu sequence
+## Status
 
-## Temuan v71 yang mengubah arah
+- Public v71 `core71` = **0.56111**, turun 0.00313 dari anchor `v66_04`
+  (0.56424), meskipun OOF KS-nya +0.00412. Ekspansi MLP dihentikan.
+- v72 dijalankan 2026-10-24 dan **gagal lolos gate**. Tidak ada kandidat v72
+  yang dipromosikan di atas anchor.
+- Artefak lengkap ada di `agas/v72/{training,notebook,output}` dan di-ringkas
+  di `agas/progress.md`, `agas/README.md`, serta Obsidian.
 
-- Historical panel **gagal** menambah model sekarang: panel score saja
-  0.847202 vs baseline 0.847219; panel + 68 fitur + rate residual 0.847199.
-  Panel tetap disimpan sebagai artefak dan negative result, bukan fitur final.
-- Auxiliary rate **gagal**: rate dapat diprediksi hampir sempurna dari fitur
-  yang sudah ada (AUC rate>=24% = 1.0), residual median ~2.7e-6. `rf_*` dibuang.
-- **MLP berhasil**: MLP 15 fold × 3 fold seed × 3 seed mencapai AUC 0.848433 /
-  KS 0.529473; core MLP + CatBoost + v70 mencapai AUC **0.850147** / KS
-  **0.532834** (MLP wide hanya 18% dari total). Ini kenaikan OOF yang cukup
-  besar dibanding plafon LightGBM 0.848369.
-- Public-proxy bootstrap menunjukkan keunggulan core71 tidak bergantung pada
-  prevalence: pada prevalence 10–25% `dKS` tetap ~+0.004 dan P(KS lebih baik)
-  0.93–0.997.
-- Artinya lever berikutnya bukan feature engineering tambahan, tetapi
-  **arsitektur model dan dekorrelasi error**.
+## Hipotesis
 
-## Fase 0 — validasi public v71 (wajib sebelum ekspansi)
+Model v66–v71 memadatkan setiap sumber menjadi agregat statis. Agregat itu
+kehilangan **urutan dan transisi**: income shock bulan ini, keterlambatan bulan
+berikutnya, perubahan pola belanja, dan status pinjaman aktif. Sequence 24 bulan
+yang hanya memakai event sebelum `decision_datetime` seharusnya menangkap
+informasi yang tidak dimiliki agregat.
 
-- Submit maksimal tiga kandidat v71: `core71` (AUC tertinggi), `core71_ks`
-  (KS OOF tertinggi dengan AUC dalam 0.0005 dari core), dan kandidat
-  konservatif `anchor0.25|core71`.
-- Catat public di `agas/progress.md` dan Obsidian. Jangan menambah kandidat
-  baru sebelum hasil ini masuk.
-- Gate:
-  - jika `core71` < 0.56424, kembali ke anchor dan perlakukan MLP sebagai
-    eksperimen yang tidak transfer ke public;
-  - jika `core71` 0.564–0.567, lanjutkan Fase 1 tetapi pertahankan anchor;
-  - jika `core71` > 0.567, jadikan MLP core sebagai pivot baru.
+## Fase 0 — data sequence (selesai)
 
-## Fase 1 — perkuat MLP (lever utama, biaya rendah)
+- `agas/v72/training/build_sequences_v72.py` membangun tensor
+  `100000 × 24 × 56` + 5 mask sumber:
+  - account: inflow/outflow/income-like credit/net/balance/low-balance days;
+  - repayment: due/paid/unpaid, jumlah pinjaman, late/late30/late90, DPD,
+    payment ratio;
+  - e-commerce: spend/order/cancel/basket/items/harga relatif/kategori;
+  - bureau: score/utilization/inquiries/delinquency/active/outstanding;
+  - previous applications: jumlah, approval/rejection/cancel, amount, rate,
+    installment, decision lag.
+- Audit cutoff: tidak ada due date, account month, transaksi e-commerce,
+  bureau report, atau previous decision setelah `decision_datetime`.
+- Output: `agas/v72/output/sequences_v72.npz`.
 
-Semua screening memakai 5 fold × 3 fold seed, lalu final 15 fold × minimal
-3 fold seed × 3 seed. Jangan memilih berdasarkan KS OOF mentah.
+## Fase 1 — model sequence (selesai)
 
-1. **Arsitektur**: sweep `128/32`, `256/64`, `512/128`, `768/256`; dropout
-   0.20–0.45; `SiLU` vs `ReLU`; weight decay 1e-4–1e-3; early stopping.
-2. **Preprocessing**: standardisasi yang sekarang vs rank-gauss
-   (`QuantileTransformer(output_distribution="normal")`); clipping 0.1/99.9
-   vs 1/99; missing-count feature.
-3. **Feature selection untuk MLP**: importance LightGBM 5-fold, lalu uji
-   top-200/400/600/771. MLP mungkin lebih baik dengan fitur lebih sedikit.
-4. **Factor features**: uji apakah 6 target-encoding fold-safe menambah MLP.
-5. **Ensemble**: minimal tiga arsitektur × tiga seed; rata-rata rank, bukan
-   probabilitas mentah. Target OOF AUC ≥0.851 dan KS ≥0.5325.
+- `agas/v72/training/train_seq_v72.py`: GRU bidirectional 1 layer + attention
+  pooling, 5-fold stratified, early stopping pada AUC validasi.
+- Dua varian: sequence murni dan sequence + blok static v70 (770 kolom).
+- Hasil 5-fold × 1 seed:
 
-## Fase 2 — diversity pohon dan stack
+| Leg | OOF AUC | OOF KS | Rank corr vs anchor |
+|---|---:|---:|---:|
+| sequence murni | 0.783309 | 0.407868 | 0.7598 |
+| sequence + static | 0.841527 | 0.514382 | 0.9494 |
+| anchor `v66_04` | 0.846840 | 0.528713 | 1.0000 |
 
-- XGBoost final 15 fold × 3 fold seed; CatBoost varian depth 4/6/8; satu
-  LightGBM `dart` atau objektif ranking/focal sebagai leg kontrol.
-- Stack hanya dengan model sederhana (logistic regression pada rank leg, atau
-  LightGBM meta depth ≤3 dengan regularisasi kuat). Meta LGB nonlinear yang
-  dicoba di v71 overfit (0.84850 vs core 0.85015), jadi stack tidak otomatis.
-- Seleksi tetap memakai AUC + public-proxy bootstrap; tambahkan sensitivitas
-  prevalence (10%, 13.6%, 20%, 25%) agar tidak bergantung pada satu asumsi.
+## Fase 2 — gate dan keputusan (selesai)
 
-## Fase 3 — sequence model (structural break berikutnya)
+- Gate yang ditetapkan sebelum run: sequence harus menambah **≥0.0005 AUC**
+  pada blend dan **tidak menurunkan KS**; kandidat final harus punya bukti
+  yang lebih kuat dari noise public.
+- `anchor + 5% sequence murni`: AUC 0.846968 (+0.000128), KS 0.528844
+  (+0.000131); bootstrap dKS +0.000519, P(dKS>0)=0.676.
+- `anchor + 15% sequence+static`: AUC 0.847708 (+0.000868), KS 0.528063
+  (−0.000650); bootstrap dKS +0.000287, P(dKS>0)=0.585.
+- `anchor + 25% sequence+static`: AUC 0.847959 (+0.001119), KS 0.528276
+  (−0.000437).
+- **Gate gagal.** Sequence murni membawa sinyal baru tetapi terlalu lemah;
+  sequence+static masih di bawah MLP static 0.8484. Tidak ada kandidat yang
+  layak menggantikan anchor.
 
-Dibangun hanya jika Fase 0–2 selesai dan masih ada ruang.
+## Fase 3 — artefak dan kandidat (selesai)
 
-- Sequence bulanan 12–24 bulan per customer: repayment (due/late/unpaid/DPD),
-  account (inflow/outflow/net/saldo/low-balance), e-commerce (spend/order/
-  cancel/kategori). Semua dipotong pada `decision_datetime`.
-- Model kecil GRU/Transformer (1–2 layer, hidden 64–128), 5-fold GroupKFold by
-  customer, OOF cross-fit. Evaluasi AUC/KS dan korelasi terhadap MLP/LGBM.
-- Label sequence hanya memakai outcome yang sudah terjadi sebelum cutoff;
-  tidak ada target aplikasi sekarang.
-- Jika sequence leg menambah ≥0.0005 AUC pada blend 5-fold, finalkan; jika
-  tidak, dokumentasikan sebagai negative result dan berhenti.
+- Kandidat valid 30.000 baris:
+  - `submission_v72_01_anchor.csv` — kontrol, direkomendasikan;
+  - `submission_v72_02_anchor_seq05.csv` — diagnostik, tidak dipromosikan;
+  - `submission_v72_03_anchor_seqst15.csv` — ditolak.
+- `summary_v72_candidates.json` memuat AUC/KS, korelasi, bootstrap, dan
+  keputusan.
+- `notebook_v72.ipynb` dieksekusi penuh dengan `RUN_TRAINING=False`, nol error.
+- Tidak ada submit Kaggle dan tidak ada push GitHub.
 
-## Fase 4 — panel versi survival (opsional, prioritas rendah)
+## Pelajaran
 
-Panel v71 memakai proksi “12 angsuran pertama”. Versi berikutnya hanya layak
-jika waktu DPD 90 bisa direkonstruksi dari due date + 90 hari dan status
-pembayaran; pinjaman yang belum mencapai 90 DPD dalam 12 bulan harus
-diperlakukan sebagai censored, bukan negatif. Tanpa perbaikan timing ini,
-panel tidak diulang.
+1. Menambah informasi baru tidak otomatis menaikkan KS; sequence yang lemah
+   hanya menambah noise pada ranking.
+2. Kenaikan OOF +0.004 pada v71 juga tidak transfer ke public. Public noise
+   (~0.0053 sd) lebih besar dari sebagian besar gain yang bisa diukur.
+3. Anchor `v66_04` tetap satu-satunya kandidat dengan bukti public berulang.
 
-## Fase 5 — seleksi dan dokumentasi
+---
 
-- Kandidat wajib: `core72` (MLP ensemble + tree), `anchor` (v66_04), dan satu
-  blend konservatif. Maksimal 3 submit per iterasi.
-- Semua CSV: 30.000 baris, ID unik/cocok test, [0,1], tanpa NaN.
-- Notebook v72 dieksekusi penuh `RUN_TRAINING=False`, nol error.
-- Update `agas/progress.md`, `agas/README.md`, Obsidian; commit lokal tanpa
-  push dan tanpa submit tanpa instruksi.
+# Rencana v73 — freeze anchor dan verifikasi final
 
-## Ekspektasi
+## Tujuan
 
-- Target realistis v72: **0.567–0.570** bila MLP benar-benar transfer ke
-  public. 0.577 tetap ekor noise: perlu kenaikan OOF ~0.003–0.004 lagi atau
-  public variance yang menguntungkan.
-- Keputusan berhenti: jika dua iterasi berturut-turut (v71 dan v72) gagal
-  melewati 0.56424, akui plafon data dan pertahankan anchor, bukan menambah
-  kandidat yang makin jauh dari anchor.
+Mempertahankan skor public terbaik yang sudah terbukti (`v66_04`, 0.56424),
+menyiapkan notebook/artefak final yang reproducible sebelum deadline
+30 Oktober 2026, dan **tidak** mengejar 0.577 dengan kandidat yang hanya
+menang di OOF. Prioritas adalah private-score robustness, bukan argmax public.
+
+## Prinsip
+
+- Tidak ada keluarga model baru kecuali ada hipotesis konkret yang sudah
+  di-pre-register dan bisa lolos gate; sequence dan MLP-heavy sudah ditutup.
+- Semua kandidat baru harus mempertahankan kedekatan rank dengan anchor
+  (target Spearman ≥0.999) dan tidak menurunkan OOF KS.
+- Maksimal 3 submit per iterasi, dan tidak submit tanpa instruksi eksplisit.
+- Semua CSV 30.000 baris, ID unik/cocok test, [0,1], tanpa NaN.
+
+## Fase 0 — freeze dan audit anchor
+
+- Verifikasi ulang `submission_v66_04_ext0.5_tm30_lgb_lean.csv`:
+  - 30.000 baris, ID unik dan sama dengan `data/test_applications.csv`;
+  - tidak ada NaN, rentang [0,1];
+  - hash file dan salinan kontrol di `agas/v73/output/`.
+- Rebuild rank anchor dari `preds_v66.npz` dan pastikan identik dengan CSV
+  (Spearman 1.0, selisih ranking nol).
+- Catat ledger public final di README/Obsidian; hentikan eksperimen yang hanya
+  mengejar noise.
+
+## Fase 1 — seleksi kandidat final
+
+Kandidat yang boleh dipertimbangkan hanya:
+
+1. **`v73_01_anchor`** — salinan exact `v66_04`; kandidat utama.
+2. **`v73_02_anchor_seq05`** — 95% anchor + 5% sequence murni, hanya jika
+   user ingin satu probe public untuk menguji apakah sinyal sequence
+   transfer. OOF KS +0.00013, P(dKS>0)=0.676; **bukan** kandidat yang
+   dijanjikan menang.
+3. Kandidat lain hanya jika punya OOF AUC ≥ anchor +0.0005, OOF KS ≥ anchor,
+   dan Spearman ≥0.999; jika tidak, jangan dibuat.
+
+Keputusan default: **submit anchor atau tidak submit sama sekali**. Jangan
+mengganti anchor dengan `core71`, `core71_ks`, atau blend sequence+static yang
+lebih jauh.
+
+## Fase 2 — notebook final
+
+- Siapkan notebook final yang mereproduksi kandidat yang dipilih dari artefak
+  tersimpan (`RUN_TRAINING=False`), dengan audit cutoff dan validasi CSV.
+- Notebook harus menjelaskan bahwa `v66_04` adalah resep tree + linear + `ext0.5`
+  dari v61/v66, dan mengapa kandidat lain ditolak.
+- Jalankan penuh, simpan output, nol error; pastikan sesuai dengan submission
+  yang dipilih.
+
+## Fase 3 — protokol submit dan feedback
+
+- Jika user mengizinkan probe: submit `v73_01_anchor` (kontrol) dan maksimal
+  satu `v73_02_anchor_seq05`, catat public.
+- Jika probe sequence ≤ anchor: buang sequence, pertahankan anchor.
+- Jika probe sequence > anchor: jangan langsung pivot; minta satu konfirmasi
+  dengan kandidat sequence berbobot lebih kecil/kontrol, karena satu hasil
+  public masih dalam noise.
+- Jika tidak ada kandidat >0.56424: akui plafon dan pertahankan anchor; jangan
+  mengulang eksperimen yang sudah negative.
+
+## Fase 4 — dokumentasi dan deadline
+
+- Update `agas/progress.md`, `agas/README.md`, Obsidian note, dan `agas/plan.md`.
+- Commit lokal; tanpa push GitHub dan tanpa submit tanpa instruksi.
+- Deadline notebook: 30 Oktober 2026 23:59 WIB.
+- Ekspektasi realistis: **0.564–0.565 public**; 0.577 tetap ekor noise yang
+  tidak didukung bukti OOF. Keberhasilan v73 adalah menjaga anchor dan
+  meninggalkan paket notebook yang bersih, bukan memaksa kenaikan yang tidak
+  bisa direplikasi.
+
+## Gate berhenti
+
+Berhenti melakukan eksperimen model jika:
+- tidak ada kandidat dengan OOF AUC ≥0.8473, OOF KS ≥0.5287, dan
+  Spearman ≥0.999 terhadap anchor; atau
+- dua probe public berturut-turut tidak melewati 0.56424.
+
+Dalam kondisi itu, finalkan anchor dan dokumentasikan plafon data.

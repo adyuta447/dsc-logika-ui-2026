@@ -1,0 +1,71 @@
+{
+  "anchor": {
+    "file": "/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv",
+    "oof_auc": 0.8468400975734337,
+    "oof_ks": 0.5287127593768207,
+    "n": 70000
+  },
+  "sequence": {
+    "pure": {
+      "oof_auc": 0.7833088631891707,
+      "oof_ks": 0.4078678002276485,
+      "spearman_anchor": 0.7597950113360392
+    },
+    "static_fused": {
+      "oof_auc": 0.8415270805864421,
+      "oof_ks": 0.5143816006494417,
+      "spearman_anchor": 0.9494170314993954
+    }
+  },
+  "bootstrap_dks_vs_anchor": {
+    "02_anchor_seq05": {
+      "mean_dks": 0.0005189511566680605,
+      "sd": 0.0011469901555873263,
+      "p_gt0": 0.6765,
+      "p_gt_0.001": 0.347
+    },
+    "03_anchor_seqst15": {
+      "mean_dks": 0.00028708725991058253,
+      "sd": 0.0014369987880759492,
+      "p_gt0": 0.585,
+      "p_gt_0.001": 0.3205
+    }
+  },
+  "sigma_public": 0.0053,
+  "candidates": [
+    {
+      "name": "01_anchor",
+      "file": "submission_v72_01_anchor.csv",
+      "weight": 0.0,
+      "oof_auc": 0.8468400975734337,
+      "oof_ks": 0.5287127593768207,
+      "spearman_anchor": 1.0,
+      "valid": true,
+      "recommended": true,
+      "note": "recommended anchor control; public 0.56424"
+    },
+    {
+      "name": "02_anchor_seq05",
+      "file": "submission_v72_02_anchor_seq05.csv",
+      "weight": 0.05,
+      "oof_auc": 0.8469679529225512,
+      "oof_ks": 0.5288436515523876,
+      "spearman_anchor": 0.9995014860227535,
+      "valid": true,
+      "recommended": false,
+      "note": "diagnostic only: 5% pure sequence; OOF gain is below noise"
+    },
+    {
+      "name": "03_anchor_seqst15",
+      "file": "submission_v72_03_anchor_seqst15.csv",
+      "weight": 0.15,
+      "oof_auc": 0.8477076188216686,
+      "oof_ks": 0.528062944591327,
+      "spearman_anchor": 0.9950558251186323,
+      "valid": true,
+      "recommended": false,
+      "note": "rejected: static-fused sequence lowers OOF KS"
+    }
+  ],
+  "decision": "no sequence candidate promoted; keep v66_04 anchor"
+}

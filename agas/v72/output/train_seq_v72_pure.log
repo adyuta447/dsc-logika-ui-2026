@@ -1,0 +1,10 @@
+22:31:49 sequence=sequences_v72.npz X=(70000, 24, 56) train=70000 test=30000 device=mps
+22:31:49 fold seed 42
+22:34:07   fs=42 sd=0 fold=0 ep=13 auc=0.787886
+22:36:18   fs=42 sd=0 fold=1 ep=13 auc=0.788556
+22:39:01   fs=42 sd=0 fold=2 ep=16 auc=0.790434
+22:41:21   fs=42 sd=0 fold=3 ep=14 auc=0.777184
+22:43:39   fs=42 sd=0 fold=4 ep=14 auc=0.779692
+22:43:39   fs=42 sd=0 auc=0.783309 ks=0.407868
+22:43:39 fs=42 auc=0.783309 ks=0.407868
+22:43:39 SUMMARY auc=0.783309 sd=0.000000 ks=0.407868 in 11.9 min

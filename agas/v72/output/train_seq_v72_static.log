@@ -1,0 +1,13 @@
+22:44:08 sequence=sequences_v72.npz X=(70000, 24, 56) train=70000 test=30000 device=mps
+22:44:08 static columns=770
+22:44:08 fold seed 42
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+22:45:40   fs=42 sd=0 fold=0 ep=8 auc=0.842942
+22:47:47   fs=42 sd=0 fold=1 ep=11 auc=0.846778
+22:49:39   fs=42 sd=0 fold=2 ep=9 auc=0.850330
+22:51:34   fs=42 sd=0 fold=3 ep=10 auc=0.837823
+22:53:14   fs=42 sd=0 fold=4 ep=9 auc=0.833856
+22:53:14   fs=42 sd=0 auc=0.841527 ks=0.514382
+22:53:14 fs=42 auc=0.841527 ks=0.514382
+22:53:14 SUMMARY auc=0.841527 sd=0.000000 ks=0.514382 in 9.1 min
