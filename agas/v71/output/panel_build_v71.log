@@ -1,0 +1,53 @@
+09:12:43 historical panel rows: 74918  positive rate=0.1650
+09:12:43 cuts total=174918 current=100000 historical=74918
+09:12:43 previous applications block
+09:13:14   previous block features=38
+09:13:14 repayment block
+09:13:33   repayment block features=93
+09:13:33 bureau block
+09:13:35   bureau block features=39
+09:13:35 account block
+09:13:36   account block features=80
+09:13:36 ecommerce block
+09:13:50   ecommerce block features=91
+09:13:50 assemble
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:684: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_ab_income_to_declared"] = safe_div(f.pn_ab_income_mean, profile_income)
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:685: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_ab_l3_income_to_declared"] = safe_div(f.pn_ab_income_3, profile_income)
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:687: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_ec_spend_to_income"] = safe_div(f.pn_ec_spend_365, 12 * profile_income)
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:688: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_ec_basket_to_income"] = safe_div(f.pn_ec_basket_mean, profile_income)
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:689: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_dti_total"] = safe_div(f.pn_pa_active_inst.fillna(0) + f.pn_installment, profile_income)
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:690: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_pa_req_to_income"] = safe_div(f.pn_pa_req_mean, profile_income)
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:691: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_rate_x_dpd"] = f.pn_rate * f.pn_rh_dpd_max
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:692: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_rate_x_late90"] = f.pn_rate * f.pn_rh_late90_n
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:693: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_rate_x_pa_rej"] = f.pn_rate * f.pn_pa_reject_rate
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:694: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_loan_to_income_x_dpd"] = f.pn_loan_to_income * f.pn_rh_dpd_max
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:695: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_late_x_net"] = f.pn_rh_late_share * f.pn_ab_net_to_income
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:696: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_late_x_low"] = f.pn_rh_late_share * f.pn_ab_low_share
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:697: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_bad_due_x_rate"] = f.pn_lg_bad_due_share * f.pn_rate
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:698: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_cc_rate_minus_cod"] = f.pn_ec_cc_rate - f.pn_ec_cod_rate
+/Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/training/build_panel_v71.py:699: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+  f["pn_bu_delinq_x_util"] = f.pn_bu_delinq_max * f.pn_bu_util_mean
+09:13:51 saved /Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/output/panel_dataset.pkl shape=(174918, 391) in 1.2 min
+{
+  "rows": 174918,
+  "historical_rows": 74918,
+  "current_rows": 100000,
+  "historical_positive_rate": 0.16503377025547933,
+  "features": 375,
+  "minutes": 1.1594341158866883,
+  "note": "All pn_ features use each row's own decision_datetime cutoff. Historical rows are approved loans with a fully observed 12-month window."
+}

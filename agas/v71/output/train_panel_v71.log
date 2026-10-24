@@ -1,0 +1,16 @@
+09:14:21 panel hist=74918 current=100000 features=378 positive=0.1650
+09:14:21 hist fold counts={0: 15095, 1: 14982, 2: 14986, 3: 14946, 4: 14909}
+09:14:21 current fold counts={0: 19915, 1: 19951, 2: 20038, 3: 20019, 4: 20077}
+09:14:21 fold 0: train=59823 valid=15095 valid_pos=0.1659
+09:15:01   fold 0 auc=0.706473 ks=0.298253
+09:15:02 fold 1: train=59936 valid=14982 valid_pos=0.1629
+09:15:48   fold 1 auc=0.706688 ks=0.300122
+09:15:49 fold 2: train=59932 valid=14986 valid_pos=0.1642
+09:16:40   fold 2 auc=0.708302 ks=0.300067
+09:16:41 fold 3: train=59972 valid=14946 valid_pos=0.1654
+09:17:31   fold 3 auc=0.707914 ks=0.296547
+09:17:32 fold 4: train=60009 valid=14909 valid_pos=0.1668
+09:18:38   fold 4 auc=0.712004 ks=0.303543
+09:18:39 PANEL hist OOF auc=0.708283 ks=0.296240
+09:18:39 PANEL current train auc=0.756185 ks=0.372977
+09:18:40 saved preds_panel_v71.npz in 4.3 min

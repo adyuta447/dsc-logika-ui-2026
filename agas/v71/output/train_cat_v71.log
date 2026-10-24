@@ -1,0 +1,59 @@
+10:34:34 features=features_v71.pkl rows=70000 lean=771 drops=('pn_', 'rf_') folds=15
+10:34:48 fold seed 42
+10:34:50   train columns=777 factor=6
+10:35:49   fs=42 sd=0 fold=0 best=1530 auc=0.845307
+10:36:27   fs=42 sd=0 fold=1 best=664 auc=0.847438
+10:37:31   fs=42 sd=0 fold=2 best=1178 auc=0.844824
+10:38:36   fs=42 sd=0 fold=3 best=1438 auc=0.848752
+10:39:27   fs=42 sd=0 fold=4 best=940 auc=0.847705
+10:40:10   fs=42 sd=0 fold=5 best=653 auc=0.854662
+10:41:23   fs=42 sd=0 fold=6 best=1310 auc=0.840991
+10:42:45   fs=42 sd=0 fold=7 best=1691 auc=0.862126
+10:43:29   fs=42 sd=0 fold=8 best=821 auc=0.857396
+10:45:38   fs=42 sd=0 fold=9 best=1959 auc=0.846579
+10:46:43   fs=42 sd=0 fold=10 best=844 auc=0.842431
+10:47:28   fs=42 sd=0 fold=11 best=544 auc=0.847068
+10:49:16   fs=42 sd=0 fold=12 best=1659 auc=0.848145
+10:50:35   fs=42 sd=0 fold=13 best=955 auc=0.837530
+10:51:27   fs=42 sd=0 fold=14 best=535 auc=0.828745
+10:51:27   fs=42 sd=0 auc=0.846583 ks=0.526299
+10:51:27 fs=42 auc=0.846583 ks=0.526299
+10:51:28 fold seed 7
+10:51:34   train columns=777 factor=6
+10:53:25   fs=7 sd=0 fold=0 best=1542 auc=0.837919
+10:54:35   fs=7 sd=0 fold=1 best=844 auc=0.855289
+10:56:37   fs=7 sd=0 fold=2 best=1531 auc=0.860079
+10:57:39   fs=7 sd=0 fold=3 best=672 auc=0.838349
+10:59:09   fs=7 sd=0 fold=4 best=1426 auc=0.847922
+11:00:21   fs=7 sd=0 fold=5 best=1093 auc=0.851830
+11:01:26   fs=7 sd=0 fold=6 best=910 auc=0.852546
+11:02:34   fs=7 sd=0 fold=7 best=994 auc=0.851915
+11:04:36   fs=7 sd=0 fold=8 best=1769 auc=0.833282
+11:05:58   fs=7 sd=0 fold=9 best=1101 auc=0.858350
+11:07:21   fs=7 sd=0 fold=10 best=1263 auc=0.841044
+11:08:07   fs=7 sd=0 fold=11 best=642 auc=0.843048
+11:09:30   fs=7 sd=0 fold=12 best=1264 auc=0.849932
+11:11:26   fs=7 sd=0 fold=13 best=2054 auc=0.849120
+11:12:27   fs=7 sd=0 fold=14 best=915 auc=0.833741
+11:12:28   fs=7 sd=0 auc=0.846847 ks=0.527172
+11:12:28 fs=7 auc=0.846847 ks=0.527172
+11:12:28 fold seed 13
+11:12:33   train columns=777 factor=6
+11:14:10   fs=13 sd=0 fold=0 best=1511 auc=0.845772
+11:15:27   fs=13 sd=0 fold=1 best=1149 auc=0.861591
+11:17:01   fs=13 sd=0 fold=2 best=1746 auc=0.844186
+11:18:00   fs=13 sd=0 fold=3 best=1001 auc=0.848363
+11:18:44   fs=13 sd=0 fold=4 best=712 auc=0.854205
+11:19:55   fs=13 sd=0 fold=5 best=1316 auc=0.848427
+11:20:59   fs=13 sd=0 fold=6 best=1049 auc=0.833138
+11:22:00   fs=13 sd=0 fold=7 best=1078 auc=0.845785
+11:22:47   fs=13 sd=0 fold=8 best=682 auc=0.853943
+11:24:16   fs=13 sd=0 fold=9 best=1645 auc=0.852217
+11:25:15   fs=13 sd=0 fold=10 best=1095 auc=0.840125
+11:26:21   fs=13 sd=0 fold=11 best=1204 auc=0.848064
+11:27:16   fs=13 sd=0 fold=12 best=1033 auc=0.844224
+11:28:43   fs=13 sd=0 fold=13 best=1501 auc=0.839171
+11:29:47   fs=13 sd=0 fold=14 best=1249 auc=0.841884
+11:29:47   fs=13 sd=0 auc=0.846684 ks=0.526090
+11:29:47 fs=13 auc=0.846684 ks=0.526090
+11:29:47 SUMMARY auc=0.846704 sd=0.000109 ks=0.526520 in 55.2 min

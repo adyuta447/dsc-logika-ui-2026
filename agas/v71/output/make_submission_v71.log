@@ -1,0 +1,84 @@
+legs:
+  mlp_7                    auc=0.848594 ks=0.529041
+  mlp_13                   auc=0.848462 ks=0.529933
+  v70_extra                auc=0.848369 ks=0.528503
+  mlp_42                   auc=0.848242 ks=0.529444
+  v70_stiff7               auc=0.847843 ks=0.527944
+  mlpw_7                   auc=0.847178 ks=0.529282
+  mlpw_13                  auc=0.847080 ks=0.526000
+  cat_7                    auc=0.846847 ks=0.527172
+  v66_xgb_full             auc=0.846756 ks=0.525536
+  v66_lgb_lean             auc=0.846721 ks=0.525311
+  cat_13                   auc=0.846684 ks=0.526090
+  v66_lgb_full             auc=0.846682 ks=0.524974
+  v66_fac_full             auc=0.846662 ks=0.524205
+  cat_42                   auc=0.846583 ks=0.526299
+  v66_lgbx_full            auc=0.846550 ks=0.524089
+  mlpw_42                  auc=0.846445 ks=0.525657
+  v66_cat_full             auc=0.846311 ks=0.525234
+  v66_linear               auc=0.842771 ks=0.522712
+anchor reconstruction spearman vs CSV: 1.000000
+best core: mlp=0.60 (wide_frac=0.30) cat=0.10 xgb=0.00 v70=0.30 auc=0.850147 ks=0.532834
+best KS-constrained: mlp=0.55 (wide_frac=0.10) cat=0.15 xgb=0.00 v70=0.30 auc=0.850112 ks=0.532884
+
+pool:
+  core71                               auc=0.850147 ks=0.532834
+  core71_ks                            auc=0.850112 ks=0.532884
+  stack_lr                             auc=0.850049 ks=0.531650
+  anchor0.75|core71                    auc=0.849998 ks=0.531377
+  anchor0.50|mlp_base                  auc=0.849669 ks=0.530838
+  tm30_71                              auc=0.849565 ks=0.530865
+  ext0.25|tm30_71|lgb_lean             auc=0.849470 ks=0.531136
+  anchor0.50|core71                    auc=0.849395 ks=0.530802
+  leg|mlp_mix                          auc=0.849383 ks=0.531167
+  leg|mlp_base                         auc=0.849274 ks=0.530920
+  ext0.5|tm30_71|lgb_lean              auc=0.849043 ks=0.530925
+  plateau|tm30_71|lgb_lean             auc=0.849042 ks=0.530924
+  leg|mlp_wide                         auc=0.848776 ks=0.530439
+  anchor0.25|core71                    auc=0.848340 ks=0.530017
+  ext0.75|tm30_71|lgb_lean             auc=0.848283 ks=0.529908
+  leg|v70_avg                          auc=0.848250 ks=0.528185
+  anchor0.50|cat_avg                   auc=0.848051 ks=0.529685
+  leg|cat_avg                          auc=0.847404 ks=0.526889
+  ext1.0|tm30_71|lgb_lean              auc=0.847192 ks=0.529384
+  anchor_v66_04                        auc=0.846840 ks=0.528713
+
+bootstrap public proxy (600 x 30k, paired vs anchor):
+  core71                               dKS=+0.004244 P(ks better)=0.965 dAUC=+0.003330
+  core71_ks                            dKS=+0.004243 P(ks better)=0.967 dAUC=+0.003292
+  stack_lr                             dKS=+0.003566 P(ks better)=0.952 dAUC=+0.003230
+  anchor0.75|core71                    dKS=+0.003352 P(ks better)=0.957 dAUC=+0.003174
+  anchor0.50|mlp_base                  dKS=+0.002850 P(ks better)=0.945 dAUC=+0.002846
+  tm30_71                              dKS=+0.002940 P(ks better)=0.943 dAUC=+0.002741
+  ext0.25|tm30_71|lgb_lean             dKS=+0.003211 P(ks better)=0.947 dAUC=+0.002650
+  anchor0.50|core71                    dKS=+0.002587 P(ks better)=0.962 dAUC=+0.002566
+  leg|mlp_mix                          dKS=+0.003097 P(ks better)=0.858 dAUC=+0.002582
+  leg|mlp_base                         dKS=+0.003059 P(ks better)=0.873 dAUC=+0.002472
+  ext0.5|tm30_71|lgb_lean              dKS=+0.002854 P(ks better)=0.895 dAUC=+0.002226
+  plateau|tm30_71|lgb_lean             dKS=+0.002844 P(ks better)=0.892 dAUC=+0.002226
+  leg|mlp_wide                         dKS=+0.002062 P(ks better)=0.750 dAUC=+0.001977
+  anchor0.25|core71                    dKS=+0.001786 P(ks better)=0.940 dAUC=+0.001505
+  ext0.75|tm30_71|lgb_lean             dKS=+0.002012 P(ks better)=0.797 dAUC=+0.001471
+  leg|v70_avg                          dKS=+0.000429 P(ks better)=0.575 dAUC=+0.001407
+  anchor0.50|cat_avg                   dKS=+0.001263 P(ks better)=0.778 dAUC=+0.001218
+  leg|cat_avg                          dKS=-0.000837 P(ks better)=0.380 dAUC=+0.000578
+  ext1.0|tm30_71|lgb_lean              dKS=+0.000973 P(ks better)=0.632 dAUC=+0.000384
+  anchor_v66_04                        dKS=+0.000000 P(ks better)=0.000 dAUC=+0.000000
+
+=== kept 14 candidates ===
+01 core71                               auc=0.850147 ks=0.532834 Pks=0.965 rho=0.98685
+02 core71_ks                            auc=0.850112 ks=0.532884 Pks=0.967 rho=0.98771
+03 stack_lr                             auc=0.850049 ks=0.531650 Pks=0.952 rho=0.98867
+04 anchor0.50|mlp_base                  auc=0.849669 ks=0.530838 Pks=0.945 rho=0.99420
+05 tm30_71                              auc=0.849565 ks=0.530865 Pks=0.943 rho=0.99433
+06 ext0.25|tm30_71|lgb_lean             auc=0.849470 ks=0.531136 Pks=0.947 rho=0.99174
+07 anchor0.50|core71                    auc=0.849395 ks=0.530802 Pks=0.962 rho=0.99673
+08 leg|mlp_base                         auc=0.849274 ks=0.530920 Pks=0.873 rho=0.97687
+09 ext0.5|tm30_71|lgb_lean              auc=0.849043 ks=0.530925 Pks=0.895 rho=0.98799
+10 leg|mlp_wide                         auc=0.848776 ks=0.530439 Pks=0.750 rho=0.97630
+11 anchor0.25|core71                    auc=0.848340 ks=0.530017 Pks=0.940 rho=0.99919
+12 ext0.75|tm30_71|lgb_lean             auc=0.848283 ks=0.529908 Pks=0.797 rho=0.98313
+13 leg|v70_avg                          auc=0.848250 ks=0.528185 Pks=0.575 rho=0.99062
+14 anchor_v66_04                        auc=0.846840 ks=0.528713 Pks=0.000 rho=1.00000
+
+saved /Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/output/summary_v71_candidates.json

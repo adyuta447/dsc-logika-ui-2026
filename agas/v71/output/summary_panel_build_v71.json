@@ -1,0 +1,9 @@
+{
+  "rows": 174918,
+  "historical_rows": 74918,
+  "current_rows": 100000,
+  "historical_positive_rate": 0.16503377025547933,
+  "features": 375,
+  "minutes": 1.1594341158866883,
+  "note": "All pn_ features use each row's own decision_datetime cutoff. Historical rows are approved loans with a fully observed 12-month window."
+}

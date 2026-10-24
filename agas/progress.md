@@ -1668,5 +1668,141 @@ Kalau hanya satu: **slot 06**. Kalau dua: **06 + 07**.
 | `agas/v67/output/submission_v67_01_anchor.csv` | **0.56424** | kontrol |
 | `agas/v68/output/submission_v68_04_ext0.5_tm30_lgb_lean.csv` | 0.56411 | 10 fold seed |
 | `agas/v69/output/submission_v69_10_ext0.5_tm30_extra.csv` | 0.55989 | pivot `extra` |
+| `agas/v70/output/submission_v70_06_plateau_tm30w7_v70_extra_lgb_lean.csv` | 0.56040 | OOF KS tertinggi, public turun |
+| `agas/v70/output/submission_v70_07_ext0.5_tm30v70_lgb_lean.csv` | 0.56419 | praktis seri dengan anchor |
+| `agas/v70/output/submission_v70_01_leg_v70_extra.csv` | 0.55801 | OOF AUC tertinggi, public turun |
 
-Kandidat v67 selain `01_anchor`, kandidat v68 selain `04`, dan semua kandidat v70 belum disubmit; public score-nya belum diketahui.
+Kandidat v67 selain `01_anchor`, kandidat v68 selain `04`, dan kandidat v70 selain tiga di atas belum disubmit; public score-nya belum diketahui. Pelajaran dari v70: pada level ini OOF AUC/KS dan public tidak monoton; selisih OOF <0.001 adalah noise. Anchor `v66_04` tetap 0.56424.
+
+## 2026-10-24 — v71: historical panel, rate residual, dan MLP diversity
+
+### Titik awal
+
+Public v70 sudah masuk: `v70_06` 0.56040, `v70_07` 0.56419, `v70_01` 0.55801.
+Tidak ada yang melewati anchor `v66_04` 0.56424. OOF KS tertinggi (v70_06)
+justru public terburuk kedua; OOF AUC tertinggi (v70_01) public paling rendah.
+Kesimpulan yang dipakai: selisih OOF <0.001 tidak prediktif, dan feature
+engineering keluarga v66–v70 sudah jenuh.
+
+### Historical panel
+
+`build_panel_v71.py` membangun panel 174.918 baris: 100.000 aplikasi sekarang
+dan 74.918 pinjaman historis approved yang window 12 bulannya selesai sebelum
+`decision_datetime`. Positive rate historis 16.50%. Ada 375 fitur `pn_` yang
+semua dihitung pada cutoff masing-masing baris:
+
+- terms pinjaman historis, previous applications, repayment, bureau, account
+  behavior, dan e-commerce sebelum cut;
+- umur/tenure di-backdate; income adalah snapshot sekarang dan dicatat sebagai
+  keterbatasan;
+- label adalah proksi `max_days_past_due >= 90` pada 12 angsuran pertama, bukan
+  timestamp harian DPD 90. Ini aproksimasi, bukan label resmi.
+
+Model panel: LightGBM 5-fold **GroupKFold by customer**, 2 konfigurasi × 3 seed.
+Hasil historical OOF AUC **0.708283**, KS **0.296240**. Skor panel untuk target
+aplikasi sekarang: AUC **0.756185**, KS **0.372977**.
+
+Screening current model memakai 5 fold × 3 fold seed, config `extra`, factor
+aktif:
+
+| Run | n_lean | AUC | KS |
+|---|---:|---:|---:|
+| v70 baseline | 684 | **0.847219** | 0.527724 |
+| panel score only | 771 | 0.847202 | 0.526964 |
+| panel score + 68 `pn_` + `rf_` | 850 | 0.847199 | 0.526876 |
+
+Panel **tidak dipakai** di model final. Selisihnya −0.000017 AUC, jauh di dalam
+noise; menambah 68 fitur historis juga tidak menolong. Ini negative result yang
+disimpan sebagai artefak, bukan fitur paksa.
+
+### Auxiliary rate
+
+Model multiclass memprediksi tier rate (16/20/24/28/32%) dari fitur selain rate
+dan installment. Rate ternyata dapat diprediksi hampir sempurna dari fitur yang
+sudah ada: AUC `rate >= 24%` = **1.0**, residual median absolut ~**2.7e-6**,
+ekor maksimum ~0.066. Artinya rate adalah fungsi deterministik dari profil yang
+sudah terukur, bukan sinyal baru. `rf_*` dibuang dari model final.
+
+### MLP diversity
+
+Feature set tetap 684 kolom lean v70 + factor fold-safe untuk tree. MLP memakai
+771 kolom numerik (tanpa panel/rate), median imputation + clipping 0.1/99.9 +
+standardisasi **di dalam fold**, arsitektur 256→64, BatchNorm, dropout, early
+stopping. Final 15 fold × 3 fold seed × 3 seed:
+
+| Leg | AUC | KS |
+|---|---:|---:|
+| `v70_extra` (LGBM) | 0.848369 | 0.528503 |
+| MLP 256/64 | **0.848433** | **0.529473** |
+| rank blend 60% MLP + 40% v70 | **0.850082** | **0.531973** |
+
+Korelasi rank MLP vs v70 hanya ~0.973, sedangkan antar-LGBM ~0.99. Ini sumber
+kenaikan: bukan MLP sendirian, tetapi error yang tidak sama. MLP wide 512/128
+juga dilatih sebagai leg opsional; OOF-nya lebih rendah dari MLP 256/64, jadi
+hanya boleh masuk dengan bobot kecil.
+
+### Final blend dan kandidat
+
+Final training 15 fold, tiga fold seed:
+
+| Leg | AUC | KS | Catatan |
+|---|---:|---:|---|
+| MLP 256/64, 3 seed | 0.848433 | 0.529473 | leg utama |
+| MLP wide 512/128, 1 seed | 0.846901 | 0.526979 | lebih lemah, hanya leg kecil |
+| CatBoost | 0.846704 | 0.526520 | sd AUC 0.000109 |
+
+Weight search pada OOF memilih `core71`:
+
+```
+0.60 × MLP-mix  +  0.10 × CatBoost  +  0.30 × v70
+MLP-mix = 0.70 × MLP 256/64 + 0.30 × MLP wide
+```
+
+Jadi bobot efektif: MLP 256/64 0.42, MLP wide 0.18, CatBoost 0.10, v70 0.30.
+AUC **0.850147**, KS **0.532834**. Kandidat KS-constrained `core71_ks`
+memakai MLP-mix 0.55 (wide hanya 0.055), CatBoost 0.15, v70 0.30; AUC
+0.850112, KS **0.532884**. Bedanya dengan core praktis nol, tetapi file tetap
+disimpan sebagai kandidat KS.
+
+Public-proxy bootstrap 600 × 30.000 subset stratifikasi:
+
+| Kandidat | dKS | P(KS > anchor) | dAUC | P(AUC > anchor) |
+|---|---:|---:|---:|---:|
+| `core71` | +0.004244 | 0.965 | +0.003330 | 1.000 |
+| `core71_ks` | +0.004243 | 0.967 | +0.003311 | 1.000 |
+| `stack_lr` | +0.003755 | 0.952 | +0.003209 | 1.000 |
+| `anchor0.25\|core71` | +0.001786 | 0.940 | +0.001505 | 1.000 |
+
+Sensitivitas prevalence (10%, 13.58%, 20%, 25%) memberi `dKS` sekitar
++0.0040 sampai +0.0042 dan P(KS lebih baik) 0.93–0.997. Keunggulan core tidak
+bergantung pada satu asumsi prevalence public.
+
+Kandidat final yang disimpan (14 CSV, semuanya tervalidasi 30.000 baris, ID
+unik/cocok test, [0,1], tanpa NaN):
+
+| Slot | Nama | AUC | KS | P(KS) | File |
+|---:|---|---:|---:|---:|---|
+| 01 | `core71` | **0.850147** | 0.532834 | 0.965 | `submission_v71_01_core71.csv` |
+| 02 | `core71_ks` | 0.850112 | **0.532884** | 0.967 | `submission_v71_02_core71_ks.csv` |
+| 03 | `stack_lr` | 0.850049 | 0.531650 | 0.952 | `submission_v71_03_stack_lr.csv` |
+| 04 | `anchor0.50\|mlp_base` | 0.849669 | 0.530838 | 0.945 | `submission_v71_04_anchor0.50_mlp_base.csv` |
+| 07 | `anchor0.50\|core71` | 0.849395 | 0.530802 | 0.962 | `submission_v71_07_anchor0.50_core71.csv` |
+| 11 | `anchor0.25\|core71` | 0.848340 | 0.530017 | 0.940 | `submission_v71_11_anchor0.25_core71.csv` |
+| 14 | `anchor_v66_04` | 0.846840 | 0.528713 | — | `submission_v71_14_anchor_v66_04.csv` |
+
+Sisanya adalah kontrol `tm30`/`ext` dan leg mentah; semuanya ada di
+`summary_v71_candidates.json`.
+
+### Ekspektasi public dan batas
+
+Dengan pergeseran OOF yang sama seperti anchor, `core71` berada di sekitar
+**0.568** public. Angka 0.577 berarti +0.009 di atas expected, sekitar 1.6 sd
+public (sd historis ~0.0053). Jadi 0.577 masih mungkin secara varians, tetapi
+bukan hasil yang bisa diklaim sebelum submit. Rekomendasi urutan submit:
+**01 `core71`** (AUC tertinggi), **02 `core71_ks`** (KS OOF tertinggi), lalu
+**11 `anchor0.25|core71`** (konservatif, rho 0.99919 terhadap anchor).
+
+Tidak ada XGBoost final: kandidat yang ada sudah cukup kuat dan waktu lebih
+baik dipakai untuk dokumentasi serta validasi. Tidak ada submit Kaggle dan
+tidak ada push GitHub. Notebook `notebook_v71.ipynb` dieksekusi penuh dengan
+`RUN_TRAINING=False`, 22 sel, nol error.

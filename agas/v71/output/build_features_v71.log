@@ -1,0 +1,11 @@
+09:29:15 adding panel features
+09:29:15   WARNING missing panel columns: ['pn_ec_cc_rate_minus_cod']
+09:29:16   added 68 panel columns
+09:29:16 building auxiliary rate model
+09:30:49   rate fold 0 best_iter=1200
+09:32:39   rate fold 1 best_iter=1200
+09:34:20   rate fold 2 best_iter=1200
+09:36:01   rate fold 3 best_iter=1200
+09:37:43   rate fold 4 best_iter=1200
+09:37:44   rate model done: predictors=861 auc(rate>=.24)=1.0
+09:37:44 saved /Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v71/output/features_v71.pkl shape=(100000, 961) in 8.5 min

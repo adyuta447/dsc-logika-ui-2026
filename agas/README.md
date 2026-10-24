@@ -1146,3 +1146,98 @@ Urutan submit: **06** (utama, KS OOF tertinggi dan masih keluarga ekstrapolasi
 v66), lalu **07** (paling dekat dengan resep 0.56424), lalu **01** (kontrol AUC
 tanpa ekstrapolasi). Notebook: `agas/v70/notebook/notebook_v70.ipynb`
 (dieksekusi dengan `RUN_TRAINING = False`, nol error).
+
+Hasil public v70: `v70_06` = **0.56040**, `v70_07` = **0.56419**,
+`v70_01` = **0.55801**. Tidak ada yang melewati anchor `v66_04` = 0.56424.
+Pelajaran: OOF KS/AUC dan public tidak monoton pada level ini; selisih OOF
+<0.001 adalah noise.
+
+## v71 — historical panel, auxiliary rate, dan MLP diversity (2026-10-24)
+
+v71 menguji tiga hal yang belum pernah dipakai: panel pinjaman historis,
+residual rate, dan model non-tree. Dua yang pertama gagal; yang ketiga berhasil.
+
+### Historical panel
+
+`build_panel_v71.py` membangun 174.918 baris (100.000 aplikasi sekarang +
+74.918 pinjaman historis) dan 375 fitur `pn_`. Pinjaman historis adalah
+`previous_applications` yang approved, punya `loan_id`, dan window 12 bulannya
+sudah selesai sebelum `decision_datetime` aplikasi sekarang. Label proksi:
+`max_days_past_due >= 90` pada 12 angsuran pertama; positive rate 16.50%.
+
+Model panel 5-fold **GroupKFold by customer**, 2 konfigurasi × 3 seed:
+
+| Metrik | Nilai |
+|---|---:|
+| AUC historical OOF | 0.708283 |
+| KS historical OOF | 0.296240 |
+| AUC skor panel ke target sekarang | 0.756185 |
+| KS skor panel ke target sekarang | 0.372977 |
+
+Screening current model 5 fold × 3 fold seed, config `extra`, factor aktif:
+
+| Run | n_lean | AUC | KS |
+|---|---:|---:|---:|
+| v70 baseline | 684 | **0.847219** | 0.527724 |
+| panel score only | 771 | 0.847202 | 0.526964 |
+| panel score + 68 `pn_` + `rf_` | 850 | 0.847199 | 0.526876 |
+
+Panel **tidak dipakai** di model final. Label historisnya terlalu lemah untuk
+menambah model 684 fitur current; ini negative result yang didokumentasikan,
+bukan disembunyikan.
+
+### Auxiliary rate
+
+Model multiclass memprediksi tier rate (16/20/24/28/32%) dari fitur selain
+rate dan installment. Hasilnya rate dapat diprediksi hampir sempurna
+(AUC rate>=24% = 1.0); residual median absolut ~2.7e-6. Rate adalah fungsi
+deterministik dari profil yang sudah terukur, jadi `rf_*` dibuang.
+
+### MLP diversity
+
+Feature set tetap 684 kolom lean v70 + factor fold-safe. MLP memakai 771 kolom
+numerik (tanpa panel/rate), median imputation + clipping 0.1/99.9 +
+standardisasi di dalam fold, arsitektur 256→64, dropout, early stopping.
+
+| Leg | AUC | KS |
+|---|---:|---:|
+| v70 `extra` (LGBM) | 0.848369 | 0.528503 |
+| MLP 256/64 (15 fold × 3 fold seed × 3 seed) | **0.848433** | **0.529473** |
+| MLP wide 512/128 (15 fold × 3 fold seed × 1 seed) | 0.846901 | 0.526979 |
+| CatBoost (15 fold × 3 fold seed) | 0.846704 | 0.526520 |
+| core71: 0.60 MLP-mix + 0.10 CatBoost + 0.30 v70 | **0.850147** | **0.532834** |
+| core71_ks: 0.55 MLP-mix + 0.15 CatBoost + 0.30 v70 | 0.850112 | **0.532884** |
+
+`core71` memakai MLP-mix 0.60 = 0.42 MLP 256/64 + 0.18 MLP wide. Korelasi rank
+MLP vs v70 hanya ~0.973, jauh lebih rendah daripada antar-LGBM. Inilah sumber
+kenaikan: bukan MLP sendirian, tetapi error yang tidak sama.
+
+Public-proxy bootstrap 600 × 30.000 subset: `core71` memberi `dKS` +0.004244
+dan P(KS lebih baik) 0.965; `core71_ks` +0.004243 dan P 0.967. Keunggulan tetap
+~+0.004 pada prevalence 10–25%, jadi bukan efek satu asumsi prevalence.
+
+Kandidat final (14 CSV tervalidasi):
+
+| Slot | File | AUC | KS | P(KS>anchor) |
+|---:|---|---:|---:|---:|
+| 01 | `submission_v71_01_core71.csv` | **0.850147** | 0.532834 | 0.965 |
+| 02 | `submission_v71_02_core71_ks.csv` | 0.850112 | **0.532884** | 0.967 |
+| 03 | `submission_v71_03_stack_lr.csv` | 0.850049 | 0.531650 | 0.952 |
+| 04 | `submission_v71_04_anchor0.50_mlp_base.csv` | 0.849669 | 0.530838 | 0.945 |
+| 07 | `submission_v71_07_anchor0.50_core71.csv` | 0.849395 | 0.530802 | 0.962 |
+| 11 | `submission_v71_11_anchor0.25_core71.csv` | 0.848340 | 0.530017 | 0.940 |
+| 14 | `submission_v71_14_anchor_v66_04.csv` | 0.846840 | 0.528713 | — |
+
+Sisanya adalah kontrol `tm30`/`ext` dan leg mentah. Urutan submit yang
+disarankan: **01 core71** (AUC tertinggi), **02 core71_ks** (KS OOF tertinggi
+dengan AUC hanya −0.000035), lalu **11 anchor0.25|core71** (paling dekat dengan
+anchor, rho 0.99919). Jika public `core71` di bawah 0.56424, kembalikan pivot ke
+`v66_04` dan jangan lanjutkan ekspansi MLP.
+
+### Status
+
+Semua CSV kandidat divalidasi 30.000 baris, ID unik dan cocok test, [0,1],
+tanpa NaN. Notebook dieksekusi penuh dengan `RUN_TRAINING=False`, nol error.
+Tidak ada submit Kaggle dan tidak ada push GitHub. Target 0.577 belum teruji di
+public; expected score dari pergeseran OOF adalah ~0.568, sehingga 0.577 masih
+ekor noise sekitar 1.6 sd public.

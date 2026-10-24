@@ -1,0 +1,20 @@
+10:39:08 features=features_v71.pkl rows=70000 lean=771
+10:39:08 fold seed 42
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+10:39:46   fs=42 sd=0 fold=0 ep=14 auc=0.846985
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+10:40:18   fs=42 sd=0 fold=1 ep=12 auc=0.849346
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+10:40:50   fs=42 sd=0 fold=2 ep=12 auc=0.854263
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+10:41:22   fs=42 sd=0 fold=3 ep=11 auc=0.842840
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/numpy/lib/_nanfunctions_impl.py:1215: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a, func=_nanmedian, keepdims=keepdims,
+10:41:52   fs=42 sd=0 fold=4 ep=11 auc=0.836857
+10:41:52   fs=42 sd=0 auc=0.845859 ks=0.525550
+10:41:52 fs=42 auc=0.845859 ks=0.525550
+10:41:53 SUMMARY auc=0.845859 sd=0.000000 ks=0.525550 in 2.8 min
