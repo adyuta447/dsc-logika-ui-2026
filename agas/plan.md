@@ -16,12 +16,15 @@ ditulis tepat di bawah rencana v72. Aturan kompetisi di `agas/limit.md`,
 | `v70_07` | 0.847249 | 0.529397 | 0.56419 | praktis sama dengan anchor |
 | `v70_01` | 0.848369 | 0.528503 | 0.55801 | AUC tertinggi, public turun |
 | `v71 core71` | 0.850147 | 0.532834 | 0.56111 | MLP-heavy, OOF gain tidak transfer |
+| `v72 seq05` | 0.846968 | 0.528844 | 0.55968 | sequence probe, ditolak |
 
-Kesimpulan: keluarga fitur/model v66–v71 sudah jenuh. Perbedaan OOF di bawah
+Kesimpulan: keluarga fitur/model v66–v72 sudah jenuh. Perbedaan OOF di bawah
 ~0.001 tidak memprediksi public; kandidat yang jauh dari rank anchor justru
 turun. Target 0.577 adalah ~2.5 sd public di atas 0.56424 dan sebagian besar
 kemungkinan merupakan ekor noise leaderboard. Karena itu v72 menguji
 **representasi sequence** sebagai informasi baru, bukan menambah bobot MLP.
+v72 juga gagal: tidak ada kandidat yang melewati anchor, sehingga v73 menjadi
+tahap freeze dan audit final.
 
 ## Prinsip yang tidak boleh dilanggar
 
@@ -158,8 +161,10 @@ kemungkinan merupakan ekor noise leaderboard. Karena itu v72 menguji
 
 - Public v71 `core71` = **0.56111**, turun 0.00313 dari anchor `v66_04`
   (0.56424), meskipun OOF KS-nya +0.00412. Ekspansi MLP dihentikan.
-- v72 dijalankan 2026-10-24 dan **gagal lolos gate**. Tidak ada kandidat v72
-  yang dipromosikan di atas anchor.
+- v72 dijalankan 2026-10-24 dan **gagal lolos gate**. Public
+  `submission_v72_02_anchor_seq05.csv` = **0.55968** (2026-10-25), turun
+  **−0.00456** dari anchor. OOF gain +0.00013 KS tidak transfer. Tidak ada
+  kandidat v72 yang dipromosikan di atas anchor; v72 ditutup.
 - Artefak lengkap ada di `agas/v72/{training,notebook,output}` dan di-ringkas
   di `agas/progress.md`, `agas/README.md`, serta Obsidian.
 
@@ -235,86 +240,93 @@ informasi yang tidak dimiliki agregat.
 
 ---
 
-# Rencana v73 — freeze anchor dan verifikasi final
+# Rencana v73 — final freeze, audit anchor, dan dokumentasi
 
-## Tujuan
+## Status
 
-Mempertahankan skor public terbaik yang sudah terbukti (`v66_04`, 0.56424),
-menyiapkan notebook/artefak final yang reproducible sebelum deadline
-30 Oktober 2026, dan **tidak** mengejar 0.577 dengan kandidat yang hanya
-menang di OOF. Prioritas adalah private-score robustness, bukan argmax public.
+- Public `submission_v72_02_anchor_seq05.csv` = **0.55968** (2026-10-25),
+  turun **−0.00456** dari anchor `v66_04` (**0.56424**).
+- OOF seq05 AUC 0.846968 / KS 0.528844, Spearman 0.999501 terhadap anchor;
+  kenaikan OOF tidak transfer ke public.
+- v72 ditutup sebagai **negative result**. Semua kandidat pasca-anchor gagal
+  melewati 0.56424.
+- v73 dijalankan 2026-10-25. Audit dan notebook final sudah selesai;
+  dokumentasi dan commit lokal dilengkapi tanpa push dan tanpa submit.
+
+## Keputusan yang dikunci
+
+**Final = `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv`**
+(public 0.56424). `seq05`, `core71`, dan seluruh blend sequence/MLP ditolak.
+`0.57768` adalah skor peserta lain, bukan kandidat kita. Tidak ada probe model
+baru; jika user meminta submit ulang, hanya exact anchor yang boleh dikirim.
 
 ## Prinsip
 
-- Tidak ada keluarga model baru kecuali ada hipotesis konkret yang sudah
-  di-pre-register dan bisa lolos gate; sequence dan MLP-heavy sudah ditutup.
-- Semua kandidat baru harus mempertahankan kedekatan rank dengan anchor
-  (target Spearman ≥0.999) dan tidak menurunkan OOF KS.
-- Maksimal 3 submit per iterasi, dan tidak submit tanpa instruksi eksplisit.
+- Tidak ada keluarga model, feature engineering, atau blend baru.
+- Tidak ada data eksternal, AutoML, atau AutoFE.
+- Semua artefak baru di `agas/v73/{training,notebook,output}`; `features.py`
+  tidak diubah.
+- Tidak ada leakage; semua fitur memakai cutoff `decision_datetime`.
+- Notebook reproducible dijalankan penuh dengan `RUN_TRAINING=False`.
+- Tidak push GitHub dan tidak submit Kaggle tanpa instruksi eksplisit.
 - Semua CSV 30.000 baris, ID unik/cocok test, [0,1], tanpa NaN.
 
-## Fase 0 — freeze dan audit anchor
+## Fase 0 — catat hasil dan freeze (selesai)
 
-- Verifikasi ulang `submission_v66_04_ext0.5_tm30_lgb_lean.csv`:
-  - 30.000 baris, ID unik dan sama dengan `data/test_applications.csv`;
-  - tidak ada NaN, rentang [0,1];
-  - hash file dan salinan kontrol di `agas/v73/output/`.
-- Rebuild rank anchor dari `preds_v66.npz` dan pastikan identik dengan CSV
-  (Spearman 1.0, selisih ranking nol).
-- Catat ledger public final di README/Obsidian; hentikan eksperimen yang hanya
-  mengejar noise.
+- Catat public seq05 = 0.55968 dan keputusan freeze di `progress.md`,
+  `README.md`, `plan.md`, dan Obsidian.
+- Hentikan eksperimen yang hanya mengejar noise public.
+- Jangan menghapus artefak v72; simpan sebagai bukti negative result.
 
-## Fase 1 — seleksi kandidat final
+## Fase 1 — audit anchor (selesai)
 
-Kandidat yang boleh dipertimbangkan hanya:
+- `agas/v73/training/audit_final_v73.py` memeriksa:
+  - 30.000 baris, ID unik dan set-nya sama dengan `data/test_applications.csv`;
+  - range `[0,1]`, tanpa NaN/inf;
+  - SHA-256
+    `acfb8ea882a92a414e338e89801ad7602e3c6c0faa9917887f6e750f0853c5c9`;
+  - rebuild rank dari `preds_v66.npz`: selisih maksimum `1.11e-16`,
+    Spearman 1.0, nol rank berubah.
+- `agas/v73/output/audit_v73.json` menyimpan manifest; status **pass**.
+- `agas/v73/output/submission_v73_01_anchor.csv` adalah salinan exact
+  byte-identical dari anchor.
 
-1. **`v73_01_anchor`** — salinan exact `v66_04`; kandidat utama.
-2. **`v73_02_anchor_seq05`** — 95% anchor + 5% sequence murni, hanya jika
-   user ingin satu probe public untuk menguji apakah sinyal sequence
-   transfer. OOF KS +0.00013, P(dKS>0)=0.676; **bukan** kandidat yang
-   dijanjikan menang.
-3. Kandidat lain hanya jika punya OOF AUC ≥ anchor +0.0005, OOF KS ≥ anchor,
-   dan Spearman ≥0.999; jika tidak, jangan dibuat.
+Jika audit gagal, jangan retrain. Gunakan
+`agas/v72/output/submission_v72_01_anchor.csv` yang byte-identical; fallback
+terakhir hanya `v70_07` setelah audit ulang dan persetujuan user.
 
-Keputusan default: **submit anchor atau tidak submit sama sekali**. Jangan
-mengganti anchor dengan `core71`, `core71_ks`, atau blend sequence+static yang
-lebih jauh.
+## Fase 2 — notebook final (selesai)
 
-## Fase 2 — notebook final
+- `agas/v73/notebook/notebook_v73_final.ipynb` dibangun dari resep/artefak v66.
+- `RUN_TRAINING=False`; training command tetap ditampilkan untuk provenance.
+- Notebook memuat audit cutoff/leakage, validasi CSV, rebuild rank, OOF
+  AUC/KS, ledger public, dan perbandingan dengan kontrol v72/v73.
+- Dieksekusi penuh dengan kernel bersih: nol error, output `STATUS: PASS`.
+- Nama final menunggu `ParticipantNumber` dan `TeamName`; format
+  `ParticipantNumber_TeamName_Notebook.ipynb`.
 
-- Siapkan notebook final yang mereproduksi kandidat yang dipilih dari artefak
-  tersimpan (`RUN_TRAINING=False`), dengan audit cutoff dan validasi CSV.
-- Notebook harus menjelaskan bahwa `v66_04` adalah resep tree + linear + `ext0.5`
-  dari v61/v66, dan mengapa kandidat lain ditolak.
-- Jalankan penuh, simpan output, nol error; pastikan sesuai dengan submission
-  yang dipilih.
+## Fase 3 — protokol submit
 
-## Fase 3 — protokol submit dan feedback
-
-- Jika user mengizinkan probe: submit `v73_01_anchor` (kontrol) dan maksimal
-  satu `v73_02_anchor_seq05`, catat public.
-- Jika probe sequence ≤ anchor: buang sequence, pertahankan anchor.
-- Jika probe sequence > anchor: jangan langsung pivot; minta satu konfirmasi
-  dengan kandidat sequence berbobot lebih kecil/kontrol, karena satu hasil
-  public masih dalam noise.
-- Jika tidak ada kandidat >0.56424: akui plafon dan pertahankan anchor; jangan
-  mengulang eksperimen yang sudah negative.
+- Pilihan final di Kaggle harus anchor `v66_04`, bukan seq05.
+- Tidak ada submit baru pada tahap ini. Anchor sudah punya public 0.56424 dan
+  kontrol `v72_01` juga 0.56424; submit ulang tidak menambah informasi.
+- Jika user meminta satu submit baru, hanya exact anchor yang diizinkan.
+- Submit notebook melalui mekanisme committee, bukan hanya CSV.
 
 ## Fase 4 — dokumentasi dan deadline
 
-- Update `agas/progress.md`, `agas/README.md`, Obsidian note, dan `agas/plan.md`.
+- Update `agas/progress.md`, `agas/README.md`, `agas/plan.md`, dan Obsidian
+  `coding-vault` note `Data Science Competition Logika UI.md`.
 - Commit lokal; tanpa push GitHub dan tanpa submit tanpa instruksi.
-- Deadline notebook: 30 Oktober 2026 23:59 WIB.
-- Ekspektasi realistis: **0.564–0.565 public**; 0.577 tetap ekor noise yang
-  tidak didukung bukti OOF. Keberhasilan v73 adalah menjaga anchor dan
-  meninggalkan paket notebook yang bersih, bukan memaksa kenaikan yang tidak
-  bisa direplikasi.
+- Deadline notebook: **30 Oktober 2026, 23:59 WIB**; target upload internal
+  29 Oktober 2026.
+- Ekspektasi realistis: **0.564–0.565 public**. Keberhasilan v73 adalah
+  menjaga anchor dan meninggalkan paket notebook yang bersih, bukan memaksa
+  kenaikan yang tidak bisa direplikasi.
 
 ## Gate berhenti
 
-Berhenti melakukan eksperimen model jika:
-- tidak ada kandidat dengan OOF AUC ≥0.8473, OOF KS ≥0.5287, dan
-  Spearman ≥0.999 terhadap anchor; atau
-- dua probe public berturut-turut tidak melewati 0.56424.
-
-Dalam kondisi itu, finalkan anchor dan dokumentasikan plafon data.
+Gate sudah terpenuhi: dua probe public berturut-turut (`core71`, `seq05`) tidak
+melewati 0.56424, dan tidak ada kandidat baru dengan bukti OOF yang layak.
+Berhenti melakukan eksperimen model; finalkan anchor dan dokumentasikan plafon
+data.

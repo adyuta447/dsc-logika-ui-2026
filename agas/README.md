@@ -64,11 +64,17 @@ Semua submission yang sudah dilaporkan user, diurutkan berdasarkan tanggal submi
 | `agas/v70/output/submission_v70_07_ext0.5_tm30v70_lgb_lean.csv` | 0.56419 | praktis sama dengan anchor |
 | `agas/v70/output/submission_v70_01_leg_v70_extra.csv` | 0.55801 | OOF AUC tertinggi, public turun |
 | `agas/v71/output/submission_v71_01_core71.csv` | 0.56111 | MLP-heavy; OOF +0.004 KS tidak transfer |
+| `agas/v72/output/submission_v72_02_anchor_seq05.csv` | 0.55968 | sequence probe; ditolak |
 
 Public score kandidat v67 selain `01_anchor`, kandidat v68 selain `04`, kandidat
-v69 selain `10`, kandidat v70 selain `01/06/07`, dan kandidat v71 selain `01`
-belum diketahui. Pola yang terlihat: kandidat yang makin jauh dari rank
-`v66_04` cenderung makin turun di public, meskipun OOF-nya naik.
+v69 selain `10`, kandidat v70 selain `01/06/07`, kandidat v71 selain `01`, dan
+kandidat v72 selain `02` belum diketahui. Pola yang terlihat: kandidat yang
+makin jauh dari rank `v66_04` cenderung makin turun di public, meskipun OOF-nya
+naik.
+
+**Status final (2026-10-25):** `v66_04` di-freeze sebagai anchor final. Semua
+kandidat pasca-anchor, termasuk `seq05`, ditolak. v73 hanya audit, notebook
+reproducible, dan dokumentasi; tidak ada probe model baru.
 
 ## 2) Metode yang dipakai
 
@@ -1287,6 +1293,44 @@ menambah KS; public-proxy bootstrap `anchor + 5% sequence` memberi dKS
 +0.00052 dengan P(dKS>0) = 0.676. Itu di bawah noise floor.
 
 Kandidat yang dibuat: `submission_v72_01_anchor.csv` (kontrol, direkomendasikan),
-`submission_v72_02_anchor_seq05.csv` (diagnostik), dan
+`submission_v72_02_anchor_seq05.csv` (public 0.55968, ditolak), dan
 `submission_v72_03_anchor_seqst15.csv` (ditolak). Tidak ada kandidat v72 yang
 dipromosikan di atas anchor. Detail ada di `summary_v72_candidates.json`.
+
+### Public dan keputusan final
+
+User melaporkan `submission_v72_02_anchor_seq05.csv` = **0.55968** pada
+2026-10-25, yaitu **−0.00456** dari anchor `v66_04` (**0.56424**). OOF seq05
+AUC 0.846968 / KS 0.528844 dengan Spearman 0.999501 terhadap anchor, tetapi
+kenaikan OOF itu tidak transfer ke public. v72 ditutup sebagai **negative
+result**.
+
+**Final:** `v66_04`. `seq05`, `core71`, dan seluruh blend sequence/MLP ditolak.
+`0.57768` adalah skor peserta lain di leaderboard, bukan kandidat kita. Tidak
+ada probe model baru; tidak ada submit Kaggle atau push GitHub otomatis.
+
+---
+
+## 9) v73: final freeze `v66_04`
+
+v73 bukan iterasi model. Isinya adalah audit artefak final, notebook
+reproducible, dan dokumentasi sebelum deadline **30 Oktober 2026, 23:59 WIB**.
+
+- Anchor final: `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv`
+  (public **0.56424**, SHA-256
+  `acfb8ea882a92a414e338e89801ad7602e3c6c0faa9917887f6e750f0853c5c9`).
+- Audit: `agas/v73/training/audit_final_v73.py` dan
+  `agas/v73/output/audit_v73.json`. Audit memeriksa 30.000 baris, ID unik dan
+  cocok test, range `[0,1]`, tanpa NaN, hash file, serta rebuild rank dari
+  `preds_v66.npz` (selisih `1.11e-16`, Spearman 1.0, nol rank berubah).
+- Salinan exact: `agas/v73/output/submission_v73_01_anchor.csv`, byte-identical
+  dengan anchor.
+- Generator notebook: `agas/v73/training/make_notebook_v73.py`.
+- Notebook final: `agas/v73/notebook/notebook_v73_final.ipynb`, dieksekusi
+  penuh dengan `RUN_TRAINING=False`, nol error, output `STATUS: PASS`.
+- Kandidat yang dipilih: `v66_04`; `v72_02_anchor_seq05` dan kandidat lain
+  ditolak. Tidak ada submit baru pada tahap ini.
+
+Nama notebook untuk submission committee mengikuti
+`ParticipantNumber_TeamName_Notebook.ipynb` setelah nomor peserta dan nama tim
+diberikan.

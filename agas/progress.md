@@ -1858,7 +1858,7 @@ lemah. Sequence + static masih di bawah static-only MLP (0.8484). Blend gate:
 Gate v72: **gagal**. Sequence tidak menambah KS di atas noise, dan tidak ada
 kandidat yang lebih layak dari anchor. Kandidat yang dibuat hanya untuk
 diagnostik: `submission_v72_01_anchor.csv` (kontrol, direkomendasikan),
-`submission_v72_02_anchor_seq05.csv` (opsional), dan
+`submission_v72_02_anchor_seq05.csv` (public 0.55968, ditolak), dan
 `submission_v72_03_anchor_seqst15.csv` (ditolak). Semua 30.000 baris, ID
 unik/cocok test, [0,1], tanpa NaN. Summary: `summary_v72_candidates.json`.
 
@@ -1866,7 +1866,70 @@ unik/cocok test, [0,1], tanpa NaN. Summary: `summary_v72_candidates.json`.
 
 Plafon data/model keluarga ini nyata. `0.57768` adalah ~2.75 sd public di atas
 anchor dan tidak punya bukti OOF yang bisa direplikasi; mengejarnya berisiko
-mengorbankan private score. Prioritas v73: freeze anchor, validasi artefak
-final, dan hanya submit kandidat yang secara eksplisit lebih dekat ke anchor
-atau punya bukti baru yang lolos gate. Tidak ada submit dan tidak ada push
-GitHub pada tahap ini.
+mengorbankan private score. Prioritas v73: **freeze anchor `v66_04`**, audit
+artefak final, dan dokumentasi. Tidak ada kandidat baru; tidak ada submit dan
+tidak ada push GitHub pada tahap ini.
+
+## 2026-10-25 — public v72 seq05, freeze anchor, audit v73
+
+### Public seq05
+
+User melaporkan `submission_v72_02_anchor_seq05.csv` = **0.55968**. Itu
+**−0.00456** dari anchor `v66_04` (**0.56424**). OOF seq05 AUC 0.846968 /
+KS 0.528844, dengan Spearman 0.999501 terhadap anchor. Kenaikan OOF +0.00013
+KS tidak transfer ke public.
+
+Ledger public terbaru:
+
+| Kandidat | Public | OOF KS | Catatan |
+|---|---:|---:|---|
+| `v66_04` | **0.56424** | 0.528713 | anchor final |
+| `v70_07` | 0.56419 | 0.529397 | near-anchor |
+| `v68_04` | 0.56411 | — | near-anchor |
+| `v71 core71` | 0.56111 | 0.532834 | MLP-heavy |
+| `v70_06` | 0.56040 | 0.530232 | OOF KS tertinggi |
+| `v69_10` | 0.55989 | 0.528254 | pivot `extra` |
+| **`v72 seq05`** | **0.55968** | 0.528844 | sequence probe, ditolak |
+| `v70_01` | 0.55801 | 0.528503 | OOF AUC tertinggi |
+
+Kesimpulan: semua kandidat pasca-anchor gagal melewati 0.56424. Sequence
+murni membawa sinyal baru tetapi terlalu lemah; mencampurnya dengan anchor
+hanya menambah noise pada ranking public. v72 ditutup sebagai **negative
+result**.
+
+### Keputusan final
+
+**Freeze `v66_04`** sebagai kandidat final. `seq05`, `core71`, dan seluruh
+blend sequence/MLP ditolak. `0.57768` adalah skor peserta lain di leaderboard,
+bukan kandidat kita; jangan jadikan target operasional. Tidak ada probe model
+baru, tidak ada submit Kaggle, dan tidak ada push GitHub otomatis.
+
+### Audit v73
+
+- `agas/v73/training/audit_final_v73.py` memvalidasi anchor:
+  - 30.000 baris, ID unik dan set-nya sama dengan `data/test_applications.csv`;
+  - range `[0,1]`, tanpa NaN/inf;
+  - SHA-256 `acfb8ea882a92a414e338e89801ad7602e3c6c0faa9917887f6e750f0853c5c9`;
+  - rebuild rank dari `preds_v66.npz` dengan resep v66: selisih maksimum
+    `1.11e-16`, Spearman 1.0, nol rank berubah.
+- `agas/v73/output/audit_v73.json` menyimpan manifest audit; status **pass**.
+- `agas/v73/output/submission_v73_01_anchor.csv` adalah salinan exact
+  byte-identical dari anchor, bukan kandidat baru.
+
+### Notebook final
+
+`agas/v73/notebook/notebook_v73_final.ipynb` dibuat dari resep dan artefak
+v66 lewat `agas/v73/training/make_notebook_v73.py`, lalu dieksekusi penuh
+dengan `RUN_TRAINING=False`. Hasil:
+
+- nol error;
+- validasi CSV/ID/range/NaN lolos;
+- hash anchor cocok;
+- rebuild rank cocok;
+- OOF AUC 0.846840 / KS 0.528713 direproduksi;
+- output akhir `STATUS: PASS`.
+
+Nama file final untuk committee masih menunggu `ParticipantNumber` dan
+`TeamName`, dengan format `ParticipantNumber_TeamName_Notebook.ipynb`.
+Deadline notebook **30 Oktober 2026, 23:59 WIB**; target upload internal
+29 Oktober 2026. Commit lokal dilakukan tanpa push.
