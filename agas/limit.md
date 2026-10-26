@@ -1,5 +1,25 @@
 WAJIB DOKUMENTASI PROGRESS DI @progress.md dan obsidian vault coding-vault pada note Data Science Logika UI
 
+format dokumentasi di progress dan obsidian : 
+# TANGGAL - JUDUL - VERSION
+## SUb Judul : contoh (
+##RINGKASAN
+##STATUS
+##GOAL
+##BATASAN
+##LANGKAH PENGERJAAN
+##HIPOTESIS
+##RUN
+##HASIL
+##KESIMPULAMN
+##KESALAHAN DAN PROBLEM
+##ARTEFAK
+##LANGKAH KE DEPAN
+)
+### Untuk sub-sub judul
+
+tidak harus mengambil semua sub-judul, bisa tambahkan atau kurangi sesuai kebutuhan
+
 Rapihkan semua pengerjaan file sesuai format folder
 @agas/ (version(notebook, output, training))
 
