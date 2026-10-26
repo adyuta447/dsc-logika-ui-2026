@@ -1,9 +1,9 @@
-# Rencana kerja `agas/` — v72 dan setelahnya
+# Rencana kerja `agas/` — v74 aktif
 
-Dokumen ini adalah rencana eksekusi aktif. Rencana v72 sudah dijalankan dan
-hasilnya ditulis di bawah rencana v71; rencana v73 untuk tahap berikutnya
-ditulis tepat di bawah rencana v72. Aturan kompetisi di `agas/limit.md`,
-`agas/overview.md`, dan `agas/rules.md` tetap mengikat.
+Dokumen ini adalah rencana eksekusi aktif. **Rencana yang sedang dijalankan
+adalah v74, ada di bagian paling bawah file ini.** Rencana v71–v73 di atasnya
+disimpan sebagai riwayat dan sudah selesai. Aturan kompetisi di
+`agas/limit.md`, `agas/overview.md`, dan `agas/rules.md` tetap mengikat.
 
 ## Status public yang melatarbelakangi
 
@@ -330,3 +330,156 @@ Gate sudah terpenuhi: dua probe public berturut-turut (`core71`, `seq05`) tidak
 melewati 0.56424, dan tidak ada kandidat baru dengan bukti OOF yang layak.
 Berhenti melakukan eksperimen model; finalkan anchor dan dokumentasikan plafon
 data.
+
+---
+
+# Rencana v74 — perbaiki alat ukur, lalu kejar 0.578 (SUDAH DIEKSEKUSI)
+
+> **Hasil 2026-10-26: ketiga gate gagal.** Fase 1 (heterogenitas fold) gain
+> −0.00034 vs gate +0.005. Fase 2 (seleksi berbasis KS) `P(>anchor)` 0.702 vs
+> gate 0.80, dan arah yang dipilihnya adalah MLP 30% yang sudah ditolak public
+> dua kali. Fase 3 (portofolio) mati karena semua kandidat sekualitas punya
+> ρ ≥ 0.9994 ke anchor, nilai harapan 8 tiket hanya +0.0007. Anchor `v66_04`
+> tetap final. Detail di `agas/progress.md` entri 2026-10-26.
+
+Ditulis 2026-10-26. Deadline notebook **30 Oktober 2026 23:59 WIB**.
+Target user: public **0.57788** (skor tim teratas leaderboard). Anchor kita
+`v66_04` = **0.56424**. Gap **+0.01364**.
+
+## Mengapa v74 tidak mengulangi v67–v73
+
+v67–v73 semuanya mencari fitur atau model baru, lalu memilih kandidat dengan
+**OOF AUC/KS**. Delapan probe berturut-turut gagal. Kesimpulan v73 adalah
+"plafon data". Ada penjelasan lain yang belum pernah diuji: **alat ukurnya
+yang salah**, bukan modelnya.
+
+Bukti yang mendasari v74 (`agas/v74/output/public_calibration_v74.json`,
+dihitung 2026-10-26):
+
+| Submission | OOF KS | Public | Offset |
+|---|---:|---:|---:|
+| `v61_alt` | 0.528624 | 0.56312 | +0.0345 |
+| `v66_04` (anchor) | 0.528713 | 0.56424 | **+0.0355** |
+| `v70_07` | 0.529397 | 0.56419 | +0.0348 |
+| `v70_06` | 0.530232 | 0.56040 | +0.0302 |
+| `v71 core71` | 0.532834 | 0.56111 | +0.0283 |
+| `v72 seq05` | 0.528844 | 0.55968 | +0.0308 |
+| `v70_01` | 0.528503 | 0.55801 | +0.0295 |
+
+Dua fakta dari tabel itu:
+
+1. **Offset selalu positif, 0.028–0.036.** Public selalu ~0.032 di atas OOF KS.
+   Kalibrasi subsample membuktikan ini bukan bias ukuran sampel: bahkan pada
+   n=750 baris, E[KS] subsample anchor hanya 0.5544 — masih jauh di bawah
+   0.56424. Jadi offset ini **sistematis**, bukan keberuntungan undian.
+2. **Urutan offset berbanding balik dengan OOF KS.** Kandidat dengan OOF KS
+   tertinggi (`core71` 0.5328) justru punya offset terkecil (+0.0283). Korelasi
+   OOF KS vs public pada 7 titik ini **negatif**.
+
+Fakta 2 adalah inti v74. Kalau OOF KS naik tetapi public turun secara
+konsisten, maka OOF KS **bukan estimator** dari public KS — ia estimator dari
+sesuatu yang lain, dan setiap seleksi argmax di atasnya adalah seleksi ke arah
+yang salah. Delapan kegagalan bukan plafon data; itu delapan kali memilih
+dengan kompas yang terbalik.
+
+Hipotesis mekanismenya: **heterogenitas fold**. OOF adalah gabungan prediksi
+dari 10 model fold yang berbeda; tiap model punya skala skor sendiri. KS adalah
+statistik berbasis ranking global, jadi perbedaan skala antar-fold mengaburkan
+ranking dan menekan OOF KS. Prediksi test tidak punya masalah ini: semua 30.000
+baris diskor oleh ensemble yang sama. Model yang lebih fleksibel (MLP, fitur
+`extra`) punya variasi antar-fold lebih besar, jadi OOF-nya **terbantu** oleh
+cara pengukuran yang salah ini sementara test-nya tidak — tepat pola yang
+terlihat di tabel.
+
+## Prinsip (tidak berubah)
+
+- Python saja; hanya data kompetisi di `data/`. Tanpa external data, AutoML,
+  AutoFE.
+- Tanpa leakage: semua fitur memakai cutoff `decision_datetime`.
+- Artefak baru hanya di `agas/v74/{training,notebook,output}`; `features.py`
+  tidak diubah.
+- Notebook reproducible, dijalankan penuh dengan `RUN_TRAINING=False`.
+- Tidak push GitHub. Tidak submit Kaggle tanpa instruksi eksplisit.
+- Semua CSV: 30.000 baris, ID unik dan cocok test, [0,1], tanpa NaN.
+- Dokumentasi ke `agas/progress.md`, `agas/README.md`, dan Obsidian
+  `coding-vault` note `Data Science Competition Logika UI.md`.
+
+## Fase 0 — kalibrasi public (SELESAI)
+
+`agas/v74/training/calibrate_public_v74.py`. Mengukur E[KS] dan sd[KS] anchor
+pada 12 ukuran subsample, 600 draw per ukuran. Output: kurva bias/sd, offset
+yang tidak bisa dijelaskan bias sampel, dan nilai `E[max]` untuk k submission
+independen. Status: pass, tersimpan di
+`agas/v74/output/public_calibration_v74.json`.
+
+## Fase 1 — perbaiki estimator (lever utama)
+
+`agas/v74/training/foldnorm_v74.py`.
+
+1. Satu run LightGBM `lean` 10-fold × 1 fold-seed, **menyimpan prediksi dan
+   indeks per fold** (v66–v73 tidak pernah menyimpan ini).
+2. Hitung tiga estimator pada vektor OOF yang sama:
+   - `ks_pooled` — cara v57–v73;
+   - `ks_foldnorm` — rank01 per fold dulu, baru digabung;
+   - `ks_perfold` — rata-rata KS di dalam tiap fold.
+3. Gate H1: kalau `ks_foldnorm − ks_pooled ≥ 0.005`, heterogenitas fold
+   terbukti sebagai penyebab offset, dan estimator yang dipakai v74 adalah
+   `ks_foldnorm`.
+4. Kalau terbukti: **re-ranking semua kandidat yang sudah ada** (`preds_v66`,
+   `preds_v68`, `preds_v70`, `preds_v71`, `preds_v72`) di bawah estimator baru,
+   tanpa training apa pun. Kandidat yang sudah pernah dibangun tetapi dibuang
+   karena OOF-nya rendah bisa saja justru yang terbaik.
+5. Kalau gate gagal (`< 0.005`): H1 ditolak, catat sebagai negative result,
+   lanjut ke Fase 2 dengan estimator bootstrap-mean.
+
+## Fase 2 — optimasi ke metrik, bukan ke AUC
+
+KS = `max_t |TPR − FPR|`: **satu titik** di kurva ROC. v57–v73 semuanya
+mengoptimasi AUC, yaitu integral seluruh kurva. Dua kandidat dengan AUC sama
+bisa punya KS berbeda jauh tergantung bentuk ROC di sekitar titik maksimum.
+
+1. Ukur di mana ambang KS berada pada OOF anchor (kuantil skor, prevalensi
+   lokal, lebar plateau).
+2. Latih ulang leg `lean` dengan **sample weight terkonsentrasi di band itu**
+   (3 level bobot), 10-fold × 1 seed, estimator Fase 1.
+3. Cari bobot blend yang memaksimalkan **bootstrap-mean KS** (1.000 resample),
+   bukan argmax KS dan bukan AUC.
+4. Gate: mean gain ≥ **+0.002** KS dan `P(> anchor) ≥ 0.80`. Gagal → negative
+   result, anchor tetap.
+
+## Fase 3 — portofolio kandidat terdekorelasi
+
+Pelajaran dari 8 kegagalan: kandidat yang disubmit selalu salah satu dari dua
+ekstrem — duplikat anchor (ρ ≥ 0.999, tidak menambah undian baru) atau keluarga
+model lain yang kualitas aslinya lebih rendah. Tidak pernah ada set kandidat
+**sekualitas tapi terdekorelasi**.
+
+- Bangun 3–4 kandidat dengan estimator Fase 1 setara anchor (selisih ≤ 0.001)
+  tetapi Spearman antar-kandidat ≤ 0.995.
+- Laporkan `E[max]` public untuk k submission dari kurva Fase 0, supaya user
+  tahu nilai tiap slot submit yang tersisa sebelum 30 Oktober.
+- Urutan submit direkomendasikan eksplisit, kandidat terkuat lebih dulu.
+
+## Fase 4 — deliverable
+
+- `agas/v74/notebook/notebook_v74.ipynb`: satu notebook bersih end-to-end —
+  data, fitur, training (flag `RUN_TRAINING`), estimator, kandidat, validasi
+  submission. Dieksekusi penuh, nol error.
+- `agas/v74/output/`: submission CSV tervalidasi + `summary_v74_candidates.json`
+  + log.
+- Update `progress.md`, `README.md`, `plan.md`, Obsidian. Commit lokal.
+
+## Ekspektasi jujur
+
+- Kalau H1 terbukti dan re-ranking menemukan kandidat lain: realistis
+  **0.566–0.572**, dengan peluang nyata menyentuh 0.578 karena yang berubah
+  adalah arah seleksi, bukan ukuran gain.
+- Kalau H1 ditolak: plafon v73 benar, hasil realistis **0.564–0.566**, dan
+  nilai v74 adalah portofolio Fase 3 + paket notebook bersih.
+- Yang tidak akan dikejar: gain OOF di bawah 0.001 yang sudah terbukti tidak
+  transfer, dan model baru tanpa gate.
+
+## Gate berhenti
+
+Berhenti dan finalkan anchor kalau Fase 1 dan Fase 2 dua-duanya gagal gate.
+Tidak ada probe kesembilan tanpa estimator yang terbukti.

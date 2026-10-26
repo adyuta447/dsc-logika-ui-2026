@@ -1,0 +1,28 @@
+{
+  "gate": 0.005,
+  "mean_gain": -0.00033950120001241535,
+  "verdict": "H1 REJECTED",
+  "minutes": 9.889457050959269,
+  "runs": [
+    {
+      "fold_seed": 42,
+      "auc_pooled": 0.8461440087862891,
+      "auc_foldnorm": 0.8461549624010718,
+      "ks_pooled": 0.525547591581796,
+      "ks_foldnorm": 0.525241443308516,
+      "ks_perfold_mean": 0.5304242696169743,
+      "ks_perfold_sd": 0.01945309078806876,
+      "gain_foldnorm": -0.0003061482732800158
+    },
+    {
+      "fold_seed": 7,
+      "auc_pooled": 0.8461060906217426,
+      "auc_foldnorm": 0.846168872857181,
+      "ks_pooled": 0.5262228364198644,
+      "ks_foldnorm": 0.5258499822931196,
+      "ks_perfold_mean": 0.5304180344497562,
+      "ks_perfold_sd": 0.015847839901516537,
+      "gain_foldnorm": -0.0003728541267448149
+    }
+  ]
+}

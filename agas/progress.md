@@ -1933,3 +1933,156 @@ Nama file final untuk committee masih menunggu `ParticipantNumber` dan
 `TeamName`, dengan format `ParticipantNumber_TeamName_Notebook.ipynb`.
 Deadline notebook **30 Oktober 2026, 23:59 WIB**; target upload internal
 29 Oktober 2026. Commit lokal dilakukan tanpa push.
+
+---
+
+# 2026-10-26 — Kejar 0.57788: ukur noise public, uji dua estimator — v74
+
+## RINGKASAN
+
+User meminta mengejar public **0.57788** (skor tim teratas) dari anchor
+**0.56424**, gap **+0.01364**, dengan deadline notebook 30 Oktober. v74 tidak
+mengulangi pola v67–v73 (cari fitur/model baru, pilih dengan argmax OOF) karena
+pola itu sudah gagal delapan kali. v74 menguji dulu **apakah alat ukurnya yang
+salah**, dengan tiga gate yang ditetapkan sebelum run. Ketiganya gagal, dan
+kegagalan itu sendiri adalah hasil utamanya: selisih yang tersisa di keluarga
+model ini lebih kecil daripada resolusi leaderboard.
+
+## STATUS
+
+Selesai. Anchor `v66_04` tetap final. Notebook v74 end-to-end dieksekusi penuh,
+nol error, `STATUS: PASS`, hash submission cocok dengan anchor
+(`acfb8ea8…53c5c9`). Tidak ada push GitHub dan tidak ada submit Kaggle.
+
+## GOAL
+
+1. Ukur besar noise public supaya gap 0.01364 bisa dinilai: sinyal atau undian.
+2. Uji dua penjelasan kenapa gain OOF tidak pernah transfer ke public.
+3. Serahkan training, notebook rapi, dan output submission yang tervalidasi.
+
+## HIPOTESIS
+
+- **H0 (fase 0)** — public jauh lebih kecil dari 30.000 baris, jadi sd-nya jauh
+  di atas 0.0053 yang dipakai v67–v73.
+- **H1 (fase 1)** — OOF KS tertekan oleh **heterogenitas fold**: vektor OOF
+  dijahit dari 10 model fold dengan skala skor masing-masing, sementara test
+  diskor satu ensemble. Kalau benar, rank-normalisasi per fold menaikkan KS dan
+  seleksi selama ini memakai kompas yang terbalik.
+- **H2 (fase 2)** — KS adalah **satu titik** di kurva ROC sedangkan AUC adalah
+  integralnya. Seleksi berbasis KS (dengan objektif bootstrap-mean, bukan
+  argmax) seharusnya lebih cocok dengan metrik lomba.
+
+## LANGKAH PENGERJAAN
+
+1. `agas/v74/training/calibrate_public_v74.py` — subsample skor OOF anchor pada
+   12 ukuran, 600 draw tiap ukuran, ukur E[KS] dan sd[KS].
+2. Uji H1 gratis dulu pada `preds_v70.npz` yang ternyata menyimpan OOF per
+   fold-seed; partisi fold direproduksi dari `StratifiedKFold` karena hanya
+   bergantung pada `y` dan `random_state`.
+3. `agas/v74/training/foldnorm_v74.py` — satu leg LightGBM `lean`, 10 fold × 2
+   fold-seed, **menyimpan indeks fold tiap baris** (belum pernah dilakukan
+   v57–v73), lalu skor vektor OOF yang sama dengan tiga estimator.
+4. `agas/v74/training/ksblend_v74.py` — greedy forward 13 leg (v66 ×7, v70 ×2,
+   v71 MLP/MLP-wide/CatBoost, v72 sequence) dengan objektif bootstrap-mean KS,
+   **di-fit pada satu separuh OOF dan dinilai pada separuh lainnya**.
+5. `agas/v74/training/make_submission_v74.py` — portofolio 9 kandidat plus
+   ukuran `sd_differential = sd·sqrt(2(1−ρ))`, yaitu bagian noise yang benar-
+   benar baru dari tiap tiket submit.
+6. `agas/v74/training/make_notebook_v74.py` — notebook end-to-end.
+
+## HASIL
+
+### Fase 0 — resolusi leaderboard
+
+| n public | E[KS] | sd[KS] | bias |
+|---:|---:|---:|---:|
+| 3.000 | 0.537482 | **0.020798** | +0.0088 |
+| 9.000 | 0.530446 | 0.011786 | +0.0017 |
+| 30.000 | 0.529108 | 0.005213 | +0.0004 |
+
+Sebaran KS antar 10 fold model yang sama (n=7.000) terukur **sd 0.0158–0.0195**.
+Artinya selisih OOF 0.001 — yaitu seluruh rentang v66–v72 — berada di bawah
+resolusi pengukuran. Offset OOF→public +0.0355 **tidak** bisa dijelaskan bias
+ukuran sampel: pada n=750 pun E[KS] hanya 0.5544.
+
+### Fase 1 — H1 ditolak
+
+| fold seed | ks_pooled | ks_foldnorm | gain | per-fold mean ± sd |
+|---:|---:|---:|---:|---|
+| 42 | 0.525548 | 0.525241 | −0.000306 | 0.530424 ± 0.019453 |
+| 7 | 0.526223 | 0.525850 | −0.000373 | 0.530418 ± 0.015848 |
+
+Mean gain **−0.00034** vs gate **+0.005**. Pada data v70 independen gain-nya
+−0.000105 (`extra`) dan +0.000045 (`stiff7`). Heterogenitas fold bukan
+penyebab offset.
+
+### Fase 2 — H2 ditolak
+
+- Separuh 0 → 1 memilih `[('mlp', 0.30)]`, gain out-of-selection **+0.004818**.
+- Separuh 1 → 0 memilih `[('mlp_wide', 0.30), ('mlp', 0.30)]`, gain
+  **−0.000067**.
+- Mean +0.002376 (lolos gate gain 0.002), tetapi `P(>anchor)` hanya **0.702**
+  vs gate **0.80**, dan dua separuh saling bertentangan.
+- Fit penuh: OOF AUC 0.846840 → 0.849706, KS 0.528713 → 0.530712, ρ 0.993957.
+
+Arah yang dipilih pencarian ini adalah **MLP 30%** — arah yang public sudah
+tolak dua kali (`core71` 0.56111, `seq05` 0.55968). Jadi fase 2 bukan hanya
+gagal gate, ia mereproduksi kesalahan yang sudah terbukti.
+
+### Fase 3 — portofolio tidak bernilai
+
+Sembilan kandidat dibangun di dalam keluarga yang terbukti. Semuanya
+ρ ≥ **0.9994** terhadap anchor, sehingga `sd_differential` hanya
+**0.00035–0.00070**. Nilai harapan terbaik dari 8 tiket submit cuma
+**+0.0007** (0.56424 → 0.56494). Kandidat yang cukup jauh untuk memberi undian
+baru adalah tepat kandidat yang public sudah tolak. Lever undian ini mati.
+
+## KESIMPULAN
+
+1. Gap +0.01364 ke 0.57788 **bukan** sesuatu yang bisa ditutup oleh keluarga
+   fitur/model ini dalam 4 hari. Seluruh rentang 18 versi adalah 0.005 KS OOF,
+   dan 0.001 di antaranya tidak terukur.
+2. Pada rentang ini OOF dan public bergerak **berlawanan**: dua kandidat dengan
+   OOF KS tertinggi justru peringkat 4 dan 5 di public.
+3. Tiga gate gagal berturut-turut. Yang tersisa punya nilai harapan nyata hanya
+   notebook (10% nilai, dinilai dari reproducibility) dan menjaga anchor.
+4. Anchor `v66_04` tetap pilihan final: satu-satunya kandidat dengan dua hasil
+   public independen.
+
+## KESALAHAN DAN PROBLEM
+
+- Estimasi awal "8 tiket submit = +0.009 public" **salah**: itu mengasumsikan
+  tiket independen. Setelah ρ diukur, nilainya +0.0007. Angka pertama tidak
+  pernah dipakai untuk keputusan.
+- `features.py` tidak memfilter `days_ago > 0` pada blok `previous`,
+  `repayment`, dan `ecommerce` utama, hanya pada blok turunan (baris 340, 384,
+  424). Diaudit: dataset committee sudah dipotong di `decision_datetime`
+  (0 dari 201.984 / 1.361.341 / 1.084.418 / 4.359.817 record setelah cutoff),
+  jadi tidak ada leakage. Tetap dicatat sebagai asumsi yang bergantung pada
+  data, bukan pada kode.
+
+## ARTEFAK
+
+- `agas/v74/training/`: `calibrate_public_v74.py`, `foldnorm_v74.py`,
+  `ksblend_v74.py`, `make_submission_v74.py`, `make_notebook_v74.py`.
+- `agas/v74/output/`: `public_calibration_v74.json`, `foldnorm_v74.json`,
+  `ksblend_v74.json`, `summary_v74_candidates.json`, `preds_foldnorm_v74.npz`,
+  `ksblend_v74.npz`, 9 CSV kandidat, `submission_v74_final.csv`, log.
+- `agas/v74/notebook/notebook_v74.ipynb` — 17 sel, end-to-end: data, audit
+  cutoff, fitur, model, blend, bukti seleksi, validasi. Dieksekusi penuh
+  dengan `RUN_TRAINING=False`, nol error.
+- `DSC0152_kali ini beneran deh_Notebook.ipynb` di root — salinan untuk
+  committee. Versi lama 14 Oktober dicadangkan ke
+  `agas/OtherTries/DSC0152_Notebook_oct14_backup.ipynb`.
+
+## LANGKAH KE DEPAN
+
+1. Pilih **`submission_v66_04_ext0.5_tm30_lgb_lean.csv`** sebagai final di
+   Kaggle. Jangan ganti ke kandidat v74 mana pun.
+2. Upload `DSC0152_kali ini beneran deh_Notebook.ipynb` sebelum **30 Oktober
+   2026, 23:59 WIB** (target internal 29 Oktober).
+3. Kalau masih ada slot submit harian yang terbuang, `submission_v74_02_stiff7_15.csv`
+   adalah tiket dengan nilai harapan tertinggi di antara kandidat non-anchor
+   (P(>anchor) 0.62) — tetapi nilainya +0.0004, jadi ini opsional.
+4. Berhenti melakukan probe model. Gate berhenti di `plan.md` sudah terpenuhi
+   tiga kali.

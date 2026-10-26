@@ -1,0 +1,26 @@
+14:08:01 train=(70000, 598) test=(30000, 598) lean=490 pos_rate=0.135814
+14:08:28   fs42 fold 0 rounds=2141 ks=0.519713
+14:08:53   fs42 fold 1 rounds=1687 ks=0.532023
+14:09:17   fs42 fold 2 rounds=1692 ks=0.536268
+14:09:46   fs42 fold 3 rounds=2143 ks=0.546137
+14:10:14   fs42 fold 4 rounds=2036 ks=0.520622
+14:11:03   fs42 fold 5 rounds=2638 ks=0.571293
+14:11:36   fs42 fold 6 rounds=1837 ks=0.516652
+14:12:05   fs42 fold 7 rounds=1105 ks=0.528294
+14:12:41   fs42 fold 8 rounds=1820 ks=0.534866
+14:13:09   fs42 fold 9 rounds=1416 ks=0.498375
+14:13:09 fs42: pooled 0.525548 | foldnorm 0.525241 (-0.000306) | perfold 0.530424 +-0.019453 | auc 0.846144
+14:13:28   fs7 fold 0 rounds=1186 ks=0.523749
+14:13:55   fs7 fold 1 rounds=1767 ks=0.544202
+14:14:22   fs7 fold 2 rounds=1600 ks=0.533058
+14:14:57   fs7 fold 3 rounds=1897 ks=0.525728
+14:15:28   fs7 fold 4 rounds=1628 ks=0.557615
+14:15:57   fs7 fold 5 rounds=1618 ks=0.509486
+14:16:19   fs7 fold 6 rounds=1288 ks=0.548043
+14:16:43   fs7 fold 7 rounds=1552 ks=0.519486
+14:17:20   fs7 fold 8 rounds=2062 ks=0.532050
+14:17:52   fs7 fold 9 rounds=1528 ks=0.510763
+14:17:52 fs7: pooled 0.526223 | foldnorm 0.525850 (-0.000373) | perfold 0.530418 +-0.015848 | auc 0.846106
+14:17:52 
+mean foldnorm gain -0.000340 vs gate 0.005 -> H1 REJECTED
+14:17:53 saved in 9.9 min

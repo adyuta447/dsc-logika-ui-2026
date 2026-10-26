@@ -1,0 +1,55 @@
+{
+  "n_public_assumed": 3000,
+  "gate_gain": 0.002,
+  "gate_prob": 0.8,
+  "out_of_selection": [
+    {
+      "fit_half": 0,
+      "chosen": [
+        [
+          "mlp",
+          0.3
+        ]
+      ],
+      "fit_mean_ks": 0.534851,
+      "score_half_ks_anchor": 0.532473,
+      "score_half_ks_blend": 0.537291,
+      "oos_gain": 0.004818
+    },
+    {
+      "fit_half": 1,
+      "chosen": [
+        [
+          "mlp_wide",
+          0.3
+        ],
+        [
+          "mlp",
+          0.3
+        ]
+      ],
+      "fit_mean_ks": 0.546384,
+      "score_half_ks_anchor": 0.52538,
+      "score_half_ks_blend": 0.525313,
+      "oos_gain": -6.7e-05
+    }
+  ],
+  "mean_oos_gain": 0.0023755,
+  "full_fit_chosen": [
+    [
+      "mlp",
+      0.3
+    ],
+    [
+      "mlp_wide",
+      0.3
+    ]
+  ],
+  "prob_beat_anchor": 0.702,
+  "anchor_oof_ks": 0.5287127593768207,
+  "blend_oof_ks": 0.5307123648380316,
+  "anchor_oof_auc": 0.8468400975734337,
+  "blend_oof_auc": 0.8497063844390917,
+  "spearman_vs_anchor": 0.9939574372996934,
+  "verdict": "FAIL"
+}

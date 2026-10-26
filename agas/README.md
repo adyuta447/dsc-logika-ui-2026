@@ -1334,3 +1334,34 @@ reproducible, dan dokumentasi sebelum deadline **30 Oktober 2026, 23:59 WIB**.
 Nama notebook untuk submission committee mengikuti
 `ParticipantNumber_TeamName_Notebook.ipynb` setelah nomor peserta dan nama tim
 diberikan.
+
+## v74 — kalibrasi noise public dan dua estimator yang ditolak (2026-10-26)
+
+Target: mengejar public 0.57788 dari anchor 0.56424. v74 tidak mencari fitur
+atau model baru; ia menguji apakah **alat ukur seleksi** yang salah, dengan
+tiga gate yang ditetapkan sebelum run. Ketiganya gagal.
+
+- **Fase 0** `calibrate_public_v74.py` — sd[KS] 0.0208 pada n=3.000 dan 0.0052
+  pada n=30.000; sebaran KS antar fold model yang sama 0.0158–0.0195 pada
+  n=7.000. Selisih OOF 0.001 berada di bawah resolusi pengukuran. Offset
+  OOF→public +0.0355 tidak bisa dijelaskan bias ukuran sampel.
+- **Fase 1** `foldnorm_v74.py` — hipotesis heterogenitas fold. Rank-normalisasi
+  per fold mengubah KS sebesar **−0.00034** (gate +0.005), dan −0.0001 pada
+  data v70 independen. **Ditolak.**
+- **Fase 2** `ksblend_v74.py` — seleksi berbasis KS dengan objektif
+  bootstrap-mean dan validasi out-of-selection separuh-separuh. Gain +0.0024
+  tetapi `P(>anchor)` 0.702 (gate 0.80) dan dua separuh bertentangan. Arah yang
+  dipilih adalah MLP 30%, arah yang sudah ditolak public dua kali. **Ditolak.**
+- **Fase 3** `make_submission_v74.py` — 9 kandidat; semuanya ρ ≥ 0.9994 ke
+  anchor sehingga tiap tiket submit hanya membawa `sd_differential`
+  0.00035–0.00070. Nilai harapan 8 tiket: +0.0007. Lever undian mati.
+- **Notebook** `agas/v74/notebook/notebook_v74.ipynb`, 17 sel, end-to-end:
+  data, audit cutoff (0 record setelah cutoff dari 7,2 juta record), fitur,
+  model, blend, bukti seleksi, validasi. `RUN_TRAINING=False`, nol error,
+  `STATUS: PASS`, sha256 `acfb8ea8…53c5c9` cocok dengan anchor.
+- Salinan committee: `DSC0152_kali ini beneran deh_Notebook.ipynb` di root
+  (versi 14 Oktober dicadangkan ke
+  `agas/OtherTries/DSC0152_Notebook_oct14_backup.ipynb`).
+
+**Keputusan final tetap `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv`
+(public 0.56424).**
