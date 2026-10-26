@@ -1,7 +1,7 @@
-# Rencana kerja `agas/` — v74 aktif
+# Rencana kerja `agas/` — v75 aktif
 
 Dokumen ini adalah rencana eksekusi aktif. **Rencana yang sedang dijalankan
-adalah v74, ada di bagian paling bawah file ini.** Rencana v71–v73 di atasnya
+adalah v75, ada di bagian paling bawah file ini.** Rencana v71–v74 di atasnya
 disimpan sebagai riwayat dan sudah selesai. Aturan kompetisi di
 `agas/limit.md`, `agas/overview.md`, dan `agas/rules.md` tetap mengikat.
 
@@ -483,3 +483,110 @@ model lain yang kualitas aslinya lebih rendah. Tidak pernah ada set kandidat
 
 Berhenti dan finalkan anchor kalau Fase 1 dan Fase 2 dua-duanya gagal gate.
 Tidak ada probe kesembilan tanpa estimator yang terbukti.
+
+---
+
+# Rencana v75 — model yang benar-benar lebih kuat dari v66_04 (SUDAH DIEKSEKUSI)
+
+> **Hasil 2026-10-26: empat hipotesis, empat gagal.** H4 learning curve masih
+> menanjak tapi 20% data terakhir hanya bernilai +0.0007 AUC. H3 monotonicity
+> dAUC −0.00078, negatif di ketiga seed. H5 compact/additif: baseline 490 tetap
+> terbaik, `gam` −0.0016. H6 model undian public **dipalsukan** oleh kalibrasi
+> ke tiga hasil nyata — `0.56424` adalah maksimum undian yang sudah diambil,
+> rata-rata keluarga ini `0.5596`, sehingga P(≥0.57) di bawah 1% per tiket.
+> Anchor `v66_04` tetap final. Detail di `agas/progress.md` entri 2026-10-26.
+
+Ditulis 2026-10-26, setelah v74. User meminta eksplisit: **model yang lebih
+kuat dari `v66_04`, public lebih tinggi, bukan file yang sama**. Permintaan itu
+dijalankan penuh. Yang tidak diulangi adalah metodenya: v67–v74 selalu
+menambah fitur/model lalu berharap public naik, delapan kali gagal.
+
+## Apa yang v74 sudah pastikan
+
+- Selisih OOF di bawah ~0.001 tidak terukur: sd[KS] 0.0208 pada n=3.000, dan
+  KS model yang sama bervariasi 0.0158–0.0195 antar fold n=7.000.
+- Karena itu v75 **hanya menerima lever yang menaikkan AUC ≥ 0.0015** dengan
+  tanda yang konsisten di 3 seed. Apa pun di bawah itu adalah noise dan tidak
+  akan disubmit.
+
+## Diagnosis yang mendasari v75
+
+Ablation per-sumber v70 dibaca ulang. `app_profile` di sana adalah **ember
+sisa** (~180 fitur lintas-sumber), bukan blok aplikasi murni, jadi AUC 0.831
+itu tidak berarti "terms pinjaman membawa semua sinyal". Diukur langsung,
+17 kolom aplikasi + profil mentah hanya memberi **AUC 0.6529**.
+
+Struktur data yang relevan:
+
+- `term_months` **selalu 12**; `annual_interest_rate` hanya punya **5 nilai**
+  (0.16–0.32); `proposed_monthly_installment` adalah anuitas eksak dari amount,
+  rate, dan 12 bulan — rasio installment terhadap formula anuitas = 1.000000
+  dengan sd 0.000000. Jadi tidak ada informasi tersembunyi di terms pinjaman.
+- Leg `linear` (spline logistic) mencapai AUC **0.8428** melawan **0.8484** leg
+  boosted terbaik. Pada data kredit nyata jarak itu jauh lebih lebar. Jaraknya
+  yang sempit adalah bukti bahwa respons mendekati **additif dan monoton** pada
+  tiap fitur risiko.
+
+## Hipotesis v75
+
+**H3 — monotonicity.** Kalau respons memang monoton pada tiap fitur risiko,
+maka memaksakan monotonisitas pada LightGBM membuang varians tanpa menambah
+bias: argumen scorecard kredit yang standar. Pohon bebas menghabiskan kapasitas
+untuk melawan noise dengan split non-monoton yang tidak ada di generator.
+**Belum pernah dicoba di 18 versi.**
+
+Arah constraint diturunkan **di dalam tiap training fold** dari tanda Spearman
+fitur–label (`RHO_MIN` 0.015); fitur yang lebih lemah dari itu dan semua
+kategorikal dibiarkan bebas. Tidak ada fold yang melihat labelnya sendiri.
+
+**H4 — plafon informasi.** Learning curve pada 20/40/60/80/100 persen baris
+training menjawab apakah plateau 0.850 itu batas data atau batas model. Kalau
+AUC masih naik di 100 persen, masalahnya varians dan H3 relevan. Kalau datar,
+datanya habis dan tidak ada feature engineering yang akan menggerakkannya.
+
+## Fase A — probe (gate sebelum membangun apa pun)
+
+`agas/v75/training/probe_v75.py`. Learning curve + perbandingan monotone vs
+bebas pada 5 fold × 3 seed, config cepat (lr 0.03) karena yang dibandingkan
+adalah bentuk, bukan angka absolut.
+
+Gate A: **mean dAUC ≥ +0.0010 dan positif di ketiga seed**. Gagal → H3 ditolak,
+catat sebagai negative result, dan tidak ada leg baru yang dibangun.
+
+## Fase B — leg monoton penuh
+
+Hanya kalau Fase A lolos. Latih leg monoton dengan config produksi v66
+(lr 0.01, 10 fold, multi fold-seed, multi booster seed) pada kolom `lean` dan
+`full`, lalu:
+
+1. uji sebagai leg mandiri terhadap `lgb_lean` dan `lgb_full`;
+2. masukkan ke rantai blend v61/v66 yang sudah terbukti, menggantikan atau
+   menemani leg bebas yang sepadan;
+3. Gate B: AUC blend naik ≥ **0.0015** terhadap anchor pada 5 fold × 3 seed,
+   dan `P(>anchor)` bootstrap ≥ **0.80** dengan validasi out-of-selection
+   separuh-separuh seperti v74 Fase 2.
+
+## Fase C — kandidat dan submission
+
+- Kandidat final dibangun dari rantai yang sama (`trees4 → core → tm30 →
+  ext0.5`) supaya satu-satunya yang berubah adalah kualitas leg, bukan resep.
+- Validasi CSV: 30.000 baris, ID unik dan cocok test, [0,1], tanpa NaN.
+- Kandidat hanya dipromosikan kalau Gate B lolos. Kalau tidak, anchor tetap dan
+  itu dilaporkan apa adanya.
+
+## Fase D — dokumentasi
+
+- `agas/v75/notebook/notebook_v75.ipynb` end-to-end, `RUN_TRAINING` flag,
+  dieksekusi penuh nol error.
+- Update `agas/progress.md`, `agas/README.md`, `agas/plan.md`, dan Obsidian
+  `coding-vault` note. Commit lokal tanpa push.
+
+## Prinsip (tidak berubah)
+
+- Python saja; hanya data di `data/`. Tanpa external data, AutoML, AutoFE.
+  Monotone constraint adalah spesifikasi model yang ditulis tangan, bukan
+  pencarian otomatis; arah constraint berasal dari satu statistik yang
+  didefinisikan eksplisit.
+- Tanpa leakage; semua fitur memakai cutoff `decision_datetime`.
+- `features.py` tidak diubah.
+- Tidak push GitHub, tidak submit Kaggle tanpa instruksi.

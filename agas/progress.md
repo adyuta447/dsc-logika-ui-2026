@@ -2086,3 +2086,200 @@ baru adalah tepat kandidat yang public sudah tolak. Lever undian ini mati.
    (P(>anchor) 0.62) — tetapi nilainya +0.0004, jadi ini opsional.
 4. Berhenti melakukan probe model. Gate berhenti di `plan.md` sudah terpenuhi
    tiga kali.
+
+---
+
+# 2026-10-26 — Model lebih kuat dari v66_04: empat hipotesis, empat gagal — v75
+
+## RINGKASAN
+
+User meminta model yang **lebih kuat** dari `v66_04` dengan target public
+**0.57**, bukan file yang sama. v75 menguji empat hipotesis dengan gate yang
+ditulis sebelum run. Keempatnya gagal. Temuan terpentingnya bukan salah satu
+kegagalan itu, melainkan **kalibrasi skor public**: `0.56424` bukan skor khas
+keluarga model ini, melainkan **maksimum dari undian yang sudah diambil**.
+Rata-rata keluarga ini **0.5596**. Jadi target 0.57 ada 3–5 sd di atas
+ekspektasi kandidat baru, bukan 0.3 sd di atas anchor seperti yang diasumsikan
+sebelumnya.
+
+## STATUS
+
+Selesai. Anchor `v66_04` tetap final. Enam kandidat v75 ditulis dan
+tervalidasi, tetapi **tidak ada yang dipromosikan**: ekspektasi semuanya
+(0.5596) di bawah anchor (0.56424). Notebook v75 end-to-end dieksekusi penuh,
+nol error, `STATUS: PASS`. Tidak ada push GitHub, tidak ada submit Kaggle.
+
+## GOAL
+
+1. Cari lever yang menaikkan KS **sebenarnya**, bukan gain OOF yang tidak
+   transfer.
+2. Kalau tidak ada, ukur dengan jujur berapa peluang mencapai 0.57 dan dari
+   mana peluang itu bisa datang.
+
+## HIPOTESIS
+
+- **H4 — plafon informasi.** Plateau 0.850 adalah batas data, bukan batas model.
+- **H3 — monotonicity.** Leg `linear` spline logistic mencapai 0.8428 melawan
+  0.8484 leg boosted terbaik. Pada data kredit nyata jaraknya jauh lebih lebar,
+  jadi responsnya mendekati additif-monoton; memaksakan monotonisitas membuang
+  varians tanpa menambah bias.
+- **H5 — kapasitas berlebih.** 490 fitur untuk 9.507 positif (19 positif per
+  kolom), dan ketujuh sumber sangat redundan (masing-masing 0.62–0.83 AUC
+  sendirian, bersama hanya 0.846) — pola satu faktor laten. Model compact atau
+  additif seharusnya menyamai atau mengalahkan yang lebar.
+- **H6 — undian public.** Skor kandidat = skor anchor + bagian noise yang tidak
+  dibagi, `sd = sd_public · sqrt(2(1−ρ))`. Kalau benar, membeli dekorelasi
+  membeli peluang.
+
+## LANGKAH PENGERJAAN
+
+1. Audit struktur blok aplikasi: `term_months` selalu 12,
+   `annual_interest_rate` hanya 5 nilai, `proposed_monthly_installment` anuitas
+   eksak dari amount+rate (rasio ke formula 1.000000, sd 0.000000). Raw
+   app+profile = AUC **0.6529**. Koreksi pembacaan ablation v70: `app_profile`
+   di sana adalah ember sisa ~180 fitur lintas-sumber, bukan blok aplikasi.
+2. `agas/v75/training/probe_v75.py` — learning curve 20/40/60/80/100% +
+   monotone vs bebas, 5 fold × 3 seed. Arah constraint dari tanda Spearman
+   **di dalam training fold saja**.
+3. `agas/v75/training/screen_compact_v75.py` — top-40/80/160/320 vs 490, plus
+   `gam` (`max_depth=1`, additif murni) dan `gam2` (`max_depth=2`). Ranking
+   kolom dihitung ulang **di dalam setiap training fold** dari baris fold itu.
+4. `agas/v75/training/make_submission_v75.py` — kandidat dekorelasi + harga
+   peluangnya, lalu **kalibrasi model peluang terhadap hasil public nyata**.
+5. `agas/v75/training/train_legs_v75.py` — trainer produksi untuk leg
+   `mono`/`gam`/`gam2`/`topK`; tidak dijalankan karena semua gate screening
+   gagal.
+6. `agas/v75/training/make_notebook_v75.py` — notebook end-to-end.
+
+## HASIL
+
+### H4 — ditolak (batas varians, tapi tipis)
+
+| baris training | AUC | KS |
+|---:|---:|---:|
+| 11.200 | 0.837646 | 0.514784 |
+| 22.400 | 0.841622 | 0.519729 |
+| 33.600 | 0.842878 | 0.519466 |
+| 44.800 | 0.844074 | 0.520488 |
+| 56.000 | 0.844780 | 0.523703 |
+
+Masih menanjak, jadi plateau 0.850 adalah batas varians. Tetapi 20% data
+terakhir hanya membeli **+0.0007 AUC**, sehingga seluruh ruang yang bisa
+dikembalikan oleh pengurangan varians hanya **+0.001–0.002 AUC**.
+
+### H3 — ditolak
+
+| fold seed | AUC bebas → monoton | KS bebas → monoton |
+|---:|---|---|
+| 42 | 0.844780 → 0.844494 (−0.000286) | 0.523703 → 0.522802 (−0.000901) |
+| 7 | 0.845332 → 0.844331 (−0.001001) | 0.523228 → 0.521095 (−0.002133) |
+| 13 | 0.845510 → 0.844458 (−0.001052) | 0.523918 → 0.521073 (−0.002845) |
+
+Mean dAUC **−0.00078**, dKS **−0.00196**, negatif di ketiga seed. Gate +0.0010
+gagal.
+
+### H5 — ditolak
+
+| varian | AUC mean | sd | dAUC |
+|---|---:|---:|---:|
+| top490 (baseline) | 0.845208 | 0.000381 | +0.000000 |
+| top320 | 0.845001 | 0.000226 | −0.000206 |
+| top160 | 0.844905 | 0.000290 | −0.000303 |
+| gam2 (`max_depth=2`) | 0.844315 | 0.000355 | −0.000892 |
+| top80 | 0.844250 | 0.000060 | −0.000958 |
+| gam (`max_depth=1`) | 0.843602 | 0.000271 | −0.001605 |
+| top40 | 0.840568 | 0.000981 | −0.004639 |
+
+Lolos gate: **tidak ada**. Selector menemukan median **443 dari 490** kolom
+punya gain non-nol, jadi fiturnya memang hampir semua menyumbang sedikit.
+Urutan `gam` < `gam2` < pohon penuh juga membantah pembacaan additif H3:
+interaksi memang membawa sinyal.
+
+### H6 — dipalsukan oleh kalibrasi (temuan utama v75)
+
+Tiga hasil public yang bisa dipetakan tepat ke kelas kandidat:
+
+| kandidat | ρ | sd model | prediksi | aktual | residual |
+|---|---:|---:|---:|---:|---:|
+| v72 seq05 | 0.99950 | 0.00063 | 0.56424 | 0.55968 | **−7.2 sd** |
+| v70_01 leg mentah | 0.98988 | 0.00285 | 0.56403 | 0.55801 | **−2.1 sd** |
+| v71 core71 | 0.96500 | 0.00530 | 0.56424 | 0.56111 | −0.6 sd |
+
+Ketiganya di bawah prediksi, dan residual dalam satuan sd **memburuk saat ρ
+naik** — kebalikan dari implikasi model shared-noise. Penyimpangannya selalu
+−0.003 sampai −0.006 dan hampir tidak bergantung pada ρ.
+
+Penjelasannya **seleksi, bukan noise**: 0.56424 adalah maksimum dari undian
+yang sudah diambil, jadi mengandung noise positif maksimum itu. Rata-rata tiga
+hasil non-anchor = **0.55960**, dan itulah ekspektasi kandidat baru.
+
+### Harga kandidat setelah kalibrasi
+
+Aturan transfer asimetris: gain OOF **tidak** dikreditkan (setiap gain terukur
+sejauh ini tiba di public sebagai kerugian), kerugian OOF **dibebankan penuh**
+(model yang 0.015 AUC lebih buruk lebih buruk di mana saja).
+
+| kandidat | OOF AUC | dKS | ρ | E[public] | P(≥0.57) |
+|---|---:|---:|---:|---:|---:|
+| `leg_mlp` | 0.849265 | +0.00217 | 0.9769 | 0.5596 | 0.008 |
+| `mix80_mlp` | 0.849810 | **+0.00371** | 0.9851 | 0.5596 | 0.005 |
+| `pair_mlp_v70_extra` | 0.850023 | +0.00334 | 0.9877 | 0.5596 | 0.005 |
+| `mix65_mlp` | 0.849881 | +0.00268 | 0.9902 | 0.5596 | 0.005 |
+| `anchor` | 0.846840 | 0 | 1.0 | **0.56424 (terukur)** | 0 |
+
+Portofolio 5 tiket: **0.026** (batas atas independen).
+
+## KESIMPULAN
+
+1. Tidak ada lever yang menaikkan KS sebenarnya. Ruang maksimum dari
+   pengurangan varians hanya +0.001–0.002 AUC, dan tiga cara mengambilnya
+   (monoton, compact, additif) semuanya negatif.
+2. **0.57 tidak bisa dijanjikan.** Ekspektasi kandidat baru 0.5596; peluang
+   mencapai 0.57 di bawah 1% per tiket dan ~2.6% untuk 5 tiket.
+3. Anchor `v66_04` tetap final karena skornya **terukur** 0.56424, bukan
+   karena diperkirakan terbaik.
+4. Tiket v75 hanya bernilai sebagai **opsi**, bukan model lebih kuat: final
+   pick Kaggle dibuat setelah skor public terlihat, jadi tiket yang jatuh
+   tinggal tidak dipilih. Tidak menambah ekspektasi, hanya menambah varians.
+
+## KESALAHAN DAN PROBLEM
+
+- **Dua kali saya melaporkan angka peluang yang salah.** Pertama P(≥0.57) ~20%
+  untuk kandidat seq, karena `TRANSFER=0` diterapkan ke kandidat yang AUC-nya
+  −0.015 di bawah anchor — asumsi itu hanya terkalibrasi untuk selisih ≤0.004.
+  Kedua P ~9% dan portofolio ~19%, karena model noise `sd·sqrt(2(1−ρ))` belum
+  diuji ke data. Setelah dikalibrasi ke 3 observasi nyata: 0.8% dan 2.6%.
+  Angka-angka awal tidak pernah dipakai untuk keputusan apa pun.
+- Pembacaan awal ablation v70 (`app_profile` AUC 0.831 = "terms pinjaman
+  membawa semua sinyal") salah; blok itu ember sisa lintas-sumber. Diverifikasi
+  dengan melatih raw app+profile: 0.6529.
+- Kalibrasi public bertumpu pada **3 titik**. Tiga titik menetapkan mean jauh
+  lebih baik daripada sebaran, jadi sebarannya di-floor ke 0.0040 dan tidak
+  diambil dari sampel.
+
+## ARTEFAK
+
+- `agas/v75/training/`: `probe_v75.py`, `screen_compact_v75.py`,
+  `train_legs_v75.py`, `make_submission_v75.py`, `make_notebook_v75.py`.
+- `agas/v75/output/`: `probe_v75.json`, `compact_v75.json`,
+  `summary_v75_candidates.json`, `preds_compact_v75.npz`, 6 CSV kandidat, log.
+- `agas/v75/notebook/notebook_v75.ipynb` — 17 sel end-to-end, dieksekusi penuh
+  `RUN_TRAINING=False`, nol error, `STATUS: PASS`, 6 file tervalidasi, rebuild
+  anchor eksak (Spearman 1.0, nol rank berubah).
+
+## LANGKAH KE DEPAN
+
+1. **Final pick di Kaggle tetap**
+   `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv` (0.56424).
+2. Kalau ada slot submit harian yang tidak terpakai, tiket terbaik adalah
+   `agas/v75/output/submission_v75_03_mix80_mlp.csv` — OOF KS tertinggi dari
+   semua kandidat dan berbentuk blend. `leg_mlp` punya P sedikit lebih tinggi
+   di model, tetapi kelas leg mentah tunggal pernah menghasilkan 0.55801, hasil
+   terburuk kita.
+3. **Jangan** submit `submission_v75_01_anchor.csv`: ρ=1.000000 dan nol rank
+   berubah terhadap anchor, jadi hanya membuang slot.
+4. Ganti final pick ke tiket **hanya** kalau public-nya di atas 0.56424.
+5. Lever yang masih terbuka dan hanya bisa dikerjakan user: membaca
+   **discussion forum dan public notebook Kaggle** kompetisi ini. Aturan Kaggle
+   mengizinkan public code sharing; itu satu-satunya jalan ke lompatan besar
+   yang belum tereksplorasi.

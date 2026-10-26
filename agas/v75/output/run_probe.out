@@ -1,0 +1,14 @@
+14:32:42 rows=70000 lean_cols=490 pos_rate=0.135814
+14:32:56   curve frac=0.2 train_rows= 11200 auc=0.837646 ks=0.514784
+14:33:15   curve frac=0.4 train_rows= 22400 auc=0.841622 ks=0.519729
+14:33:38   curve frac=0.6 train_rows= 33600 auc=0.842878 ks=0.519466
+14:34:12   curve frac=0.8 train_rows= 44800 auc=0.844074 ks=0.520488
+14:35:06   curve frac=1.0 train_rows= 56000 auc=0.844780 ks=0.523703
+14:35:06 learning curve slope over the last 20% of data: +0.003530 AUC per unit frac
+14:37:37   mono seed=42 auc 0.844780 -> 0.844494 (-0.000286) | ks 0.523703 -> 0.522802 (-0.000901)
+14:39:16   mono seed=7 auc 0.845332 -> 0.844331 (-0.001001) | ks 0.523228 -> 0.521095 (-0.002133)
+14:41:11   mono seed=13 auc 0.845510 -> 0.844458 (-0.001052) | ks 0.523918 -> 0.521073 (-0.002845)
+14:41:11 
+monotone mean dAUC -0.000780 dKS -0.001959 | positive in all 3 seeds: False
+14:41:11 verdict: WEAK  (threshold +0.0010 AUC and all seeds positive)
+14:41:11 saved in 8.5 min

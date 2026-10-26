@@ -1,0 +1,39 @@
+14:41:48 rows=70000 lean=490 positives=9507 (19.4 positives per column)
+14:46:43   seed=42 top40    auc=0.840098 ks=0.516439
+14:46:43   seed=42 top80    auc=0.844208 ks=0.522671
+14:46:43   seed=42 top160   auc=0.844703 ks=0.523767
+14:46:43   seed=42 top320   auc=0.844744 ks=0.521868
+14:46:43   seed=42 top490   auc=0.844780 ks=0.523703
+14:46:43   seed=42 gam      auc=0.843439 ks=0.522781
+14:46:43   seed=42 gam2     auc=0.843960 ks=0.522113
+14:46:43   elapsed 4.9 min
+14:52:46   seed=7 top40    auc=0.841696 ks=0.519353
+14:52:46   seed=7 top80    auc=0.844222 ks=0.521858
+14:52:46   seed=7 top160   auc=0.844774 ks=0.523462
+14:52:46   seed=7 top320   auc=0.845165 ks=0.525286
+14:52:46   seed=7 top490   auc=0.845332 ks=0.523228
+14:52:46   seed=7 gam      auc=0.843452 ks=0.524135
+14:52:46   seed=7 gam2     auc=0.844316 ks=0.523950
+14:52:46   elapsed 11.0 min
+14:57:40   seed=13 top40    auc=0.839910 ks=0.515215
+14:57:40   seed=13 top80    auc=0.844318 ks=0.523548
+14:57:40   seed=13 top160   auc=0.845237 ks=0.522648
+14:57:40   seed=13 top320   auc=0.845095 ks=0.524333
+14:57:40   seed=13 top490   auc=0.845510 ks=0.523918
+14:57:40   seed=13 gam      auc=0.843915 ks=0.522259
+14:57:40   seed=13 gam2     auc=0.844670 ks=0.521235
+14:57:40   elapsed 15.9 min
+14:57:41 
+14:57:41 variant      AUC mean        sd   KS mean       dAUC  all+
+14:57:41 top490       0.845208  0.000381  0.523616  +0.000000 False
+14:57:41 top320       0.845001  0.000226  0.523829  -0.000206 False
+14:57:41 top160       0.844905  0.000290  0.523292  -0.000303 False
+14:57:41 gam2         0.844315  0.000355  0.522433  -0.000892 False
+14:57:41 top80        0.844250  0.000060  0.522692  -0.000958 False
+14:57:41 gam          0.843602  0.000271  0.523058  -0.001605 False
+14:57:41 top40        0.840568  0.000981  0.517002  -0.004639 False
+14:57:41 
+gate: dAUC >= 0.0015 and positive in all 3 seeds
+14:57:41 passed: none
+14:57:41 median columns with non-zero gain in the selector: 443
+14:57:41 saved in 15.9 min

@@ -1,0 +1,114 @@
+{
+  "lean_cols": 490,
+  "positives": 9507,
+  "sizes": [
+    40,
+    80,
+    160,
+    320,
+    0
+  ],
+  "seeds": [
+    42,
+    7,
+    13
+  ],
+  "gate": 0.0015,
+  "baseline": "top490",
+  "results": [
+    {
+      "variant": "top490",
+      "auc_mean": 0.845208,
+      "auc_sd": 0.000381,
+      "ks_mean": 0.523616,
+      "d_auc_mean": 0.0,
+      "d_auc_all_positive": false,
+      "per_seed_d_auc": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "variant": "top320",
+      "auc_mean": 0.845001,
+      "auc_sd": 0.000226,
+      "ks_mean": 0.523829,
+      "d_auc_mean": -0.000206,
+      "d_auc_all_positive": false,
+      "per_seed_d_auc": [
+        -3.7e-05,
+        -0.000168,
+        -0.000415
+      ]
+    },
+    {
+      "variant": "top160",
+      "auc_mean": 0.844905,
+      "auc_sd": 0.00029,
+      "ks_mean": 0.523292,
+      "d_auc_mean": -0.000303,
+      "d_auc_all_positive": false,
+      "per_seed_d_auc": [
+        -7.7e-05,
+        -0.000559,
+        -0.000273
+      ]
+    },
+    {
+      "variant": "gam2",
+      "auc_mean": 0.844315,
+      "auc_sd": 0.000355,
+      "ks_mean": 0.522433,
+      "d_auc_mean": -0.000892,
+      "d_auc_all_positive": false,
+      "per_seed_d_auc": [
+        -0.000821,
+        -0.001016,
+        -0.00084
+      ]
+    },
+    {
+      "variant": "top80",
+      "auc_mean": 0.84425,
+      "auc_sd": 6e-05,
+      "ks_mean": 0.522692,
+      "d_auc_mean": -0.000958,
+      "d_auc_all_positive": false,
+      "per_seed_d_auc": [
+        -0.000572,
+        -0.00111,
+        -0.001192
+      ]
+    },
+    {
+      "variant": "gam",
+      "auc_mean": 0.843602,
+      "auc_sd": 0.000271,
+      "ks_mean": 0.523058,
+      "d_auc_mean": -0.001605,
+      "d_auc_all_positive": false,
+      "per_seed_d_auc": [
+        -0.001341,
+        -0.00188,
+        -0.001595
+      ]
+    },
+    {
+      "variant": "top40",
+      "auc_mean": 0.840568,
+      "auc_sd": 0.000981,
+      "ks_mean": 0.517002,
+      "d_auc_mean": -0.004639,
+      "d_auc_all_positive": false,
+      "per_seed_d_auc": [
+        -0.004682,
+        -0.003636,
+        -0.0056
+      ]
+    }
+  ],
+  "passed": [],
+  "selector_nonzero_median": 443,
+  "minutes": 15.89414176940918
+}

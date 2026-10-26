@@ -1365,3 +1365,43 @@ tiga gate yang ditetapkan sebelum run. Ketiganya gagal.
 
 **Keputusan final tetap `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv`
 (public 0.56424).**
+
+## v75 — empat hipotesis untuk mengalahkan v66_04, empat gagal (2026-10-26)
+
+User meminta model lebih kuat dari `v66_04` dengan target public 0.57. Empat
+hipotesis diuji dengan gate yang ditulis sebelum run; keempatnya gagal.
+
+- **Struktur blok aplikasi** — `term_months` selalu 12, `annual_interest_rate`
+  hanya 5 nilai, `proposed_monthly_installment` anuitas eksak dari amount+rate
+  (rasio 1.000000, sd 0.000000). Raw app+profile = AUC 0.6529. Koreksi: blok
+  `app_profile` di ablation v70 adalah ember sisa ~180 fitur lintas-sumber,
+  bukan blok aplikasi murni.
+- **H4 learning curve** `probe_v75.py` — 0.8376 → 0.8416 → 0.8429 → 0.8441 →
+  0.8448. Plateau 0.850 adalah batas **varians**, bukan informasi, tetapi 20%
+  data terakhir hanya bernilai +0.0007 AUC.
+- **H3 monotonicity** `probe_v75.py` — arah constraint dari tanda Spearman di
+  dalam training fold. Mean dAUC **−0.00078**, dKS −0.00196, negatif di ketiga
+  seed. Ditolak.
+- **H5 kapasitas berlebih** `screen_compact_v75.py` — top-40/80/160/320 vs 490
+  dengan ranking kolom dihitung ulang di dalam tiap training fold, plus `gam`
+  (`max_depth=1`) dan `gam2` (`max_depth=2`). Baseline 490 tetap terbaik;
+  `gam` −0.0016, `gam2` −0.0009. Lolos gate: tidak ada. Selector menemukan
+  median 443/490 kolom bergain non-nol.
+- **H6 undian public** `make_submission_v75.py` — **dipalsukan oleh kalibrasi.**
+  Tiga hasil public yang bisa dipetakan tepat ke kelas kandidat semuanya di
+  bawah prediksi, dan residualnya memburuk saat ρ naik: seq05 (ρ 0.9995)
+  −7.2 sd, v70_01 leg mentah (ρ 0.9899) −2.1 sd, core71 (ρ 0.965) −0.6 sd.
+  Penyebabnya seleksi: **0.56424 adalah maksimum undian yang sudah diambil**,
+  dan rata-rata keluarga ini **0.5596**.
+
+**Kandidat.** Enam file di `agas/v75/output/`, semuanya tervalidasi 30.000
+baris. Setelah kalibrasi, E[public] tiap tiket 0.5596 dan P(≥0.57) di bawah 1%
+per tiket (≈0.026 untuk 5 tiket). Tidak ada yang dipromosikan.
+
+**Notebook** `agas/v75/notebook/notebook_v75.ipynb` — 17 sel end-to-end,
+`RUN_TRAINING=False`, nol error, `STATUS: PASS`, rebuild anchor eksak.
+
+**Keputusan final tetap `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv`
+(public 0.56424).** Kalau ada slot submit menganggur, tiket terbaik adalah
+`submission_v75_03_mix80_mlp.csv`; jangan submit `submission_v75_01_anchor.csv`
+(ρ=1.000000 terhadap anchor).
