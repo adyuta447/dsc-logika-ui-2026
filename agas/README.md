@@ -1477,3 +1477,36 @@ training; dieksekusi penuh nol error, `STATUS: PASS`, 10 file tervalidasi.
 **Jangan jalankan ulang run produksi untuk menambah fold-seed** — nilainya
 murni pengurangan varians leg, dan jalur leg→rantai sudah terbukti tertutup.
 Kalau tetap diinginkan: 10 fold (profil memori terbukti), bukan 12.
+
+## v77 — terobosan r=0.75 dan satu hipotesis yang dipatahkan (2026-10-26)
+
+`submission_v76_02_r0.75.csv` = **0.56520**: kandidat pertama dalam 20 versi
+yang melewati anchor 0.56424, **+0.00102 = 14.6 sd** instrumen (sd 0.00007 dari
+tiga pengukuran resep `r=0.5` lintas feature set dan fold-seed). **Final pick
+berubah ke file ini.** Hipotesis fragility v76 ditolak: `r=0.75` ada pada
+ρ 0.999803 — gangguan lebih besar daripada `seq05` (0.99950) yang turun 0.00456
+— dan naik.
+
+**Mekanisme, aljabar:** `base + r·(base − lgb_lean) ≡ base − w·lgb_lean` dengan
+`w = r/(1+r)`, terverifikasi numerik (beda maks 3.3e-5 = satu posisi rank). `r`
+mengatur bobot neto negatif `lgb_lean`: −0.21667 di r=0.5, −0.31190 di r=0.75.
+
+**OOF anti-korelasi di sumbu ini** — `r=0.75` punya OOF AUC −0.00035 dan KS
+−0.00092 tapi public +0.00102. v61 dan v66 menyapu `r` lalu memilih 0.5 dengan
+argmax OOF AUC, jadi seleksi OOF membuang kenaikan ini selama 20 versi. Line
+search v77 berjalan **tanpa gate OOF**.
+
+**Hipotesis saya yang dipatahkan:** saya menduga kontras itu memperkuat 108
+kolom yang `lean` buang. Leg khusus 108 kolom itu dilatih (OOF AUC 0.836393,
+didominasi `gn_` 66 kolom) dan uji arah mematahkannya — naik-`r` antikorelasi
+dengan menambah leg apa pun (`lgb_lean` −0.9959, `dropped` −0.6800), karena
+naik-`r` **mengurangkan**. Yang bertahan: de-shrinkage, menjauh dari konsensus
+sepanjang residu `base − lgb_lean`. Mengapa residu itu membawa sinyal belum
+terbukti.
+
+**Submit berikutnya, satu file:** `agas/v77/output/submission_v77_r1p000.csv`.
+Aturan: >0.56520 → `r1p250`; 0.56418–0.56520 → `r0p875`; <0.56418 → `r0p625`.
+Grid lengkap r = 0.25/0.625/0.875/1.00/1.25/1.50/2.00 sudah ditulis.
+
+**Notebook** `notebook_v77.ipynb` — 19 sel, nol error, `STATUS: PASS`, 11 file
+tervalidasi, file `r0.75` yang sudah diskor direproduksi eksak.

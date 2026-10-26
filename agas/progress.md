@@ -2621,3 +2621,181 @@ public.
    tetap diinginkan, pakai 10 fold (profil memori yang sudah terbukti di v66)
    dan 3 fold-seed, bukan 12 fold.
 4. Final pick tetap `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv`.
+
+---
+
+# 2026-10-26 — Terobosan: r=0.75 melewati anchor, dan satu hipotesis dipatahkan — v77
+
+## RINGKASAN
+
+`submission_v76_02_r0.75.csv` = **0.56520**. Kandidat **pertama dalam 20 versi**
+yang melewati anchor 0.56424, dengan **+0.00102 = 14.6 sd** instrumen. Final
+pick Kaggle berubah.
+
+Dua hasil lain yang sama pentingnya: mekanismenya terjelaskan secara **aljabar**,
+dan interpretasi substantif pertama saya **diuji lalu dipatahkan**.
+
+## STATUS
+
+Selesai. 7 kandidat line-search `r` + 4 kandidat jalur kedua ditulis dan
+tervalidasi. Notebook v77 (19 sel) dieksekusi penuh nol error, `STATUS: PASS`,
+11 file tervalidasi, file `r0.75` yang sudah diskor direproduksi eksak. Tidak
+ada push GitHub.
+
+## HASIL
+
+### Gradien di sumbu ekstrapolasi
+
+| resep | public | n |
+|---|---:|---:|
+| `r = 0.50` | 0.56424 / 0.56419 / 0.56411 → mean **0.56418**, sd **0.00007** | 3 |
+| **`r = 0.75`** | **0.56520** | 1 |
+
+Tiga pengukuran `r=0.50` berasal dari feature set dan jumlah fold-seed yang
+berbeda (v66 enam, v68 sepuluh, `v70_07` fitur v70) dan sepakat dalam 0.00013.
+Itu instrumennya. +0.00102 = 14.6 sd.
+
+**Hipotesis fragility v76 ditolak.** `seq05` pada ρ 0.99950 turun 0.00456,
+yang menimbulkan dugaan anchor adalah maksimum lokal rapuh. `r=0.75` ada pada
+ρ 0.999803 — gangguan **lebih besar** — dan **naik**. Permukaannya mulus.
+
+### Mekanisme: aljabar, bukan tafsir
+
+```
+base + r·(base − lgb_lean)  ≡  base − w·lgb_lean ,   w = r/(1+r)
+```
+
+Terverifikasi numerik untuk r ∈ {0.25 … 3.0}: beda maksimum 3.3e-5, yaitu tepat
+satu posisi rank dari 30.000 akibat tie-breaking. `lgb_lean` juga ada di dalam
+`base` dengan bobot `0.7 × 2/3 × 1/4 = 0.11667`, sehingga koefisien netonya:
+
+| r | w | bobot neto `lgb_lean` |
+|---:|---:|---:|
+| 0.00 | 0.000 | +0.11667 |
+| 0.50 | 0.333 | −0.21667 |
+| **0.75** | 0.429 | **−0.31190** |
+| 1.00 | 0.500 | −0.38333 |
+| 1.50 | 0.600 | −0.48333 |
+
+### OOF anti-korelasi — sebab 20 versi melewatkannya
+
+| kandidat | OOF AUC | dAUC | dKS | public |
+|---|---:|---:|---:|---:|
+| `r=0.50` | 0.846840 | — | — | 0.56418 |
+| `r=0.75` | 0.846490 | **−0.000350** | **−0.000920** | **0.56520** |
+| `r=1.00` | 0.846034 | −0.000806 | −0.001842 | belum |
+
+v61 dan v66 sama-sama menyapu `r` lalu memilih 0.5 dengan **argmax OOF AUC**.
+Di sumbu ini OOF menunjuk arah yang salah. Karena itu line search v77 berjalan
+**tanpa gate OOF** — penyimpangan sengaja dari protokol v74/v75, dibenarkan
+hanya oleh pengukuran di sumbu ini.
+
+### HIPOTESIS SAYA YANG DIPATAHKAN
+
+Interpretasi pertama saya: `lgb_lean` satu-satunya leg berkolom `lean` (490)
+sementara empat leg lain berkolom `full` (598), jadi `base − w·lgb_lean` adalah
+kontras penuh-minus-lean yang mengisolasi 108 kolom buangan (demografi + `gn_`,
+`ec_share_`, `ec_catqty_`, `cs_shift`, `buh_`); menaikkan `w` memperkuat sinyal
+itu.
+
+**Diuji langsung dan salah.** Leg LightGBM dilatih khusus pada 108 kolom itu
+(10 fold × 2 seed, 5.5 menit): **OOF AUC 0.836393, KS 0.506835** — kuat untuk
+108 kolom, dan didominasi `gn_` (66 dari 108), bukan demografi mentah. Lalu
+arah "naikkan r" dibandingkan dengan arah "tambah tiap leg":
+
+| arah naik-r vs tambah 20% | Pearson |
+|---|---:|
+| `lgb_lean` | **−0.9959** |
+| `lgb_full` | −0.9848 |
+| `fac_full` | −0.9793 |
+| `xgb_full` | −0.9764 |
+| `lgbx_full` | −0.9755 |
+| `cat_full` | −0.8855 |
+| `linear` | −0.7550 |
+| `dropped` | **−0.6800** |
+
+Semuanya negatif, paling negatif terhadap `lgb_lean` sendiri. **Menaikkan `r`
+mengurangkan, bukan menambahkan** — jadi ia tidak mungkin "memperkuat" leg apa
+pun. Hipotesis ditarik.
+
+**Yang bertahan setelah uji itu, dan berhenti di situ:** `lgb_lean` berkorelasi
+~0.99 dengan `base`, jadi mengurangkan kelipatan besar darinya **memperbesar
+residu kecil** di antara keduanya. Menaikkan `r` adalah **de-shrinkage** — ia
+menjauhkan ranking dari konsensus sepanjang arah ketidaksepakatan
+`base − lgb_lean`, mengurutkan ulang baris yang di konsensus nyaris seri.
+Public memberi imbalan pada itu satu kali. Mengapa residu itu membawa sinyal
+**belum terbukti**.
+
+### Grid line search
+
+| r | w | bobot neto | OOF AUC | ρ ke r=0.5 | public | prediksi linear |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0.250 | 0.200 | −0.08333 | 0.847085 | 0.999803 | — | 0.56316 |
+| 0.500 | 0.333 | −0.21667 | 0.846840 | 1.000000 | **0.56418** | 0.56418 |
+| 0.625 | 0.385 | −0.26795 | 0.846682 | 0.999950 | — | 0.56469 |
+| 0.750 | 0.429 | −0.31190 | 0.846490 | 0.999803 | **0.56520** | 0.56520 |
+| 0.875 | 0.467 | −0.35000 | 0.846275 | 0.999558 | — | 0.56571 |
+| **1.000** | 0.500 | −0.38333 | 0.846034 | 0.999215 | — | **0.56622** |
+| 1.250 | 0.556 | −0.43889 | 0.845471 | 0.998239 | — | 0.56724 |
+| 1.500 | 0.600 | −0.48333 | 0.844801 | 0.996878 | — | 0.56826 |
+| 2.000 | 0.667 | −0.55000 | 0.843146 | 0.993027 | — | 0.57030 |
+
+Prediksi linear adalah dugaan terdaftar agar bisa dipatahkan, **bukan kunci
+seleksi**. Permukaannya harus berbalik di suatu titik.
+
+### Jalur kedua: leg kolom-buangan
+
+| kandidat | OOF AUC | dAUC vs r0.75 | ρ ke r0.75 |
+|---|---:|---:|---:|
+| `r0.75_plus_dropped10` | 0.846541 | +0.000051 | 0.999577 |
+| `r0.75_plus_dropped20` | 0.846364 | −0.000127 | 0.998296 |
+| `r0.75_dropped_in_trees5` | 0.846078 | −0.000412 | 0.999043 |
+| `r0.75_plus_dropped35` | 0.845642 | −0.000848 | 0.994735 |
+
+Leg ini tetap disimpan bukan sebagai penjelasan, melainkan **lever terpisah**:
+AUC 0.836 pada 108 kolom, belum pernah masuk rantai. Diurutkan **di belakang**
+line search `r`, karena `r` punya gradien terukur dan jalur ini belum.
+
+## KESIMPULAN
+
+1. Sumbu `r` adalah sumbu pertama dengan **gradien public terukur**, bukan
+   undian. Instrumennya ber-sd 0.00007.
+2. Mekanismenya aljabar dan pasti: `r` mengatur bobot neto negatif `lgb_lean`.
+   Interpretasi substantif di atasnya **belum terbukti** dan satu versi sudah
+   dipatahkan.
+3. OOF anti-korelasi di sumbu ini, sehingga seleksi OOF yang dipakai v61–v76
+   justru membuang kenaikan ini selama 20 versi.
+4. Final pick berubah ke `r=0.75`.
+
+## KESALAHAN DAN PROBLEM
+
+- **Interpretasi "public memberi imbalan pada sinyal demografi" salah**, dan
+  sudah saya tarik di `plan.md`, docstring `make_submission_v77.py`, notebook
+  bagian 6b, dan entri ini. Saya menuliskannya sebagai penjelasan sebelum
+  mengujinya; ujinya butuh 6 menit dan langsung mematahkannya.
+- Bug kecil di `make_submission_v77.py`: ada sisa baris placeholder `base`
+  ganda saat penulisan pertama; dibersihkan sebelum run.
+
+## ARTEFAK
+
+- `agas/v77/training/`: `make_submission_v77.py`, `train_dropped_v77.py`,
+  `make_dropped_candidates_v77.py`, `make_notebook_v77.py`.
+- `agas/v77/output/`: `summary_v77.json`, `summary_v77_dropped.json`,
+  `dropped_v77.json`, `preds_dropped_v77.npz`, 7 CSV line-search + 4 CSV jalur
+  kedua.
+- `agas/v77/notebook/notebook_v77.ipynb` — 19 sel end-to-end, bagian 6 memuat
+  gradien dan aljabarnya, bagian 6b memuat hipotesis yang gagal; dieksekusi
+  penuh `RUN_TRAINING=False`, nol error, `STATUS: PASS`, 11 file tervalidasi.
+
+## LANGKAH KE DEPAN
+
+1. **Submit satu file: `agas/v77/output/submission_v77_r1p000.csv`.**
+2. Aturan keputusan setelah hasilnya keluar:
+   - **> 0.56520** → gradien lanjut: kirim `r1p250.csv`, lalu `r1p500.csv`
+   - **0.56418–0.56520** → optimum antara 0.75–1.00: kirim `r0p875.csv`
+   - **< 0.56418** → optimum dekat 0.75: kirim `r0p625.csv` untuk mengapit
+3. Satu titik per submission. sd instrumen 0.00007 membuat tiap titik hampir
+   bebas noise; melompat membuang informasi.
+4. Jalur kedua (`submission_v77d_*`) menunggu line search `r` punya optimum.
+5. **Final pick Kaggle: `agas/v76/output/submission_v76_02_r0.75.csv`**
+   (0.56520). Ganti lagi hanya kalau ada titik sweep yang melewatinya.

@@ -1,0 +1,57 @@
+{
+  "dropped_leg_oof_auc": 0.8363933233003126,
+  "dropped_leg_oof_ks": 0.5068347261203594,
+  "reference_r": 0.75,
+  "reference_public": 0.5652,
+  "reference_oof_auc": 0.8464901183223571,
+  "reference_oof_ks": 0.5277923775259673,
+  "refuted_hypothesis": "raising r amplifies the 108 dropped columns",
+  "direction_pearson_vs_adding_leg": {
+    "dropped": -0.68,
+    "lgb_lean": -0.9959,
+    "lgb_full": -0.9848,
+    "linear": -0.755,
+    "cat_full": -0.8855,
+    "xgb_full": -0.9764,
+    "lgbx_full": -0.9755,
+    "fac_full": -0.9793
+  },
+  "candidates": [
+    {
+      "name": "r0.75_plus_dropped10",
+      "oof_auc": 0.846541,
+      "oof_ks": 0.527772,
+      "d_oof_auc": 5.1e-05,
+      "d_oof_ks": -2e-05,
+      "spearman_vs_r075": 0.999577,
+      "file": "submission_v77d_r0p75_plus_dropped10.csv"
+    },
+    {
+      "name": "r0.75_plus_dropped20",
+      "oof_auc": 0.846364,
+      "oof_ks": 0.526989,
+      "d_oof_auc": -0.000127,
+      "d_oof_ks": -0.000803,
+      "spearman_vs_r075": 0.998296,
+      "file": "submission_v77d_r0p75_plus_dropped20.csv"
+    },
+    {
+      "name": "r0.75_plus_dropped35",
+      "oof_auc": 0.845642,
+      "oof_ks": 0.524422,
+      "d_oof_auc": -0.000848,
+      "d_oof_ks": -0.003371,
+      "spearman_vs_r075": 0.994735,
+      "file": "submission_v77d_r0p75_plus_dropped35.csv"
+    },
+    {
+      "name": "r0.75_dropped_in_trees5",
+      "oof_auc": 0.846078,
+      "oof_ks": 0.527086,
+      "d_oof_auc": -0.000412,
+      "d_oof_ks": -0.000706,
+      "spearman_vs_r075": 0.999043,
+      "file": "submission_v77d_r0p75_dropped_in_trees5.csv"
+    }
+  ]
+}

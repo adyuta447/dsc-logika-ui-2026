@@ -1,0 +1,33 @@
+{
+  "n_dropped": 108,
+  "n_all": 598,
+  "dropped_named": [
+    "age",
+    "app_dow",
+    "app_hour",
+    "decision_lag_h",
+    "dependents",
+    "employment_tenure_months",
+    "employment_type",
+    "housing_status",
+    "income_per_dependent",
+    "loan_purpose",
+    "region",
+    "tenure_to_age"
+  ],
+  "by_prefix": {
+    "ec_share_": 7,
+    "ec_catqty_": 7,
+    "cs_shift": 8,
+    "buh_": 8,
+    "gn_": 66
+  },
+  "folds": 10,
+  "seeds": [
+    42,
+    7
+  ],
+  "oof_auc": 0.8363933233003126,
+  "oof_ks": 0.5068347261203594,
+  "minutes": 5.541265519460042
+}

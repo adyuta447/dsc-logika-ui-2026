@@ -1,0 +1,155 @@
+{
+  "instrument_sd": 7e-05,
+  "measured_public": {
+    "0.5": [
+      0.56424,
+      0.56419,
+      0.56411
+    ],
+    "0.75": [
+      0.5652
+    ]
+  },
+  "base_public_r050": 0.5641799999999999,
+  "local_slope_per_unit_r": 0.004080000000000528,
+  "anchor_oof_auc": 0.8468400975734337,
+  "anchor_oof_ks": 0.5287127593768207,
+  "algebra": "base + r*(base - lgb_lean) == base - w*lgb_lean, w = r/(1+r)",
+  "lean_drops": [
+    "region",
+    "employment_type",
+    "housing_status",
+    "age",
+    "employment_tenure_months",
+    "dependents",
+    "tenure_to_age",
+    "income_per_dependent",
+    "loan_purpose",
+    "decision_lag_h",
+    "app_hour",
+    "app_dow",
+    "ec_share_*",
+    "ec_catqty_*",
+    "cs_shift*",
+    "buh_*",
+    "gn_*"
+  ],
+  "grid": [
+    {
+      "r": 0.25,
+      "w": 0.2,
+      "net_lgb_lean": -0.08333,
+      "oof_auc": 0.847085,
+      "oof_ks": 0.528338,
+      "d_oof_auc": 0.000245,
+      "d_oof_ks": -0.000375,
+      "spearman_vs_r050": 0.999803,
+      "public_measured": null,
+      "linear_prediction": 0.56316,
+      "file": "submission_v77_r0p250.csv"
+    },
+    {
+      "r": 0.5,
+      "w": 0.3333,
+      "net_lgb_lean": -0.21667,
+      "oof_auc": 0.84684,
+      "oof_ks": 0.528713,
+      "d_oof_auc": 0.0,
+      "d_oof_ks": 0.0,
+      "spearman_vs_r050": 1.0,
+      "public_measured": 0.56418,
+      "linear_prediction": 0.56418
+    },
+    {
+      "r": 0.625,
+      "w": 0.3846,
+      "net_lgb_lean": -0.26795,
+      "oof_auc": 0.846682,
+      "oof_ks": 0.528436,
+      "d_oof_auc": -0.000158,
+      "d_oof_ks": -0.000276,
+      "spearman_vs_r050": 0.99995,
+      "public_measured": null,
+      "linear_prediction": 0.56469,
+      "file": "submission_v77_r0p625.csv"
+    },
+    {
+      "r": 0.75,
+      "w": 0.4286,
+      "net_lgb_lean": -0.3119,
+      "oof_auc": 0.84649,
+      "oof_ks": 0.527792,
+      "d_oof_auc": -0.00035,
+      "d_oof_ks": -0.00092,
+      "spearman_vs_r050": 0.999803,
+      "public_measured": 0.5652,
+      "linear_prediction": 0.5652
+    },
+    {
+      "r": 0.875,
+      "w": 0.4667,
+      "net_lgb_lean": -0.35,
+      "oof_auc": 0.846275,
+      "oof_ks": 0.52752,
+      "d_oof_auc": -0.000565,
+      "d_oof_ks": -0.001193,
+      "spearman_vs_r050": 0.999558,
+      "public_measured": null,
+      "linear_prediction": 0.56571,
+      "file": "submission_v77_r0p875.csv"
+    },
+    {
+      "r": 1.0,
+      "w": 0.5,
+      "net_lgb_lean": -0.38333,
+      "oof_auc": 0.846034,
+      "oof_ks": 0.526871,
+      "d_oof_auc": -0.000806,
+      "d_oof_ks": -0.001842,
+      "spearman_vs_r050": 0.999215,
+      "public_measured": null,
+      "linear_prediction": 0.56622,
+      "file": "submission_v77_r1p000.csv"
+    },
+    {
+      "r": 1.25,
+      "w": 0.5556,
+      "net_lgb_lean": -0.43889,
+      "oof_auc": 0.845471,
+      "oof_ks": 0.526408,
+      "d_oof_auc": -0.001369,
+      "d_oof_ks": -0.002305,
+      "spearman_vs_r050": 0.998239,
+      "public_measured": null,
+      "linear_prediction": 0.56724,
+      "file": "submission_v77_r1p250.csv"
+    },
+    {
+      "r": 1.5,
+      "w": 0.6,
+      "net_lgb_lean": -0.48333,
+      "oof_auc": 0.844801,
+      "oof_ks": 0.525879,
+      "d_oof_auc": -0.00204,
+      "d_oof_ks": -0.002833,
+      "spearman_vs_r050": 0.996878,
+      "public_measured": null,
+      "linear_prediction": 0.56826,
+      "file": "submission_v77_r1p500.csv"
+    },
+    {
+      "r": 2.0,
+      "w": 0.6667,
+      "net_lgb_lean": -0.55,
+      "oof_auc": 0.843146,
+      "oof_ks": 0.52435,
+      "d_oof_auc": -0.003694,
+      "d_oof_ks": -0.004363,
+      "spearman_vs_r050": 0.993027,
+      "public_measured": null,
+      "linear_prediction": 0.5703,
+      "file": "submission_v77_r2p000.csv"
+    }
+  ],
+  "files_written": 7
+}

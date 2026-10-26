@@ -1,0 +1,8 @@
+dropped columns: 108 of 598
+  named: ['age', 'app_dow', 'app_hour', 'decision_lag_h', 'dependents', 'employment_tenure_months', 'employment_type', 'housing_status', 'income_per_dependent', 'loan_purpose', 'region', 'tenure_to_age']
+  by prefix: {'ec_share_': 7, 'ec_catqty_': 7, 'cs_shift': 8, 'buh_': 8, 'gn_': 66}
+  seed 42: auc=0.835954 ks=0.505818
+  seed 7: auc=0.836270 ks=0.506964
+
+dropped-columns leg: AUC 0.836393 KS 0.506835  [5.5 min]
+saved /Users/agas/Documents/ITB/Lomba/dsc-logika-ui-2026/agas/v77/output/preds_dropped_v77.npz
