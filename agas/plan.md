@@ -1,7 +1,7 @@
-# Rencana kerja `agas/` — v75 aktif
+# Rencana kerja `agas/` — v76 aktif
 
 Dokumen ini adalah rencana eksekusi aktif. **Rencana yang sedang dijalankan
-adalah v75, ada di bagian paling bawah file ini.** Rencana v71–v74 di atasnya
+adalah v76, ada di bagian paling bawah file ini.** Rencana v71–v75 di atasnya
 disimpan sebagai riwayat dan sudah selesai. Aturan kompetisi di
 `agas/limit.md`, `agas/overview.md`, dan `agas/rules.md` tetap mengikat.
 
@@ -590,3 +590,143 @@ Hanya kalau Fase A lolos. Latih leg monoton dengan config produksi v66
 - Tanpa leakage; semua fitur memakai cutoff `decision_datetime`.
 - `features.py` tidak diubah.
 - Tidak push GitHub, tidak submit Kaggle tanpa instruksi.
+
+---
+
+# Rencana v76 — leaderboard sebagai alat ukur, bukan undian (SUDAH DIEKSEKUSI)
+
+> **Hasil 2026-10-26: 8 kandidat sweep dibangun dan divalidasi, notebook
+> dieksekusi nol error.** Belum ada submission v76 yang dikirim. Langkah
+> berikutnya ada pada user: kirim `submission_v76_01_core3to1.csv` lebih dulu,
+> lalu terapkan aturan go/no-go di Fase 0. Detail di `agas/progress.md` entri
+> 2026-10-26.
+
+Ditulis 2026-10-26 setelah dua hasil public v75 masuk. User meminta cara lain
+menaikkan skor public untuk mengejar leaderboard.
+
+## Hasil baru yang mengubah segalanya
+
+| submission | public |
+|---|---:|
+| `submission_v75_03_mix80_mlp.csv` | 0.56073 |
+| `submission_v75_04_pair_mlp_v70_extra.csv` | 0.56045 |
+
+Kalibrasi v75 meramalkan E[public] = **0.5596** untuk kedua file ini. Aktualnya
+0.56073 dan 0.56045 — **prediksinya tepat**, menyimpang +0.0011 dan +0.0008,
+jauh di dalam sebaran. Model keluarga itu terkonfirmasi.
+
+Dengan 8 observasi, ledger public terbelah dua cluster yang terpisah tajam:
+
+| Cluster | isi | n | mean | sd |
+|---|---|---:|---:|---:|
+| **A** | rantai persis `ext0.5 \| tm30 \| lgb_lean` | 3 | **0.56418** | **0.00007** |
+| **B** | bukan rantai itu | 5 | 0.56000 | 0.00123 |
+
+Cluster A: `v66_04` 0.56424, `v70_07` 0.56419, `v68_04` 0.56411.
+Cluster B: `core71` 0.56111, `mix80_mlp` 0.56073, `pair_mlp` 0.56045,
+`seq05` 0.55968, `v70_01` 0.55801.
+
+Dua fakta yang keluar dari situ:
+
+1. **Keunggulan +0.00418 cluster A nyata, bukan keberuntungan.** Ketiga
+   anggotanya dilatih dengan feature set dan jumlah seed yang berbeda — v66
+   enam fold-seed, v68 sepuluh, v70_07 fitur v70 sama sekali lain — tetapi
+   mendarat dalam rentang 0.00013. Maksimum dari 5 undian cluster B hanya akan
+   0.56142, jadi 0.56424 tidak bisa dijelaskan sebagai undian terbaik.
+2. **Di dalam rantai itu, leaderboard adalah alat ukur ber-sd 0.00007.**
+   Ini pertama kalinya di seluruh proyek public bisa dipakai sebagai
+   instrumen presisi, bukan sumber noise. Selisih di atas 0.0002 adalah sinyal.
+
+## Apa yang belum pernah diukur
+
+Kualitas leg sudah terbukti **tidak** menggerakkan cluster A: v70_07 memakai
+fitur yang sama sekali berbeda dan v68 memakai sepuluh fold-seed, dua-duanya
+mendarat di 0.5641–0.5642. Jadi public KS rantai ini jenuh pada level leg.
+
+Yang tersisa adalah **parameter rantainya sendiri**, dan hanya satu nilai yang
+pernah diukur di public:
+
+- rasio ekstrapolasi `r` = 0.5 (satu-satunya yang pernah disubmit dengan
+  `tm30` + `lgb_lean` pada leg kuat);
+- bobot linear `tm` = 0.30;
+- bobot core `trees4 : lgbx` = 2 : 1;
+- leg referensi ekstrapolasi = `lgb_lean`.
+
+v61 dan v66 memang menyapu `r` dan `tm`, tetapi memilih dengan **OOF AUC** —
+kunci yang v74 dan v75 buktikan tidak berkorelasi dengan public. Jadi sumbu ini
+secara efektif belum pernah diukur pada metrik yang menentukan.
+
+Cluster C memberi petunjuk arah: `qc_00` (ext1.5, ref `fac_full`) 0.56171,
+`v58ext` (ext1.5, ref `fac`) 0.55900, `v66_02` (plateau tm20, `fac_full`)
+0.55877. Mengganti leg referensi dari `lgb_lean` mahal. Jadi `ref=lgb_lean`
+dipertahankan di seluruh sweep.
+
+## Hipotesis
+
+**H7 — fragility vs gradient.** Dua kemungkinan, dan satu submission bisa
+memisahkannya.
+
+- *Gradient*: public KS adalah fungsi mulus dari parameter rantai, dan 0.5642
+  adalah nilai di `r=0.5`. Kalau begitu menggeser `r` memberi gradien terukur
+  dan optimumnya mungkin bukan di 0.5.
+- *Fragility*: 0.5642 adalah maksimum lokal yang rapuh; gangguan sekecil apa
+  pun menjatuhkannya ke ~0.560. Bukti pendukung: `seq05` dengan ρ 0.99950 turun
+  0.00456.
+
+## Fase 0 — kandidat kontrol yang memisahkan dua hipotesis
+
+Gangguan terkecil yang bisa dibuat di dalam rantai: ubah bobot core dari
+2:1 menjadi 3:1. ρ terhadap anchor = **0.999986**, jauh lebih dekat daripada
+`seq05`.
+
+- Kalau file ini tetap ~0.5641 → hipotesis *gradient*, sweep diteruskan.
+- Kalau jatuh ke ~0.560 → hipotesis *fragility*, **sweep dihentikan**, anchor
+  dibekukan, dan tidak ada submission lanjutan yang dibuang.
+
+Ini submission paling informatif yang tersedia dan harus dikirim lebih dulu.
+
+## Fase 1 — sweep satu-sumbu (hanya kalau Fase 0 lolos)
+
+Semua memakai `ref=lgb_lean`, legs v66 yang sama, satu parameter diubah per
+kandidat:
+
+| langkah | ρ ke anchor | sumbu |
+|---|---:|---|
+| `core3to1` | 0.999986 | bobot core (kontrol Fase 0) |
+| `r0.75` | 0.999803 | rasio ekstrapolasi, naik |
+| `r0.25` | 0.999803 | rasio ekstrapolasi, turun |
+| `tm0.40` | 0.999425 | bobot linear, naik |
+| `tm0.20` | 0.999425 | bobot linear, turun |
+| `r1.00` | 0.999215 | ekstrapolasi, langkah besar |
+
+Urutan submit dirancang untuk informasi, bukan untuk harapan: kontrol dulu,
+lalu dua titik mengapit `r=0.5` supaya gradien dan kelengkungan langsung
+terbaca pada sd 0.00007.
+
+## Fase 2 — artefak
+
+- `agas/v76/training/make_submission_v76.py` — ledger, statistik cluster,
+  sweep, urutan submit, aturan go/no-go.
+- `agas/v76/notebook/notebook_v76.ipynb` — end-to-end, `RUN_TRAINING` flag,
+  dieksekusi penuh nol error.
+- `agas/v76/output/` — CSV kandidat + `summary_v76.json`.
+- Update `progress.md`, `README.md`, `plan.md`, Obsidian. Commit lokal.
+
+## Prinsip (tidak berubah)
+
+- Python saja; hanya data di `data/`. Tanpa external data, AutoML, AutoFE.
+- Tanpa leakage; semua fitur memakai cutoff `decision_datetime`.
+- `features.py` tidak diubah; v76 tidak melatih model baru sama sekali, hanya
+  merakit ulang leg yang sudah ada.
+- Tidak push GitHub, tidak submit Kaggle tanpa instruksi.
+- CSV: 30.000 baris, ID unik dan cocok test, [0,1], tanpa NaN.
+
+## Ekspektasi jujur
+
+- Fase 0 adalah tes hipotesis, bukan upaya menaikkan skor. Peluang terbesarnya
+  adalah menghemat submission, bukan menambah skor.
+- Kalau hipotesis *gradient* benar dan optimumnya bukan di `r=0.5`, kenaikan
+  yang masuk akal **+0.001 sampai +0.004**, membawa public ke 0.565–0.568.
+- Kalau *fragility* benar, v76 berhenti setelah satu submission dan anchor
+  dibekukan. Itu hasil yang sah dan menghemat slot.
+- 0.57788 tetap tidak dijanjikan oleh satu pun pengukuran yang ada.

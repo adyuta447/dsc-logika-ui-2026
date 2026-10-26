@@ -1,0 +1,219 @@
+{
+  "ledger": [
+    {
+      "name": "v66_04  ext0.5|tm30|lgb_lean",
+      "cluster": "A",
+      "public": 0.56424
+    },
+    {
+      "name": "v70_07  ext0.5|tm30v70|lgb_lean",
+      "cluster": "A",
+      "public": 0.56419
+    },
+    {
+      "name": "v68_04  ext0.5|tm30|lgb_lean",
+      "cluster": "A",
+      "public": 0.56411
+    },
+    {
+      "name": "v71     core71 MLP-heavy",
+      "cluster": "B",
+      "public": 0.56111
+    },
+    {
+      "name": "v75_03  mix80_mlp",
+      "cluster": "B",
+      "public": 0.56073
+    },
+    {
+      "name": "v75_04  pair_mlp_v70_extra",
+      "cluster": "B",
+      "public": 0.56045
+    },
+    {
+      "name": "v72     seq05 anchor+5% seq",
+      "cluster": "B",
+      "public": 0.55968
+    },
+    {
+      "name": "v70_01  raw leg v70_extra",
+      "cluster": "B",
+      "public": 0.55801
+    },
+    {
+      "name": "v61_alt ext0.5|tm30|lean (weaker legs)",
+      "cluster": "C",
+      "public": 0.56312
+    },
+    {
+      "name": "qc_00   ext1.5|fac_full",
+      "cluster": "C",
+      "public": 0.56171
+    },
+    {
+      "name": "v58ext  ext1.5|fac",
+      "cluster": "C",
+      "public": 0.559
+    },
+    {
+      "name": "v66_02  plateau|tm20|fac_full",
+      "cluster": "C",
+      "public": 0.55877
+    }
+  ],
+  "cluster_stats": {
+    "A": {
+      "n": 3,
+      "mean": 0.56418,
+      "sd": 7e-05,
+      "min": 0.56411,
+      "max": 0.56424
+    },
+    "B": {
+      "n": 5,
+      "mean": 0.56,
+      "sd": 0.00123,
+      "min": 0.55801,
+      "max": 0.56111
+    },
+    "C": {
+      "n": 4,
+      "mean": 0.56065,
+      "sd": 0.00212,
+      "min": 0.55877,
+      "max": 0.56312
+    }
+  },
+  "gap_A_minus_B": 0.00418,
+  "instrument_sd": 7e-05,
+  "anchor_public": 0.56424,
+  "anchor_oof_auc": 0.8468400975734337,
+  "anchor_oof_ks": 0.5287127593768207,
+  "control": "core3to1",
+  "go_no_go": {
+    "continue_at_or_above": 0.5639,
+    "stop_at_or_below": 0.562
+  },
+  "candidates": [
+    {
+      "name": "anchor",
+      "submit_order": 0,
+      "why": "the measured reference, 0.56424; do not resubmit, it returns the same",
+      "params": {
+        "baseline": true
+      },
+      "oof_auc": 0.84684,
+      "oof_ks": 0.528713,
+      "d_oof_auc": 0.0,
+      "d_oof_ks": 0.0,
+      "spearman_vs_anchor": 1.0,
+      "rank_changes": 0,
+      "file": "submission_v76_00_anchor.csv"
+    },
+    {
+      "name": "core3to1",
+      "submit_order": 1,
+      "why": "core weight 3:1 instead of 2:1 - the smallest perturbation available; the control that separates a smooth surface from a brittle maximum",
+      "params": {
+        "cw": 3.0
+      },
+      "oof_auc": 0.846846,
+      "oof_ks": 0.528396,
+      "d_oof_auc": 6e-06,
+      "d_oof_ks": -0.000317,
+      "spearman_vs_anchor": 0.999986,
+      "rank_changes": 29552,
+      "file": "submission_v76_01_core3to1.csv"
+    },
+    {
+      "name": "r0.75",
+      "submit_order": 2,
+      "why": "extrapolation ratio up one step, with tm and ref held fixed",
+      "params": {
+        "r": 0.75
+      },
+      "oof_auc": 0.84649,
+      "oof_ks": 0.527792,
+      "d_oof_auc": -0.00035,
+      "d_oof_ks": -0.00092,
+      "spearman_vs_anchor": 0.999803,
+      "rank_changes": 29882,
+      "file": "submission_v76_02_r0.75.csv"
+    },
+    {
+      "name": "r0.25",
+      "submit_order": 3,
+      "why": "extrapolation ratio down one step; with r0.75 this brackets r=0.5 so the gradient and the curvature read directly off the instrument",
+      "params": {
+        "r": 0.25
+      },
+      "oof_auc": 0.847085,
+      "oof_ks": 0.528338,
+      "d_oof_auc": 0.000245,
+      "d_oof_ks": -0.000375,
+      "spearman_vs_anchor": 0.999803,
+      "rank_changes": 29892,
+      "file": "submission_v76_03_r0.25.csv"
+    },
+    {
+      "name": "tm0.40",
+      "submit_order": 4,
+      "why": "linear weight up one step",
+      "params": {
+        "tm": 0.4
+      },
+      "oof_auc": 0.84617,
+      "oof_ks": 0.526889,
+      "d_oof_auc": -0.00067,
+      "d_oof_ks": -0.001823,
+      "spearman_vs_anchor": 0.999425,
+      "rank_changes": 29919,
+      "file": "submission_v76_04_tm0.40.csv"
+    },
+    {
+      "name": "tm0.20",
+      "submit_order": 5,
+      "why": "linear weight down one step",
+      "params": {
+        "tm": 0.2
+      },
+      "oof_auc": 0.847206,
+      "oof_ks": 0.52839,
+      "d_oof_auc": 0.000366,
+      "d_oof_ks": -0.000322,
+      "spearman_vs_anchor": 0.999425,
+      "rank_changes": 29938,
+      "file": "submission_v76_05_tm0.20.csv"
+    },
+    {
+      "name": "r1.00",
+      "submit_order": 6,
+      "why": "extrapolation ratio, large step; only worth sending if r0.75 moved up",
+      "params": {
+        "r": 1.0
+      },
+      "oof_auc": 0.846034,
+      "oof_ks": 0.526871,
+      "d_oof_auc": -0.000806,
+      "d_oof_ks": -0.001842,
+      "spearman_vs_anchor": 0.999215,
+      "rank_changes": 29949,
+      "file": "submission_v76_06_r1.00.csv"
+    },
+    {
+      "name": "core1to1",
+      "submit_order": 7,
+      "why": "core weight 1:1, the other direction",
+      "params": {
+        "cw": 1.0
+      },
+      "oof_auc": 0.846802,
+      "oof_ks": 0.527823,
+      "d_oof_auc": -3.8e-05,
+      "d_oof_ks": -0.000889,
+      "spearman_vs_anchor": 0.999943,
+      "rank_changes": 29761,
+      "file": "submission_v76_07_core1to1.csv"
+    }
+  ]
+}

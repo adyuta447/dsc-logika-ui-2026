@@ -2283,3 +2283,164 @@ Portofolio 5 tiket: **0.026** (batas atas independen).
    **discussion forum dan public notebook Kaggle** kompetisi ini. Aturan Kaggle
    mengizinkan public code sharing; itu satu-satunya jalan ke lompatan besar
    yang belum tereksplorasi.
+
+---
+
+# 2026-10-26 — Leaderboard jadi alat ukur: dua cluster public — v76
+
+## RINGKASAN
+
+Dua hasil public v75 masuk: `mix80_mlp` **0.56073** dan `pair_mlp_v70_extra`
+**0.56045**. Kalibrasi v75 meramalkan **0.5596** untuk keduanya sebelum
+disubmit — menyimpang +0.0011 dan +0.0008, jadi model keluarga itu terkonfirmasi.
+
+Dengan 8 observasi, ledger public ternyata **tidak** satu awan noise, melainkan
+dua cluster yang nyaris tidak bertumpang. Konsekuensinya mengubah strategi:
+di dalam rantai `ext0.5 | tm30 | lgb_lean`, leaderboard adalah **alat ukur
+ber-sd 0.00007** — presisi pertama yang proyek ini punya. v76 berhenti
+memperlakukan public sebagai undian dan mulai memakainya sebagai instrumen.
+
+## STATUS
+
+Selesai. 8 kandidat sweep ditulis dan tervalidasi, notebook v76 end-to-end
+dieksekusi penuh nol error (`STATUS: PASS`), rebuild anchor eksak. Belum ada
+submission v76 yang dikirim — menunggu user. Tidak ada push GitHub.
+
+## GOAL
+
+Cari cara menaikkan public dengan memakai informasi yang baru tersedia, bukan
+dengan melatih keluarga model baru (v75 sudah membuktikan keluarga itu habis).
+
+## HASIL — struktur cluster
+
+| Cluster | isi | n | mean | sd |
+|---|---|---:|---:|---:|
+| **A** | rantai persis `ext0.5 \| tm30 \| lgb_lean` | 3 | **0.56418** | **0.00007** |
+| **B** | bukan rantai itu | 5 | 0.56000 | 0.00123 |
+| **C** | rantai dengan r / ref / tm lain | 4 | 0.56065 | 0.00212 |
+
+Cluster A: `v66_04` 0.56424, `v70_07` 0.56419, `v68_04` 0.56411.
+Cluster B: `core71` 0.56111, `mix80_mlp` 0.56073, `pair_mlp` 0.56045,
+`seq05` 0.55968, `v70_01` 0.55801.
+Cluster C: `v61_alt` 0.56312, `qc_00` 0.56171, `v58ext` 0.55900,
+`v66_02` 0.55877.
+
+Gap A−B = **+0.00418**.
+
+### Mengapa gap itu nyata, bukan undian
+
+Ketiga anggota cluster A dilatih dengan **feature set dan jumlah fold-seed yang
+berbeda** — v66 enam fold-seed, v68 sepuluh, `v70_07` memakai fitur v70 sama
+sekali lain — tetapi mendarat dalam rentang **0.00013**. Maksimum dari 5 undian
+cluster B hanya akan mencapai **0.56142**, jadi 0.56424 tidak bisa dijelaskan
+sebagai undian terbaik dari satu distribusi.
+
+### Dua pembacaan lama yang dikoreksi
+
+- **v74** menyimpulkan sebaran public ~0.02 pada subset 3.000 baris dan skor
+  pemimpin sebagian besar noise.
+- **v75** menyimpulkan 0.56424 adalah **maksimum** dari undian yang sudah
+  diambil (winner's curse).
+
+Keduanya cocok untuk perilaku **cluster B** dan tetap berlaku di sana. Tidak
+satu pun menggambarkan cluster A, yang skornya reproducible sampai lima desimal
+melintasi feature set yang berbeda. Jadi 0.56424 adalah properti resep, bukan
+keberuntungan.
+
+### Yang belum pernah diukur
+
+Kualitas leg terbukti **tidak** menggerakkan cluster A (`v70_07` dan `v68_04`
+membuktikannya). Yang tersisa adalah parameter rantainya sendiri, dan hanya
+satu nilai tiap parameter yang pernah mencapai public: `r`=0.5, `tm`=0.30,
+bobot core 2:1, `ref`=`lgb_lean`. v61 dan v66 memang menyapu `r` dan `tm`,
+tetapi memilih dengan **OOF AUC** — kunci yang v74 dan v75 ukur sebagai tidak
+berkorelasi dengan public. Pada metrik yang menentukan, sumbu ini belum diukur.
+
+Cluster C memberi arah yang sudah pasti: mengganti `ref` dari `lgb_lean` mahal
+(`qc_00` 0.56171, `v58ext` 0.55900, `v66_02` 0.55877). Jadi `ref` dikunci.
+
+## HIPOTESIS
+
+**H7 — gradient vs fragility.**
+
+- *Gradient*: public KS mulus terhadap parameter rantai; menggeser `r` memberi
+  gradien terukur dan optimumnya mungkin bukan 0.5.
+- *Fragility*: 0.5642 adalah maksimum lokal rapuh; gangguan sekecil apa pun
+  menjatuhkannya ke ~0.560. Bukti pendukung: `seq05` ρ 0.99950 turun 0.00456.
+
+Satu submission memisahkan keduanya.
+
+## RUN
+
+`agas/v76/training/make_submission_v76.py` — tanpa training, hanya merakit
+ulang leg v66 yang tersimpan. Satu parameter diubah per kandidat, `ref` dikunci
+ke `lgb_lean`.
+
+| urutan | file | ρ ke anchor | rank berubah | sumbu |
+|---:|---|---:|---:|---|
+| 1 | `core3to1` | **0.999986** | 29.552 | bobot core (kontrol) |
+| 2 | `r0.75` | 0.999803 | 29.882 | rasio ekstrapolasi naik |
+| 3 | `r0.25` | 0.999803 | 29.892 | rasio ekstrapolasi turun |
+| 4 | `tm0.40` | 0.999425 | 29.919 | bobot linear naik |
+| 5 | `tm0.20` | 0.999425 | 29.938 | bobot linear turun |
+| 6 | `r1.00` | 0.999215 | 29.949 | ekstrapolasi langkah besar |
+| 7 | `core1to1` | 0.999943 | 29.761 | bobot core arah lain |
+
+### Aturan go/no-go setelah submission 1 (`core3to1`)
+
+| hasil | tindakan |
+|---|---|
+| ≥ 0.5639 | permukaan mulus → teruskan sweep sesuai urutan |
+| ≤ 0.5620 | 0.56424 maksimum rapuh → **stop**, bekukan anchor, hemat slot |
+| di antara | tidak konklusif → kirim `r0.75` saja, lalu putuskan |
+
+`core3to1` dipilih sebagai kontrol karena ρ 0.999986 adalah gangguan terkecil
+yang bisa dibuat di dalam rantai — jauh lebih dekat daripada `seq05` (0.99950)
+yang turun 0.00456.
+
+## KESIMPULAN
+
+1. Public bukan satu distribusi. Rantai `ext0.5|tm30|lgb_lean` punya keunggulan
+   +0.00418 yang reproducible melintasi feature set dan seed.
+2. Di dalam rantai itu sd public **0.00007**, jadi selisih di atas 0.0002
+   adalah sinyal. Ini membuat sweep parameter jadi eksperimen terukur, bukan
+   undian.
+3. Satu-satunya sumbu yang belum pernah diukur pada metrik yang menentukan
+   adalah parameter rantai itu sendiri.
+4. Submission pertama adalah **tes hipotesis**, bukan upaya menaikkan skor.
+   Nilai terbesarnya mungkin menghemat slot, bukan menambah skor.
+
+## KESALAHAN DAN PROBLEM
+
+- v74 dan v75 memperlakukan seluruh ledger sebagai satu distribusi. Itu
+  mencampur dua populasi dengan sd 0.00007 dan 0.00123, dan menghasilkan
+  kesimpulan "anchor hanyalah maksimum undian" yang hanya benar untuk
+  cluster B. Struktur cluster baru terlihat setelah dua hasil v75 masuk dan
+  menaikkan n cluster B dari 3 ke 5.
+- sd instrumen 0.00007 bertumpu pada **tiga** observasi satu resep. Itu
+  mengukur reproducibility resep itu melintasi feature set dan seed, bukan
+  klaim umum tentang leaderboard.
+- Langkah sweep adalah resep **berbeda**, bukan versi ulang resep yang sama,
+  jadi simpangannya mencampur efek parameter dengan fragility permukaan. Itu
+  sebabnya kontrol dikirim lebih dulu.
+
+## ARTEFAK
+
+- `agas/v76/training/make_submission_v76.py`, `make_notebook_v76.py`.
+- `agas/v76/output/`: 8 CSV kandidat + `summary_v76.json`.
+- `agas/v76/notebook/notebook_v76.ipynb` — 17 sel end-to-end, `RUN_TRAINING`
+  flag, dieksekusi penuh nol error, `STATUS: PASS`, 8 file tervalidasi,
+  rebuild anchor eksak (Spearman 1.0, nol rank berubah).
+
+## LANGKAH KE DEPAN
+
+1. Submit **`agas/v76/output/submission_v76_01_core3to1.csv`** lebih dulu, lalu
+   terapkan aturan go/no-go di atas.
+2. Kalau lolos: `r0.75`, lalu `r0.25`, lalu pasangan `tm`. `r1.00` hanya kalau
+   `r0.75` naik.
+3. **Jangan** submit `submission_v76_00_anchor.csv` — rank-identik dengan
+   anchor, hanya membuang slot. File itu ada sebagai cek rebuild di notebook.
+4. Final pick tetap `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv`
+   kecuali ada kandidat sweep yang kembali di atas 0.56424.
+5. Lever yang masih hanya bisa dikerjakan user: membaca discussion forum dan
+   public notebook Kaggle kompetisi ini.

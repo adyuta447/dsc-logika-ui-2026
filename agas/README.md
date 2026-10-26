@@ -1405,3 +1405,42 @@ per tiket (≈0.026 untuk 5 tiket). Tidak ada yang dipromosikan.
 (public 0.56424).** Kalau ada slot submit menganggur, tiket terbaik adalah
 `submission_v75_03_mix80_mlp.csv`; jangan submit `submission_v75_01_anchor.csv`
 (ρ=1.000000 terhadap anchor).
+
+## v76 — leaderboard sebagai alat ukur: dua cluster public (2026-10-26)
+
+Dua hasil v75 masuk (`mix80_mlp` 0.56073, `pair_mlp_v70_extra` 0.56045; v75
+meramalkan 0.5596 untuk keduanya). Dengan 8 observasi, ledger public terbelah
+dua cluster yang nyaris tidak bertumpang:
+
+| Cluster | isi | n | mean | sd |
+|---|---|---:|---:|---:|
+| **A** | rantai persis `ext0.5 \| tm30 \| lgb_lean` | 3 | **0.56418** | **0.00007** |
+| **B** | bukan rantai itu | 5 | 0.56000 | 0.00123 |
+
+Gap **+0.00418**, dan nyata: ketiga anggota cluster A dilatih dengan feature set
+dan jumlah fold-seed berbeda (v66 enam, v68 sepuluh, `v70_07` fitur v70) tetapi
+mendarat dalam rentang 0.00013. Maksimum 5 undian cluster B hanya 0.56142.
+
+**Koreksi v74/v75:** keduanya memperlakukan ledger sebagai satu distribusi dan
+menyimpulkan 0.56424 adalah maksimum undian. Itu benar untuk cluster B, bukan
+untuk cluster A yang reproducible sampai lima desimal.
+
+**Konsekuensi:** di dalam rantai itu sd public 0.00007, jadi selisih di atas
+0.0002 adalah sinyal. Satu-satunya sumbu yang belum pernah diukur pada metrik
+yang menentukan adalah parameter rantai itu sendiri — v61/v66 menyapu `r` dan
+`tm` tetapi memilih dengan OOF AUC.
+
+**Sweep** `make_submission_v76.py` (tanpa training, merakit ulang leg v66), satu
+parameter per kandidat, `ref=lgb_lean` dikunci karena cluster C menunjukkan
+menggantinya mahal: `core3to1` (ρ 0.999986, kontrol) → `r0.75` → `r0.25` →
+`tm0.40` → `tm0.20` → `r1.00` → `core1to1`.
+
+**Go/no-go setelah submission 1:** ≥0.5639 teruskan; ≤0.5620 stop dan bekukan
+anchor; di antaranya kirim `r0.75` lalu putuskan.
+
+**Notebook** `agas/v76/notebook/notebook_v76.ipynb` — 17 sel end-to-end,
+`RUN_TRAINING=False`, nol error, `STATUS: PASS`, 8 file tervalidasi.
+
+**Final pick tetap `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv`**
+kecuali ada kandidat sweep yang kembali di atas 0.56424. Jangan submit
+`submission_v76_00_anchor.csv` (rank-identik dengan anchor).
