@@ -1,0 +1,373 @@
+{
+  "folds": 5,
+  "seeds": [
+    42,
+    7
+  ],
+  "n_lean": 490,
+  "baseline": "v61_inherited",
+  "results": [
+    {
+      "config": "extra_only",
+      "auc_mean": 0.846423,
+      "ks_mean": 0.525275,
+      "d_auc_mean": 0.000973,
+      "d_auc_per_seed": [
+        0.000992,
+        0.000955
+      ],
+      "wins_both_seeds": true,
+      "why": "the inherited config with random split thresholds, isolating the one change `wide_extra` bundles"
+    },
+    {
+      "config": "wide_extra",
+      "auc_mean": 0.845908,
+      "ks_mean": 0.524201,
+      "d_auc_mean": 0.000458,
+      "d_auc_per_seed": [
+        0.000564,
+        0.000351
+      ],
+      "wins_both_seeds": true,
+      "why": "v70's `extra` shape, the best single leg measured so far"
+    },
+    {
+      "config": "slow",
+      "auc_mean": 0.845587,
+      "ks_mean": 0.524449,
+      "d_auc_mean": 0.000137,
+      "d_auc_per_seed": [
+        0.000108,
+        0.000166
+      ],
+      "wins_both_seeds": true,
+      "why": "half the step size; more rounds is the cheapest variance cut"
+    },
+    {
+      "config": "stiff",
+      "auc_mean": 0.845581,
+      "ks_mean": 0.525346,
+      "d_auc_mean": 0.000131,
+      "d_auc_per_seed": [
+        0.000312,
+        -5e-05
+      ],
+      "wins_both_seeds": false,
+      "why": "v70's `stiff7` shape: far less capacity, far more shrinkage"
+    },
+    {
+      "config": "fine_bin",
+      "auc_mean": 0.845561,
+      "ks_mean": 0.524488,
+      "d_auc_mean": 0.000111,
+      "d_auc_per_seed": [
+        5.8e-05,
+        0.000163
+      ],
+      "wins_both_seeds": true,
+      "why": "twice the histogram resolution"
+    },
+    {
+      "config": "thin_ff",
+      "auc_mean": 0.845462,
+      "ks_mean": 0.524039,
+      "d_auc_mean": 1.1e-05,
+      "d_auc_per_seed": [
+        -3.7e-05,
+        6e-05
+      ],
+      "wins_both_seeds": false,
+      "why": "harder column subsampling: 490 redundant columns should tolerate it and it decorrelates the trees"
+    },
+    {
+      "config": "v61_inherited",
+      "auc_mean": 0.84545,
+      "ks_mean": 0.52426,
+      "d_auc_mean": 0.0,
+      "d_auc_per_seed": [
+        0.0,
+        0.0
+      ],
+      "wins_both_seeds": false,
+      "why": "the settings every leg has used since v61"
+    },
+    {
+      "config": "loose_l2",
+      "auc_mean": 0.845391,
+      "ks_mean": 0.523824,
+      "d_auc_mean": -6e-05,
+      "d_auc_per_seed": [
+        -5.5e-05,
+        -6.4e-05
+      ],
+      "wins_both_seeds": false,
+      "why": "checks whether the inherited shrinkage is too strong"
+    },
+    {
+      "config": "deep",
+      "auc_mean": 0.844425,
+      "ks_mean": 0.522846,
+      "d_auc_mean": -0.001025,
+      "d_auc_per_seed": [
+        -0.001012,
+        -0.001039
+      ],
+      "wins_both_seeds": false,
+      "why": "much more capacity, held back by shrinkage instead of depth"
+    }
+  ],
+  "winners": [
+    "extra_only",
+    "wide_extra",
+    "slow",
+    "fine_bin"
+  ],
+  "detail": {
+    "v61_inherited": {
+      "why": "the settings every leg has used since v61",
+      "per_seed": {
+        "42": {
+          "auc": 0.8453290386330248,
+          "ks": 0.5240770025052263,
+          "median_rounds": 1570
+        },
+        "7": {
+          "auc": 0.8455717274055343,
+          "ks": 0.5244426179783732,
+          "median_rounds": 1625
+        }
+      },
+      "auc_mean": 0.8454503830192795,
+      "ks_mean": 0.5242598102417997,
+      "params": {
+        "learning_rate": 0.01,
+        "num_leaves": 15,
+        "min_child_samples": 200,
+        "feature_fraction": 0.3,
+        "bagging_fraction": 0.8,
+        "lambda_l2": 5.0,
+        "max_bin": 127
+      },
+      "rounds": 12000
+    },
+    "wide_extra": {
+      "why": "v70's `extra` shape, the best single leg measured so far",
+      "per_seed": {
+        "42": {
+          "auc": 0.8458930380759735,
+          "ks": 0.524993364234264,
+          "median_rounds": 1403
+        },
+        "7": {
+          "auc": 0.845922902086433,
+          "ks": 0.5234083703502307,
+          "median_rounds": 1312
+        }
+      },
+      "auc_mean": 0.8459079700812032,
+      "ks_mean": 0.5242008672922474,
+      "params": {
+        "learning_rate": 0.012,
+        "num_leaves": 31,
+        "min_child_samples": 120,
+        "feature_fraction": 0.35,
+        "bagging_fraction": 0.85,
+        "lambda_l2": 12.0,
+        "max_bin": 127,
+        "extra_trees": true
+      },
+      "rounds": 10000
+    },
+    "stiff": {
+      "why": "v70's `stiff7` shape: far less capacity, far more shrinkage",
+      "per_seed": {
+        "42": {
+          "auc": 0.8456406884916958,
+          "ks": 0.5246704521225652,
+          "median_rounds": 3301
+        },
+        "7": {
+          "auc": 0.8455216358530849,
+          "ks": 0.5260213782392624,
+          "median_rounds": 2916
+        }
+      },
+      "auc_mean": 0.8455811621723903,
+      "ks_mean": 0.5253459151809139,
+      "params": {
+        "learning_rate": 0.01,
+        "num_leaves": 7,
+        "min_child_samples": 400,
+        "feature_fraction": 0.2,
+        "bagging_fraction": 0.7,
+        "lambda_l2": 40.0,
+        "max_bin": 127
+      },
+      "rounds": 16000
+    },
+    "slow": {
+      "why": "half the step size; more rounds is the cheapest variance cut",
+      "per_seed": {
+        "42": {
+          "auc": 0.8454374115189576,
+          "ks": 0.524319197456544,
+          "median_rounds": 3341
+        },
+        "7": {
+          "auc": 0.8457373609452341,
+          "ks": 0.5245795838068388,
+          "median_rounds": 3138
+        }
+      },
+      "auc_mean": 0.8455873862320958,
+      "ks_mean": 0.5244493906316914,
+      "params": {
+        "learning_rate": 0.005,
+        "num_leaves": 15,
+        "min_child_samples": 200,
+        "feature_fraction": 0.3,
+        "bagging_fraction": 0.8,
+        "lambda_l2": 5.0,
+        "max_bin": 127
+      },
+      "rounds": 30000
+    },
+    "deep": {
+      "why": "much more capacity, held back by shrinkage instead of depth",
+      "per_seed": {
+        "42": {
+          "auc": 0.8443166843239911,
+          "ks": 0.5220300475902264,
+          "median_rounds": 691
+        },
+        "7": {
+          "auc": 0.8445332266554364,
+          "ks": 0.5236624935176624,
+          "median_rounds": 610
+        }
+      },
+      "auc_mean": 0.8444249554897137,
+      "ks_mean": 0.5228462705539444,
+      "params": {
+        "learning_rate": 0.015,
+        "num_leaves": 63,
+        "min_child_samples": 60,
+        "feature_fraction": 0.4,
+        "bagging_fraction": 0.8,
+        "lambda_l2": 30.0,
+        "max_bin": 127
+      },
+      "rounds": 8000
+    },
+    "thin_ff": {
+      "why": "harder column subsampling: 490 redundant columns should tolerate it and it decorrelates the trees",
+      "per_seed": {
+        "42": {
+          "auc": 0.8452919429241953,
+          "ks": 0.5232511161215299,
+          "median_rounds": 2073
+        },
+        "7": {
+          "auc": 0.8456314658592955,
+          "ks": 0.5248260753502874,
+          "median_rounds": 1841
+        }
+      },
+      "auc_mean": 0.8454617043917454,
+      "ks_mean": 0.5240385957359086,
+      "params": {
+        "learning_rate": 0.01,
+        "num_leaves": 15,
+        "min_child_samples": 200,
+        "feature_fraction": 0.15,
+        "bagging_fraction": 0.8,
+        "lambda_l2": 5.0,
+        "max_bin": 127
+      },
+      "rounds": 14000
+    },
+    "loose_l2": {
+      "why": "checks whether the inherited shrinkage is too strong",
+      "per_seed": {
+        "42": {
+          "auc": 0.8452737915177799,
+          "ks": 0.5231017995468463,
+          "median_rounds": 1632
+        },
+        "7": {
+          "auc": 0.8455079688299578,
+          "ks": 0.5245468281603155,
+          "median_rounds": 1812
+        }
+      },
+      "auc_mean": 0.8453908801738689,
+      "ks_mean": 0.523824313853581,
+      "params": {
+        "learning_rate": 0.01,
+        "num_leaves": 15,
+        "min_child_samples": 100,
+        "feature_fraction": 0.3,
+        "bagging_fraction": 0.8,
+        "lambda_l2": 1.0,
+        "max_bin": 127
+      },
+      "rounds": 12000
+    },
+    "extra_only": {
+      "why": "the inherited config with random split thresholds, isolating the one change `wide_extra` bundles",
+      "per_seed": {
+        "42": {
+          "auc": 0.8463207098326307,
+          "ks": 0.5256943886251169,
+          "median_rounds": 2448
+        },
+        "7": {
+          "auc": 0.8465262298664167,
+          "ks": 0.5248551464647486,
+          "median_rounds": 2328
+        }
+      },
+      "auc_mean": 0.8464234698495237,
+      "ks_mean": 0.5252747675449327,
+      "params": {
+        "learning_rate": 0.01,
+        "num_leaves": 15,
+        "min_child_samples": 200,
+        "feature_fraction": 0.3,
+        "bagging_fraction": 0.8,
+        "lambda_l2": 5.0,
+        "max_bin": 127,
+        "extra_trees": true
+      },
+      "rounds": 14000
+    },
+    "fine_bin": {
+      "why": "twice the histogram resolution",
+      "per_seed": {
+        "42": {
+          "auc": 0.8453873999516308,
+          "ks": 0.5247549998747972,
+          "median_rounds": 1603
+        },
+        "7": {
+          "auc": 0.8457347579511345,
+          "ks": 0.5242209444274305,
+          "median_rounds": 1518
+        }
+      },
+      "auc_mean": 0.8455610789513827,
+      "ks_mean": 0.5244879721511139,
+      "params": {
+        "learning_rate": 0.01,
+        "num_leaves": 15,
+        "min_child_samples": 200,
+        "feature_fraction": 0.3,
+        "bagging_fraction": 0.8,
+        "lambda_l2": 5.0,
+        "max_bin": 255
+      },
+      "rounds": 12000
+    }
+  },
+  "minutes": 30.316691760222117
+}

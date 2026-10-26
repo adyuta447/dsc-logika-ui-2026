@@ -1,0 +1,15 @@
+16:00:45 feature counts: full=598 lean=490 fac=553
+16:00:45 folds=12 fold_seeds=[42, 7, 13, 21, 5] lgb_seeds=[0, 1, 2, 3, 4]
+16:00:45 computing factor inputs
+16:00:58 factor inputs ready
+16:33:42 seed 42 fac_full   auc=0.847159 ks=0.524915
+17:09:31 seed 42 lgb_full   auc=0.847231 ks=0.525868
+17:36:43 seed 42 lgb_lean   auc=0.847220 ks=0.524959
+17:42:18 seed 42 lgbx_full  auc=0.845799 ks=0.524702
+17:57:59 seed 42 cat_full   auc=0.845588 ks=0.524531
+18:19:09 seed 42 xgb_full   auc=0.846184 ks=0.524797
+18:23:33 seed 42 linear     auc=0.842330 ks=0.521921
+18:23:34 saved after 1/5 fold seeds, elapsed 142.8 min
+18:57:08 seed 7 fac_full   auc=0.847495 ks=0.526087
+19:41:56 seed 7 lgb_full   auc=0.847623 ks=0.527024
+21:20:22 seed 7 lgb_lean   auc=0.847511 ks=0.527071

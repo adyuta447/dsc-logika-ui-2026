@@ -1,0 +1,43 @@
+15:13:33 rows=70000 lean=490 configs=9 folds=5 seeds=[42, 7]
+15:14:44   v61_inherited  seed=42 auc=0.845329 ks=0.524077 rounds~1570
+15:16:04   v61_inherited  seed=7 auc=0.845572 ks=0.524443 rounds~1625
+15:16:04   v61_inherited  MEAN auc=0.845450 ks=0.524260   [2.5 min]
+15:18:03   wide_extra     seed=42 auc=0.845893 ks=0.524993 rounds~1403
+15:20:01   wide_extra     seed=7 auc=0.845923 ks=0.523408 rounds~1312
+15:20:01   wide_extra     MEAN auc=0.845908 ks=0.524201   [6.5 min]
+15:21:14   stiff          seed=42 auc=0.845641 ks=0.524670 rounds~3301
+15:22:25   stiff          seed=7 auc=0.845522 ks=0.526021 rounds~2916
+15:22:25   stiff          MEAN auc=0.845581 ks=0.525346   [8.9 min]
+15:24:57   slow           seed=42 auc=0.845437 ks=0.524319 rounds~3341
+15:27:22   slow           seed=7 auc=0.845737 ks=0.524580 rounds~3138
+15:27:22   slow           MEAN auc=0.845587 ks=0.524449   [13.8 min]
+15:29:25   deep           seed=42 auc=0.844317 ks=0.522030 rounds~691
+15:31:24   deep           seed=7 auc=0.844533 ks=0.523662 rounds~610
+15:31:24   deep           MEAN auc=0.844425 ks=0.522846   [17.9 min]
+15:32:38   thin_ff        seed=42 auc=0.845292 ks=0.523251 rounds~2073
+15:33:51   thin_ff        seed=7 auc=0.845631 ks=0.524826 rounds~1841
+15:33:51   thin_ff        MEAN auc=0.845462 ks=0.524039   [20.3 min]
+15:35:22   loose_l2       seed=42 auc=0.845274 ks=0.523102 rounds~1632
+15:36:52   loose_l2       seed=7 auc=0.845508 ks=0.524547 rounds~1812
+15:36:52   loose_l2       MEAN auc=0.845391 ks=0.523824   [23.3 min]
+15:38:46   extra_only     seed=42 auc=0.846321 ks=0.525694 rounds~2448
+15:40:44   extra_only     seed=7 auc=0.846526 ks=0.524855 rounds~2328
+15:40:44   extra_only     MEAN auc=0.846423 ks=0.525275   [27.2 min]
+15:42:22   fine_bin       seed=42 auc=0.845387 ks=0.524755 rounds~1603
+15:43:51   fine_bin       seed=7 auc=0.845735 ks=0.524221 rounds~1518
+15:43:51   fine_bin       MEAN auc=0.845561 ks=0.524488   [30.3 min]
+15:43:51 
+15:43:51 config            AUC mean   KS mean       dAUC  both
+15:43:51 extra_only        0.846423  0.525275  +0.000973  True
+15:43:51 wide_extra        0.845908  0.524201  +0.000458  True
+15:43:51 slow              0.845587  0.524449  +0.000137  True
+15:43:51 stiff             0.845581  0.525346  +0.000131 False
+15:43:51 fine_bin          0.845561  0.524488  +0.000111  True
+15:43:51 thin_ff           0.845462  0.524039  +0.000011 False
+15:43:51 v61_inherited     0.845450  0.524260  +0.000000 False
+15:43:51 loose_l2          0.845391  0.523824  -0.000060 False
+15:43:51 deep              0.844425  0.522846  -0.001025 False
+15:43:51 
+beat the inherited config on both seeds: ['extra_only', 'wide_extra', 'slow', 'fine_bin']
+15:43:51 best: extra_only at +0.000973 AUC
+15:43:51 saved in 30.3 min

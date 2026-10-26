@@ -1,0 +1,121 @@
+{
+  "source_v76": "preds_v76legs_partial.npz (12 folds x 1 fold seed x 5 booster seeds, extra_trees on 3 legs)",
+  "source_v66": "preds_v66.npz (10 folds x 6 fold seeds x 5 booster seeds)",
+  "extra_trees_legs": [
+    "lgb_full",
+    "lgb_lean",
+    "fac_full"
+  ],
+  "legs": [
+    {
+      "leg": "fac_full",
+      "v66_auc": 0.846662,
+      "v76_auc": 0.847159,
+      "delta": 0.000497,
+      "extra_trees": true,
+      "pick": "v76"
+    },
+    {
+      "leg": "lgb_full",
+      "v66_auc": 0.846682,
+      "v76_auc": 0.847231,
+      "delta": 0.00055,
+      "extra_trees": true,
+      "pick": "v76"
+    },
+    {
+      "leg": "lgb_lean",
+      "v66_auc": 0.846721,
+      "v76_auc": 0.84722,
+      "delta": 0.000499,
+      "extra_trees": true,
+      "pick": "v76"
+    },
+    {
+      "leg": "lgbx_full",
+      "v66_auc": 0.84655,
+      "v76_auc": 0.845799,
+      "delta": -0.000751,
+      "extra_trees": false,
+      "pick": "v66"
+    },
+    {
+      "leg": "cat_full",
+      "v66_auc": 0.846311,
+      "v76_auc": 0.845588,
+      "delta": -0.000722,
+      "extra_trees": false,
+      "pick": "v66"
+    },
+    {
+      "leg": "xgb_full",
+      "v66_auc": 0.846756,
+      "v76_auc": 0.846184,
+      "delta": -0.000572,
+      "extra_trees": false,
+      "pick": "v66"
+    },
+    {
+      "leg": "linear",
+      "v66_auc": 0.842771,
+      "v76_auc": 0.84233,
+      "delta": -0.000441,
+      "extra_trees": false,
+      "pick": "v66"
+    }
+  ],
+  "picks": {
+    "fac_full": "v76",
+    "lgb_full": "v76",
+    "lgb_lean": "v76",
+    "lgbx_full": "v66",
+    "cat_full": "v66",
+    "xgb_full": "v66",
+    "linear": "v66"
+  },
+  "anchor_oof_auc": 0.8468400975734337,
+  "anchor_oof_ks": 0.5287127593768207,
+  "chains": [
+    {
+      "name": "anchor_v66",
+      "oof_auc": 0.84684,
+      "oof_ks": 0.528713,
+      "d_auc": 0.0,
+      "d_ks": 0.0,
+      "spearman_vs_anchor": 1.0,
+      "legs_from_v76": []
+    },
+    {
+      "name": "hybrid",
+      "oof_auc": 0.846752,
+      "oof_ks": 0.528143,
+      "d_auc": -8.8e-05,
+      "d_ks": -0.00057,
+      "spearman_vs_anchor": 0.999945,
+      "legs_from_v76": [
+        "fac_full",
+        "lgb_full",
+        "lgb_lean"
+      ],
+      "file": "submission_v76legs_hybrid.csv"
+    },
+    {
+      "name": "pure_v76",
+      "oof_auc": 0.846485,
+      "oof_ks": 0.529182,
+      "d_auc": -0.000355,
+      "d_ks": 0.00047,
+      "spearman_vs_anchor": 0.9999,
+      "legs_from_v76": [
+        "fac_full",
+        "lgb_full",
+        "lgb_lean",
+        "lgbx_full",
+        "cat_full",
+        "xgb_full",
+        "linear"
+      ],
+      "file": "submission_v76legs_pure_v76.csv"
+    }
+  ]
+}

@@ -2444,3 +2444,180 @@ yang turun 0.00456.
    kecuali ada kandidat sweep yang kembali di atas 0.56424.
 5. Lever yang masih hanya bisa dikerjakan user: membaca discussion forum dan
    public notebook Kaggle kompetisi ini.
+
+---
+
+# 2026-10-26 — Training produksi v76: tuning nyata yang tidak diteruskan rantai — v76b
+
+## RINGKASAN
+
+User meminta training yang jauh lebih baik untuk v76 dan menyetujui run 6–8 jam.
+Dua hasil keluar, dan keduanya penting dengan arah berlawanan:
+
+1. **Tuning-nya nyata.** Hyperparameter v66 ternyata diwarisi mentah dari v61
+   dan belum pernah dicari; screening 9 konfigurasi menemukan
+   `extra_trees=True` memberi **+0.000973 AUC**, konsisten di dua seed, dan
+   terbawa ke produksi (+0.0005 terhadap leg v66 yang sudah di-bag 6 fold-seed,
+   padahal hanya punya 1).
+2. **Gain itu tidak mencapai rantai.** Rantai dengan tiga leg lebih baik
+   mendarat di **−0.000088 AUC** terhadap anchor — seri, jauh di bawah resolusi
+   ~0.001 yang v74/v75 tetapkan.
+
+## STATUS
+
+Run dihentikan di fold-seed 1 dari 5 karena swap habis (detail di bawah).
+Checkpoint utuh dan dipakai. 2 kandidat baru ditulis dan tervalidasi. Notebook
+v76 (19 sel) dieksekusi penuh nol error, `STATUS: PASS`, 10 file tervalidasi.
+Tidak ada push GitHub, tidak ada submit Kaggle.
+
+## LANGKAH PENGERJAAN
+
+### Fase 1 — screening hyperparameter
+
+`agas/v76/training/screen_params_v76.py`. Sembilan konfigurasi ditulis tangan,
+masing-masing hipotesis eksplisit tentang apa yang salah dari setelan warisan
+v61. 5 fold × 2 fold-seed. Syarat lolos: menang di **kedua** seed.
+
+| config | AUC mean | dAUC | kedua seed |
+|---|---:|---:|:--:|
+| **`extra_only`** | **0.846423** | **+0.000973** | ✅ |
+| `wide_extra` | 0.845908 | +0.000458 | ✅ |
+| `slow` | 0.845587 | +0.000137 | ✅ |
+| `stiff` | 0.845581 | +0.000131 | ❌ |
+| `fine_bin` | 0.845561 | +0.000111 | ✅ |
+| `thin_ff` | 0.845462 | +0.000011 | ❌ |
+| `v61_inherited` | 0.845450 | — | baseline |
+| `loose_l2` | 0.845391 | −0.000060 | ❌ |
+| `deep` | 0.844425 | −0.001025 | ❌ |
+
+Pemenangnya adalah setelan v61 **apa adanya plus `extra_trees=True`**, satu
+parameter. `deep` (63 leaf) justru −0.001 dan `loose_l2` negatif, jadi setelan
+warisan v61 sudah dekat optimal di setiap sumbu kecuali yang satu ini. v70
+pernah memakai `extra_trees` tetapi dibundel dengan lima perubahan lain,
+sehingga efek terisolasinya belum pernah terukur.
+
+Ini model tuning yang ditulis tangan, bukan AutoML: tidak ada pencarian
+otomatis, tidak ada pemilihan pipeline, dan tiap konfigurasi ditulis beserta
+alasannya.
+
+### Fase 2 — run produksi
+
+`agas/v76/training/train_legs_v76.py`: salinan utuh trainer v66, dengan hanya
+dua hal berubah — `extra_trees=True` pada tiga leg LightGBM biasa (round cap
+12.000 → 16.000) dan 12 fold bukan 10. `train_submission_v66.py` **tidak
+disentuh**; itu provenance anchor dengan tiga hasil public dan harus tetap
+reproducible apa adanya. `lgbx` sengaja tidak diubah karena screening tidak
+pernah mengukur `extra_trees` terisolasi pada bentuk leg itu.
+
+Smoke test 2 fold × 1 seed lolos ketujuh leg lebih dulu.
+
+### Kenapa berhenti di 1 dari 5 fold-seed
+
+Trainer menyimpan satu frame fitur ter-concat **per fold** di dalam satu
+fold-seed, ~0.5 GB masing-masing. Pada 12 fold itu ~5.8 GB di atas `X` dan
+`Xte`. Fold-seed 42 selesai 143 menit; fold-seed 7 mulai swapping dan leg
+`lgb_lean`-nya saja butuh **98 menit** melawan 27 menit untuk leg yang sama
+satu seed sebelumnya. Dengan swap 15.2 dari 16.4 GB, empat seed sisa butuh
+15+ jam dengan risiko nyata di-kill, jadi run dihentikan dan checkpoint
+pertamanya disimpan.
+
+## HASIL
+
+### Leg: v66 bagged 6 fold-seed vs checkpoint v76 1 fold-seed
+
+| leg | v66 | v76 | selisih | `extra_trees` | dipakai |
+|---|---:|---:|---:|:--:|:--:|
+| `fac_full` | 0.846662 | **0.847159** | +0.000497 | ✅ | v76 |
+| `lgb_full` | 0.846682 | **0.847231** | +0.000550 | ✅ | v76 |
+| `lgb_lean` | 0.846721 | **0.847220** | +0.000499 | ✅ | v76 |
+| `lgbx_full` | **0.846550** | 0.845799 | −0.000751 | ❌ | v66 |
+| `cat_full` | **0.846311** | 0.845588 | −0.000722 | ❌ | v66 |
+| `xgb_full` | **0.846756** | 0.846184 | −0.000572 | ❌ | v66 |
+| `linear` | **0.842771** | 0.842330 | −0.000441 | ❌ | v66 |
+
+Pola pick-nya persis membelah di `extra_trees`: ketiga leg yang menerimanya
+menang meski bagging-nya seperenam; empat yang tidak kalah sebanyak biaya
+1 fold-seed alih-alih 6. Jadi tidak ada run yang mendominasi, dan tiap slot
+bisa diisi dari run yang melatihnya lebih baik.
+
+### Rantai di atas tiap set leg
+
+| rantai | OOF AUC | OOF KS | dAUC | dKS | ρ ke anchor |
+|---|---:|---:|---:|---:|---:|
+| `anchor_v66` | **0.846840** | 0.528713 | — | — | 1.000000 |
+| `hybrid` (leg terbaik per slot) | 0.846752 | 0.528143 | −0.000088 | −0.000570 | 0.999945 |
+| `pure_v76` | 0.846485 | **0.529182** | −0.000355 | +0.000470 | 0.999900 |
+
+`hybrid` **seri** dengan anchor: −0.000088 AUC jauh di bawah resolusi ~0.001.
+Gain leg +0.0005 pada tiga leg tidak muncul di rantai.
+
+### Hipotesis yang diuji dan DITOLAK
+
+Penjelasan pertama yang saya ajukan: `extra_trees` membuat ketiga leg lebih
+mirip, sehingga rank-averaging di `trees4` punya lebih sedikit untuk dirata-rata.
+**Diuji dan salah.**
+
+| | trees4 pairwise ρ | all-7 ρ | trio `extra_trees` |
+|---|---:|---:|---:|
+| v66 | 0.99395 | 0.98889 | 0.99873 |
+| `hybrid` | 0.99326 | 0.98839 | 0.99836 |
+| `pure_v76` | **0.99167** | **0.98683** | **0.99836** |
+
+Leg v76 **lebih** terdekorelasi, bukan kurang. Jadi leg-nya keluar sekaligus
+lebih baik dan lebih beragam, dan rantainya tetap tidak bergerak. Pernyataan
+yang jujur adalah pengukurannya, bukan mekanismenya: akurasi leg dan performa
+rantai **terdekopel** di sini — hal yang sudah dikatakan `v70_07` (leg lebih
+baik, fitur berbeda, 0.56419) dan `v68_04` (sepuluh fold-seed, 0.56411) di
+public.
+
+## KESIMPULAN
+
+1. `extra_trees=True` adalah perbaikan training nyata dan terukur dua kali
+   (screening +0.00097, produksi +0.0005 terhadap leg yang bagging-nya 6×).
+2. Perbaikan itu **tidak diteruskan ke rantai**. Rantai sudah jenuh pada level
+   leg, konsisten dengan dua hasil public sebelumnya.
+3. Karena itu run lanjutan untuk menambah fold-seed **tidak direkomendasikan**:
+   nilainya murni pengurangan varians pada leg, dan jalur leg→rantai sudah
+   terbukti tertutup.
+4. Sweep parameter rantai v76 (`core3to1`, `r0.75`, `r0.25`, `tm`) tetap satu-
+   satunya sumbu yang belum pernah diukur di public, dan tidak terpengaruh
+   hasil ini.
+
+## KESALAHAN DAN PROBLEM
+
+- **ETA saya salah dua kali.** Pertama 84 menit/fold-seed (aslinya 143) karena
+  saya menilai biaya `extra_trees` dengan round cap 16.000 hanya +11 menit;
+  tiga leg LGB itu sendiri menghabiskan 96 dari 143 menit. Kedua, ekstrapolasi
+  dari smoke test memberi 18 jam karena biaya tetap pada 2 fold tidak
+  proporsional.
+- **Pilihan 12 fold salah.** Saya menandai risiko memori cache per-fold saat
+  memilihnya lalu menilai "aman di 16 GB". Penilaian itu keliru dan
+  mengakibatkan swap habis serta run terhenti di 1 dari 5 fold-seed.
+- **Hipotesis keragaman saya salah** dan sudah dinyatakan ditolak di atas,
+  bukan dibiarkan berdiri sebagai penjelasan.
+- Bug kecil: `chain(*sets[...])` ter-unpack sebagai argumen `tm`; dan skrip cek
+  checkpoint saya mengiterasi `test_ids` berisi string ke `np.isfinite`.
+  Keduanya diperbaiki, tidak memengaruhi hasil.
+
+## ARTEFAK
+
+- `agas/v76/training/screen_params_v76.py`, `train_legs_v76.py`,
+  `make_legs_candidate_v76.py`.
+- `agas/v76/output/`: `params_v76.json`, `preds_v76legs_partial.npz`,
+  `summary_v76legs.json`, `diversity_v76.json`, `train_log_v76legs.txt`,
+  `submission_v76legs_hybrid.csv`, `submission_v76legs_pure_v76.csv`.
+- `agas/v76/notebook/notebook_v76.ipynb` — 19 sel end-to-end, bagian 6b memuat
+  seluruh hasil training, dieksekusi penuh `RUN_TRAINING=False`, nol error,
+  `STATUS: PASS`, 10 file tervalidasi, rebuild anchor eksak.
+
+## LANGKAH KE DEPAN
+
+1. Prioritas submit tidak berubah: **`submission_v76_01_core3to1.csv`** lebih
+   dulu, lalu aturan go/no-go rantai.
+2. `submission_v76legs_hybrid.csv` adalah kandidat "leg terbaik yang pernah
+   kita punya" dengan ρ 0.999945 ke anchor. Submit hanya kalau ada slot lebih;
+   ekspektasinya seri dengan anchor.
+3. **Jangan** jalankan ulang run produksi untuk menambah fold-seed. Kalau
+   tetap diinginkan, pakai 10 fold (profil memori yang sudah terbukti di v66)
+   dan 3 fold-seed, bukan 12 fold.
+4. Final pick tetap `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv`.

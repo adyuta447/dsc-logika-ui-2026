@@ -1444,3 +1444,36 @@ anchor; di antaranya kirim `r0.75` lalu putuskan.
 **Final pick tetap `agas/v66/output/submission_v66_04_ext0.5_tm30_lgb_lean.csv`**
 kecuali ada kandidat sweep yang kembali di atas 0.56424. Jangan submit
 `submission_v76_00_anchor.csv` (rank-identik dengan anchor).
+
+## v76b — training produksi: tuning nyata, rantai tidak bergerak (2026-10-26)
+
+Hyperparameter v66 ternyata diwarisi mentah dari v61 dan belum pernah dicari.
+
+- **Screening** `screen_params_v76.py` — 9 konfigurasi ditulis tangan, 5 fold ×
+  2 fold-seed, syarat menang di kedua seed. Pemenang: setelan v61 apa adanya
+  **plus `extra_trees=True`**, **+0.000973 AUC** (+0.00099 / +0.00096 per seed).
+  `deep` −0.001025, `loose_l2` negatif — setelan v61 sudah dekat optimal di
+  semua sumbu lain. v70 memakai `extra_trees` tetapi dibundel 5 perubahan lain,
+  jadi efek terisolasinya belum pernah terukur.
+- **Produksi** `train_legs_v76.py` — salinan utuh trainer v66; hanya
+  `extra_trees` pada 3 leg LGB (round cap 16.000) dan 12 fold. Trainer v66
+  tidak disentuh. **Berhenti di fold-seed 1/5**: cache satu frame fitur per
+  fold (~0.5 GB × 12) menghabiskan swap (15.2/16.4 GB); `lgb_lean` seed 7 butuh
+  98 menit vs 27 menit seed sebelumnya. Pilihan 12 fold itu kesalahan penilaian.
+- **Leg** — 3 leg `extra_trees` mengalahkan versi v66 yang di-bag 6 fold-seed
+  (+0.0005 masing-masing) meski hanya punya 1; 4 leg lain kalah sebanyak biaya
+  bagging. Kandidat `hybrid` mengambil leg terbaik per slot.
+- **Rantai** `make_legs_candidate_v76.py` — `hybrid` **seri** dengan anchor
+  (−0.000088 AUC, jauh di bawah resolusi ~0.001), `pure_v76` −0.000355 AUC /
+  +0.000470 KS. **Gain leg tidak diteruskan ke rantai.**
+- **Hipotesis keragaman DITOLAK** — leg v76 justru lebih terdekorelasi (trees4
+  pairwise ρ 0.99395 → 0.99167). Jadi leg keluar lebih baik *dan* lebih
+  beragam, rantai tetap tidak bergerak. Akurasi leg dan performa rantai
+  terdekopel, konsisten dengan `v70_07` (0.56419) dan `v68_04` (0.56411).
+
+**Notebook** `notebook_v76.ipynb` kini 19 sel, bagian 6b memuat seluruh hasil
+training; dieksekusi penuh nol error, `STATUS: PASS`, 10 file tervalidasi.
+
+**Jangan jalankan ulang run produksi untuk menambah fold-seed** — nilainya
+murni pengurangan varians leg, dan jalur leg→rantai sudah terbukti tertutup.
+Kalau tetap diinginkan: 10 fold (profil memori terbukti), bukan 12.

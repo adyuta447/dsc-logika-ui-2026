@@ -1,0 +1,17 @@
+{
+  "v66": {
+    "trees4_mean_rho": 0.99395,
+    "all7_mean_rho": 0.98889,
+    "extra_trees_trio_rho": 0.99873
+  },
+  "hybrid": {
+    "trees4_mean_rho": 0.99326,
+    "all7_mean_rho": 0.98839,
+    "extra_trees_trio_rho": 0.99836
+  },
+  "pure_v76": {
+    "trees4_mean_rho": 0.99167,
+    "all7_mean_rho": 0.98683,
+    "extra_trees_trio_rho": 0.99836
+  }
+}

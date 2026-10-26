@@ -353,6 +353,81 @@ print(f"  between      inconclusive -> send r0.75 only, then decide")
 """)
 
 md(r"""
+## 6b. Training the legs better, and what it bought
+
+v76 also retrained the legs, because v66's own docstring says its boosting
+parameters are "copied from v61" - so every leg in the anchor has carried v61's
+settings unchanged and no version ever searched them.
+
+**The screen.** `screen_params_v76.py` tried nine hand-written configurations on
+the `lean` columns, 5 folds x 2 fold seeds each, each one a stated hypothesis
+rather than a point in an automated search. The winner was the inherited
+configuration with `extra_trees=True` and nothing else changed: **+0.000973
+AUC, and +0.000992 / +0.000955 on the two seeds separately**. `deep` (63
+leaves) came in at -0.001025 and `loose_l2` below baseline, so v61's settings
+were already close to right on every axis except this one. Randomising the
+split threshold instead of optimising it is a variance cut, which is what the
+v75 learning curve said this problem needs.
+
+**The production run, and why it stopped at one fold seed of five.** The
+trainer caches one concatenated feature frame per fold inside a fold seed,
+about 0.5 GB each, so twelve folds need roughly 5.8 GB on top of `X` and `Xte`.
+Fold seed 42 finished in 143 minutes; fold seed 7 then began swapping and its
+`lgb_lean` leg alone took 98 minutes against 27 for the same leg one seed
+earlier. With swap at 15.2 of 16.4 GB the remaining seeds would have taken
+fifteen hours or more with a real chance of being killed, so the run was
+stopped and its first checkpoint kept. The 12-fold choice was made knowing this
+cache exists and judging it safe; that judgement was wrong.
+
+**What the checkpoint shows.** Against v66's fully bagged legs, the three legs
+that received `extra_trees` are better while carrying a sixth of the fold-seed
+bagging, and the four that did not are worse by about what one fold seed
+instead of six costs. So neither run dominates and each slot can be filled from
+whichever run trained it better - that is the `hybrid` chain below.
+
+**The result: leg gains do not reach the chain.** `hybrid` lands at -0.000088
+AUC against the anchor, which is a tie far below the ~0.001 resolution v74 and
+v75 established, even though three of its legs are +0.0005 each.
+
+The first explanation tried was that `extra_trees` makes the legs more alike,
+so the rank averaging in `trees4` has less to average. **That was tested and
+is false**: the v76 legs are *less* correlated, with `trees4` pairwise Spearman
+falling from 0.99395 to 0.99167. The legs came out both better and more
+diverse, and the chain still did not move. The honest statement is the
+measurement, not a mechanism: leg accuracy and chain performance are decoupled
+here, which is also what `v70_07` (better legs, different features, 0.56419)
+and `v68_04` (ten fold seeds, 0.56411) already said on public.
+""")
+
+code(r"""
+for name in ["params_v76", "summary_v76legs", "diversity_v76"]:
+    p = V76 / f"output/{name}.json"
+    if not p.exists():
+        print(f"{name}: not built\n")
+        continue
+    d = json.loads(p.read_text())
+    if name == "params_v76":
+        print("hyper-parameter screen, 5 folds x 2 fold seeds, lean columns")
+        t = pd.DataFrame(d["results"])[["config", "auc_mean", "ks_mean",
+                                        "d_auc_mean", "wins_both_seeds"]]
+        print(t.to_string(index=False))
+        print(f"\nbeat the inherited configuration on both seeds: {d['winners']}\n")
+    elif name == "summary_v76legs":
+        print("legs, v66 fully bagged against the v76 checkpoint")
+        print(pd.DataFrame(d["legs"]).to_string(index=False))
+        print("\nthe chain built on each leg set")
+        print(pd.DataFrame(d["chains"])[
+            ["name", "oof_auc", "oof_ks", "d_auc", "d_ks",
+             "spearman_vs_anchor"]].to_string(index=False))
+        print()
+    else:
+        print("leg diversity: mean pairwise Spearman between legs")
+        print(pd.DataFrame(d).T.to_string())
+        print("\nthe v76 legs are LESS correlated, so the 'extra_trees made the")
+        print("legs too similar' explanation is falsified.")
+""")
+
+md(r"""
 ## 7. Submission validation
 
 Every candidate file must have 30.000 rows, the exact test id set, unique ids,
@@ -362,7 +437,7 @@ and finite probabilities in [0, 1].
 code(r"""
 test_id_set = set(pd.read_csv(DATA / "test_applications.csv",
                               usecols=["application_id"]).application_id)
-files = sorted((V76 / "output").glob("submission_v76_*.csv"))
+files = sorted((V76 / "output").glob("submission_v76*.csv"))
 assert files, "no v76 submission files found"
 
 report = []

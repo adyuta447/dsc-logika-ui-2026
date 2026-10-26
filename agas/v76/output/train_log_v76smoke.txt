@@ -1,0 +1,20 @@
+15:46:05 feature counts: full=598 lean=490 fac=553
+15:46:05 folds=2 fold_seeds=[42] lgb_seeds=[0]
+15:46:05 computing factor inputs
+15:46:18 factor inputs ready
+15:46:47 seed 42 fac_full   auc=0.844116 ks=0.523449
+15:47:19 seed 42 lgb_full   auc=0.844118 ks=0.521481
+15:47:48 seed 42 lgb_lean   auc=0.844116 ks=0.521544
+15:48:33 seed 42 lgbx_full  auc=0.842608 ks=0.521702
+15:50:31 seed 42 cat_full   auc=0.842276 ks=0.520013
+15:59:59 seed 42 xgb_full   auc=0.843117 ks=0.520487
+16:00:29 seed 42 linear     auc=0.838435 ks=0.514890
+16:00:30 saved after 1/1 fold seeds, elapsed 14.4 min
+16:00:30 BAG fac_full   auc=0.844116 ks=0.523449
+16:00:30 BAG lgb_full   auc=0.844118 ks=0.521481
+16:00:30 BAG lgb_lean   auc=0.844116 ks=0.521544
+16:00:30 BAG lgbx_full  auc=0.842608 ks=0.521702
+16:00:30 BAG cat_full   auc=0.842276 ks=0.520013
+16:00:30 BAG xgb_full   auc=0.843117 ks=0.520487
+16:00:30 BAG linear     auc=0.838435 ks=0.514890
+16:00:30 done in 14.4 min
