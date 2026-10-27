@@ -1,0 +1,101 @@
+{
+  "run": "10 folds x 6 fold seeds x 3 booster seeds, extra_trees on lgb_full/lgb_lean/fac_full, 524.8 min",
+  "controlled_experiment": {
+    "lgbx_full": true,
+    "cat_full": true,
+    "xgb_full": true,
+    "linear": true
+  },
+  "legs": [
+    {
+      "leg": "fac_full",
+      "v66_auc": 0.846662,
+      "v78_auc": 0.847467,
+      "delta": 0.000804,
+      "extra_trees": true,
+      "bit_identical": null
+    },
+    {
+      "leg": "lgb_full",
+      "v66_auc": 0.846682,
+      "v78_auc": 0.847511,
+      "delta": 0.000829,
+      "extra_trees": true,
+      "bit_identical": null
+    },
+    {
+      "leg": "lgb_lean",
+      "v66_auc": 0.846721,
+      "v78_auc": 0.847474,
+      "delta": 0.000753,
+      "extra_trees": true,
+      "bit_identical": null
+    },
+    {
+      "leg": "lgbx_full",
+      "v66_auc": 0.84655,
+      "v78_auc": 0.84655,
+      "delta": 0.0,
+      "extra_trees": false,
+      "bit_identical": true
+    },
+    {
+      "leg": "cat_full",
+      "v66_auc": 0.846311,
+      "v78_auc": 0.846311,
+      "delta": 0.0,
+      "extra_trees": false,
+      "bit_identical": true
+    },
+    {
+      "leg": "xgb_full",
+      "v66_auc": 0.846756,
+      "v78_auc": 0.846756,
+      "delta": 0.0,
+      "extra_trees": false,
+      "bit_identical": true
+    },
+    {
+      "leg": "linear",
+      "v66_auc": 0.842771,
+      "v78_auc": 0.842771,
+      "delta": 0.0,
+      "extra_trees": false,
+      "bit_identical": true
+    }
+  ],
+  "reference_r": 0.75,
+  "reference_public": 0.5652,
+  "reference_oof_auc": 0.8464901183223571,
+  "reference_oof_ks": 0.5277923775259673,
+  "candidates": [
+    {
+      "name": "v78legs_r075",
+      "oof_auc": 0.846323,
+      "oof_ks": 0.527859,
+      "d_oof_auc": -0.000168,
+      "d_oof_ks": 6.7e-05,
+      "spearman_vs_scored": 0.999772,
+      "file": "submission_v78legs_r075.csv"
+    },
+    {
+      "name": "v78legs_r0p625",
+      "oof_auc": 0.846559,
+      "oof_ks": 0.528468,
+      "d_oof_auc": 6.9e-05,
+      "d_oof_ks": 0.000675,
+      "spearman_vs_scored": 0.999768,
+      "file": "submission_v78legs_r0p625.csv"
+    },
+    {
+      "name": "v78legs_r0p875",
+      "oof_auc": 0.846059,
+      "oof_ks": 0.527501,
+      "d_oof_auc": -0.000431,
+      "d_oof_ks": -0.000291,
+      "spearman_vs_scored": 0.999689,
+      "file": "submission_v78legs_r0p875.csv"
+    }
+  ],
+  "submit": "submission_v78legs_r075.csv"
+}

@@ -376,6 +376,49 @@ print("public rises then falls, so it has no standing as a selection key here.")
 """)
 
 md(r"""
+## 6c. The long training run, and the chain on its legs
+
+524.8 minutes: 10 folds, six fold seeds, three booster seeds, `extra_trees` on
+`lgb_full`, `lgb_lean` and `fac_full` and nothing else changed from v66. Ten
+folds rather than v76's twelve, because v76 chose twelve knowing the trainer
+caches one concatenated feature frame per fold and judged 5.8 GB safe on 16 GB;
+it was not, swap hit 15.2 of 16.4 GB and the run stalled at one fold seed of
+five. Ten folds is v66's own profile and it held: six fold seeds at a steady
+~80 minutes each with no slowdown.
+
+The run is a clean A/B and the notebook asserts it rather than trusting it: the
+four legs that were not touched are **bit-identical** to v66's at 1e-12, since
+the folds, the fold seeds and `deterministic=True` all match. So every
+difference below is the `extra_trees` change and nothing else, and there is no
+hybrid-versus-pure question as there was in v76b — taking all seven legs from
+v78 is taking v66's legs with three upgraded.
+
+Each upgraded leg gains about +0.0008 AUC. The chain built on them at
+`r = 0.75` does not inherit that: it lands within 0.0002 of the vector that
+scored 0.56520. That is the same pattern v76b found and set aside on
+out-of-fold evidence — but out-of-fold has no standing on this axis, so the
+question stays open until it is sent.
+""")
+
+code(r"""
+d = json.loads((V78 / "output/summary_v78legs.json").read_text())
+print(d["run"])
+print("\nlegs left untouched, checked against v66 at 1e-12:")
+for k, v in d["controlled_experiment"].items():
+    print(f"  {k:12s} bit-identical: {v}")
+print()
+print(pd.DataFrame(d["legs"]).to_string(index=False))
+print(f"\nreference r=0.75 on v66 legs: OOF AUC {d['reference_oof_auc']:.6f}, "
+      f"public {d['reference_public']:.5f}")
+print("\nchains on the v78 legs:")
+print(pd.DataFrame(d["candidates"])[
+    ["name", "oof_auc", "d_oof_auc", "d_oof_ks", "spearman_vs_scored",
+     "file"]].to_string(index=False))
+print(f"\nqueued for submission: {d['submit']}")
+print("out-of-fold shown for completeness; it is not the selection key here.")
+""")
+
+md(r"""
 ## 7. Submission validation
 
 Every candidate file must have 30.000 rows, the exact test id set, unique ids,
@@ -385,7 +428,7 @@ and finite probabilities in [0, 1].
 code(r"""
 test_id_set = set(pd.read_csv(DATA / "test_applications.csv",
                               usecols=["application_id"]).application_id)
-files = sorted((V78 / "output").glob("submission_v78_*.csv"))
+files = sorted((V78 / "output").glob("submission_v78*.csv"))
 assert files, "no v76 submission files found"
 
 report = []
@@ -429,10 +472,12 @@ peak is +0.000017 above what is already measured.
 instrument's spread is 0.00007, so each point is nearly noise-free and sending
 several at once throws away the ability to attribute a change to a cause.
 
-**A longer training run is in progress** at 10 folds, six fold seeds and three
-booster seeds with `extra_trees` — v66's memory profile, which is the one known
-to fit, after v76's 12-fold choice exhausted swap and stalled. It checkpoints
-after every fold seed. Its legs feed a rebuilt chain at `r = 0.75` once done.
+**The long training run finished** in 524.8 minutes: 10 folds, six fold seeds,
+three booster seeds, `extra_trees` on `lgb_full`, `lgb_lean` and `fac_full`.
+Section 6c has the result. The candidate it produces,
+`submission_v78legs_r075.csv`, is queued behind the `tm` and `core` points
+because leg quality has never moved this chain on public while those axes have
+never been measured at all.
 
 **Limits.**
 

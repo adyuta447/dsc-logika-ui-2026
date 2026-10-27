@@ -1542,3 +1542,20 @@ booster seed, checkpoint tiap fold-seed.
 **Notebook** `notebook_v78.ipynb` — 19 sel, nol error, `STATUS: PASS`, 20 file
 tervalidasi. **Final pick tetap `agas/v76/output/submission_v76_02_r0.75.csv`**
 (0.56520).
+
+### v78 training panjang — selesai (2026-10-28)
+
+524.8 menit, 10 fold × 6 fold-seed × 3 booster seed, `extra_trees` pada
+`lgb_full`/`lgb_lean`/`fac_full`. **A/B bersih:** keempat leg yang tidak diubah
+**bit-identical** dengan v66 pada 1e-12 (di-assert oleh skrip), jadi tiap
+selisih adalah efek `extra_trees` saja. Tiap leg yang ditingkatkan naik
+**+0.00075 … +0.00083 AUC**.
+
+Rantai di atasnya **tidak mewarisi** kenaikan itu: `v78legs_r075` mendarat
+−0.000168 AUC dari vektor yang mencetak 0.56520 (ρ 0.999772). Pola sama dengan
+v76b — bedanya v76b menutupnya dengan bukti OOF, yang di sumbu ini tidak punya
+standing. Pertanyaannya terbuka sampai dikirim, tetapi **diantrekan di
+belakang** `tm` dan `core` yang belum pernah diukur di `r=0.75`.
+
+Notebook `notebook_v78.ipynb` → 21 sel, bagian 6c; nol error, 23 file
+tervalidasi.

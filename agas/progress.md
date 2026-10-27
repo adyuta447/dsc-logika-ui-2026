@@ -3028,3 +3028,63 @@ memprediksi apa pun. Urutan di atas berdasarkan kebaruan struktural.
 **Final pick tetap `agas/v76/output/submission_v76_02_r0.75.csv`** (0.56520).
 Karena final pick dipilih setelah skor terlihat, tiap submission tambahan hanya
 berisiko satu slot, bukan skor akhir.
+
+## 2026-10-28 — Run training panjang selesai: A/B bersih, rantai tidak ikut naik
+
+Run `train_legs_v78.py` tuntas: **524.8 menit (8.7 jam)**, 10 fold × 6 fold-seed
+× 3 booster seed, `extra_trees=True` pada `lgb_full`, `lgb_lean`, `fac_full`,
+sisanya identik v66. Enam fold-seed berjalan stabil ~80 menit masing-masing
+tanpa melambat — 10 fold memang profil memori yang muat, berbeda dari pilihan
+12 fold di v76 yang menghabiskan swap dan mandek di 1 dari 5.
+
+### Eksperimen terkontrol: diasserkan, bukan dipercaya
+
+Keempat leg yang tidak diubah **bit-identical** dengan v66 pada toleransi 1e-12
+(fold, fold-seed, dan `deterministic=True` sama). Skrip meng-assert ini, bukan
+mengandalkan kecocokan angka cetak. Jadi setiap selisih di bawah adalah efek
+`extra_trees` dan bukan yang lain — dan tidak ada lagi pertanyaan
+hybrid-versus-pure seperti di v76b: mengambil ketujuh leg dari v78 **sama
+dengan** mengambil leg v66 dengan tiga di antaranya ditingkatkan.
+
+| leg | v66 bagged | v78 bagged | selisih | `extra_trees` |
+|---|---:|---:|---:|:--:|
+| `lgb_full` | 0.846682 | **0.847511** | **+0.000829** | ✅ |
+| `fac_full` | 0.846662 | **0.847467** | **+0.000804** | ✅ |
+| `lgb_lean` | 0.846721 | **0.847474** | **+0.000753** | ✅ |
+| `lgbx_full` | 0.846550 | 0.846550 | +0.000000 | ❌ |
+| `cat_full` | 0.846311 | 0.846311 | +0.000000 | ❌ |
+| `xgb_full` | 0.846756 | 0.846756 | +0.000000 | ❌ |
+| `linear` | 0.842771 | 0.842771 | +0.000000 | ❌ |
+
+### Rantai di atasnya
+
+| kandidat | OOF AUC | dAUC | dKS | ρ ke file terskor |
+|---|---:|---:|---:|---:|
+| `r075` pada leg v66 | 0.846490 | — | — | 1.000000 → **public 0.56520** |
+| `v78legs_r075` | 0.846323 | −0.000168 | +0.000067 | 0.999772 |
+| `v78legs_r0p625` | 0.846559 | +0.000069 | +0.000675 | 0.999768 |
+| `v78legs_r0p875` | 0.846059 | −0.000431 | −0.000291 | 0.999689 |
+
+Tiap leg naik ~+0.0008 AUC; rantainya **tidak mewarisi** itu — mendarat dalam
+0.0002 dari vektor yang mencetak 0.56520. Pola yang sama dengan v76b. Bedanya:
+v76b menutup pertanyaan ini dengan bukti OOF, dan OOF **tidak punya standing**
+di sumbu ini. Jadi pertanyaannya tetap terbuka sampai dikirim.
+
+Referensi `r=0.75` pada leg v66 diverifikasi mereproduksi file yang benar-benar
+terskor: nol rank berbeda.
+
+### Prioritas submit (tidak berubah)
+
+Kandidat training **diantrekan di belakang** `tm` dan `core`, karena kualitas
+leg belum pernah menggerakkan rantai ini di public (`v70_07` 0.56419, `v68_04`
+0.56411) sementara `tm` dan `core` belum pernah diukur sama sekali di `r=0.75`.
+
+1. `submission_v78_tm20_r075.csv`
+2. `submission_v78_tm40_r075.csv`
+3. `submission_v78_core3to1_r075.csv`
+4. `submission_v78legs_r075.csv` ← hasil training 8.7 jam
+
+Notebook `notebook_v78.ipynb` kini **21 sel**, bagian 6c memuat hasil run;
+dieksekusi penuh nol error, `STATUS: PASS`, **23 file tervalidasi**.
+
+**Final pick tetap `agas/v76/output/submission_v76_02_r0.75.csv`** (0.56520).
