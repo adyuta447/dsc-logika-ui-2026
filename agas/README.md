@@ -1510,3 +1510,35 @@ Grid lengkap r = 0.25/0.625/0.875/1.00/1.25/1.50/2.00 sudah ditulis.
 
 **Notebook** `notebook_v77.ipynb` — 19 sel, nol error, `STATUS: PASS`, 11 file
 tervalidasi, file `r0.75` yang sudah diskor direproduksi eksak.
+
+## v78 — sumbu r ditutup, sumbu referensi dibuka (2026-10-27)
+
+`submission_v77_r1p000.csv` = **0.56464**. Tiga titik menutup sumbu
+ekstrapolasi: kuadratik kelengkungan −0.01264, puncak **r = 0.7864** nilai
+**0.565217**, gain tersisa **+0.000017** = seperempat sd instrumen. Netto sumbu
+ini **+0.00102**. Aturan terdaftar v77 ("kirim r0p875") **dibatalkan** karena
+ditulis dengan dua titik; kuadratik menempatkan r=0.875 di 0.56512, di bawah
+titik terbaik.
+
+**Derajat kebebasan berikutnya.** Rantai **mengurangkan** satu leg
+(`base − w·ref`), dan referensi `lgb_lean` ditulis v61 lalu tidak pernah
+dipertanyakan 21 versi. v78 mengukurnya dengan **kekuatan pengurangan
+disamakan**: tiap referensi diberi `r` yang menempatkan bobot netonya di
+−0.31190, karena tiap leg sudah membawa bobot berbeda di dalam `base`
+(anggota `trees4` 0.11667, `lgbx_full` 0.23333, `linear` 0.30, `fac_full` dan
+leg kolom-buangan 0). Pertanyaannya jadi *leg mana yang layak dikurangkan*
+dengan *seberapa kuat* ditahan konstan.
+
+**Urutan submit** memvariasikan satu atribut per langkah:
+`ref_lgb_full_matched` (kolom berbeda, keluarga sama) → `ref_fac_full_matched`
+(tidak ada di `base`) → `ref_xgb_full_matched` (keluarga model berbeda).
+20 kandidat tervalidasi di `agas/v78/output/`.
+
+**Training panjang** `train_legs_v78.py` — identik trainer v76 kecuali **10
+fold, bukan 12**. v76 memilih 12 dan menghabiskan swap; 10 adalah profil v66
+yang terbukti menyelesaikan enam fold-seed. Setelan 10 fold × 6 fold-seed × 3
+booster seed, checkpoint tiap fold-seed.
+
+**Notebook** `notebook_v78.ipynb` — 19 sel, nol error, `STATUS: PASS`, 20 file
+tervalidasi. **Final pick tetap `agas/v76/output/submission_v76_02_r0.75.csv`**
+(0.56520).

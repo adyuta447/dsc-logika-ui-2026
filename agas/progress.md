@@ -2799,3 +2799,134 @@ line search `r`, karena `r` punya gradien terukur dan jalur ini belum.
 4. Jalur kedua (`submission_v77d_*`) menunggu line search `r` punya optimum.
 5. **Final pick Kaggle: `agas/v76/output/submission_v76_02_r0.75.csv`**
    (0.56520). Ganti lagi hanya kalau ada titik sweep yang melewatinya.
+
+---
+
+# 2026-10-27 — Sumbu r ditutup, sumbu referensi dibuka, training panjang — v78
+
+## RINGKASAN
+
+`submission_v77_r1p000.csv` = **0.56464**. Dengan tiga titik, sumbu
+ekstrapolasi sekarang **terpetakan dan ditutup**: kuadratik berpuncak di
+r = 0.7864 dengan nilai 0.565217, hanya **+0.000017** di atas r=0.75 yang sudah
+terukur. Netto dari sumbu ini **+0.00102**.
+
+Yang sumbu itu benar-benar hasilkan adalah **mekanismenya**: rantai
+**mengurangkan** satu leg, dan `r` hanya mengatur seberapa kuat. Leg yang
+dikurangkan — `lgb_lean` — ditulis v61 dan **belum pernah dipertanyakan 21
+versi**. Itu derajat kebebasan yang v78 buka.
+
+Run training panjang juga dijalankan, dengan profil memori yang terbukti muat.
+
+## STATUS
+
+Selesai. 20 kandidat sumbu referensi/tm/core ditulis dan tervalidasi. Notebook
+v78 (19 sel) dieksekusi penuh nol error, `STATUS: PASS`, 20 file tervalidasi,
+file `r0.75` yang sudah diskor direproduksi eksak. Run training 10 fold × 6
+fold-seed × 3 booster seed sedang berjalan. Tidak ada push GitHub.
+
+## HASIL
+
+### Sumbu r: ditutup
+
+| r | public | n |
+|---:|---:|---:|
+| 0.50 | 0.56424 / 0.56419 / 0.56411 → **0.56418**, sd 0.00007 | 3 |
+| **0.75** | **0.56520** | 1 |
+| 1.00 | 0.56464 | 1 |
+
+Kuadratik: kelengkungan **−0.01264** (konkaf, ada maksimum), puncak
+**r = 0.7864** nilai **0.565217**. Gain tersisa **+0.000017** = seperempat sd
+instrumen.
+
+Prediksi untuk titik yang tidak jadi dikirim: r=0.875 → 0.56512 (−0.00008),
+r=0.625 → 0.56489, r=1.25 → 0.56250, r=1.5 → 0.55878, r=2.0 → 0.54660.
+
+**Aturan terdaftar saya sendiri dibatalkan.** Aturan v77 bilang "kirim r0p875
+kalau hasilnya 0.56418–0.56520". Aturan itu ditulis dengan **dua** titik. Titik
+ketiga membuatnya kedaluwarsa: kuadratik menempatkan r=0.875 di bawah titik
+terbaik yang sudah ada, jadi mengirimnya berarti membuang slot untuk
+mengonfirmasi kerugian yang diprediksi. Pembatalan ini dicatat, bukan
+didiamkan.
+
+### Sumbu referensi: dibuka dengan kekuatan pengurangan yang disamakan
+
+Membandingkan referensi pada `r` tetap akan membandingkan hal yang berbeda,
+karena tiap leg sudah membawa bobotnya sendiri di dalam `base`:
+
+| leg | bobot di dalam `base` |
+|---|---:|
+| anggota `trees4` (`lgb_full`, `lgb_lean`, `cat_full`, `xgb_full`) | 0.11667 |
+| `lgbx_full` | 0.23333 |
+| `linear` | 0.30000 |
+| `fac_full`, leg kolom-buangan | 0 (tidak ada di `base`) |
+
+Jadi tiap referensi diberi `r` yang menempatkan **bobot netonya** di
+**−0.31190**, nilai pada optimum terukur: `w = bobot_di_base + 0.31190`,
+`r = w/(1−w)`. Dengan begitu pertanyaannya menjadi **leg mana yang layak
+dikurangkan**, dengan **seberapa kuat** ditahan konstan. Varian `r` tetap juga
+dibangun supaya perbedaan dua kerangka itu tercatat, bukan diasumsikan.
+
+Urutan submit memvariasikan **satu atribut per langkah**, bukan mengurutkan
+berdasarkan angka yang tidak punya standing di sini:
+
+1. `ref_lgb_full_matched` — keluarga model sama dengan `lgb_lean`, kolom
+   berbeda → apakah **kolom** leg yang dikurangkan itu penting?
+2. `ref_fac_full_matched` — leg yang sama sekali **tidak ada di `base`**
+3. `ref_xgb_full_matched` — **keluarga model** berbeda
+
+### Training panjang
+
+`agas/v78/training/train_legs_v78.py` — identik dengan trainer v76
+(`extra_trees=True` pada tiga leg LGB, round cap 16.000), **kecuali 10 fold,
+bukan 12**. Itu intinya: v76 memilih 12 fold dan menghabiskan swap
+(15.2/16.4 GB), berhenti di 1 dari 5 fold-seed. 10 fold adalah profil v66
+sendiri, yang menyelesaikan enam fold-seed tanpa swapping.
+
+Setelan: 10 fold × **6 fold-seed** (42,7,13,21,5,101 — sama persis dengan v66
+agar bagging-nya sebanding) × 3 booster seed (`extra_trees` sudah mengacak
+threshold; 5 booster seed akan mendorong run melewati 10 jam). Checkpoint tiap
+fold-seed; rank bersifat invarian skala, jadi jumlah parsial dibagi jumlah seed
+penuh tetap memberi ranking yang identik.
+
+## KESIMPULAN
+
+1. Sumbu `r` memberi **+0.00102** dan sekarang tertutup secara kuantitatif,
+   bukan karena kehabisan ide.
+2. Nilai sebenarnya dari sumbu itu adalah mekanismenya: rantai mengurangkan
+   satu leg, dan pilihan leg itu belum pernah diuji.
+3. OOF tetap tidak dipakai sebagai kunci seleksi. Sepanjang sumbu `r`, OOF AUC
+   turun monoton (0.846840 → 0.846490 → 0.846034) sementara public naik lalu
+   turun.
+
+## KESALAHAN DAN PROBLEM
+
+- **Bug saat membuat trainer v78:** penggantian default `--lgb-seeds` tidak
+  kena karena file v76 masih memakai default v66 (`"0,1,2,3,4"`), sehingga run
+  pertama jalan dengan 5 booster seed (~12.7 jam, bukan ~8). Ketahuan ~1 menit
+  setelah start, dihentikan, diperbaiki, diluncurkan ulang dengan argumen
+  eksplisit. Tidak ada pekerjaan yang hilang.
+- Aturan keputusan v77 kedaluwarsa oleh datanya sendiri; dibatalkan secara
+  eksplisit dengan alasan tercatat.
+
+## ARTEFAK
+
+- `agas/v78/training/`: `make_submission_v78.py`, `train_legs_v78.py`,
+  `make_notebook_v78.py`.
+- `agas/v78/output/`: `summary_v78.json`, 20 CSV kandidat, log training.
+- `agas/v78/notebook/notebook_v78.ipynb` — 19 sel end-to-end; bagian 6 menutup
+  sumbu `r`, bagian 6b membuka sumbu referensi; dieksekusi penuh
+  `RUN_TRAINING=False`, nol error, `STATUS: PASS`, 20 file tervalidasi.
+
+## LANGKAH KE DEPAN
+
+1. **Jangan kirim titik `r` lagi.** Sumbu itu terpetakan; puncaknya +0.000017
+   di atas yang sudah terukur.
+2. **Submit satu file:** `agas/v78/output/submission_v78_ref_lgb_full_matched.csv`.
+   Lalu `ref_fac_full_matched`, lalu `ref_xgb_full_matched` — satu per
+   submission.
+3. Setelah run training selesai, bangun ulang rantai pada `r = 0.75` dengan leg
+   baru dan uji satu kali di public. Perbandingan OOF v76b tidak bisa
+   memutuskan ini karena OOF tidak melacak public di wilayah ini.
+4. **Final pick Kaggle: `agas/v76/output/submission_v76_02_r0.75.csv`**
+   (0.56520).

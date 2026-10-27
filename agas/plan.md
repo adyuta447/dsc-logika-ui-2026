@@ -1,7 +1,7 @@
-# Rencana kerja `agas/` — v77 aktif
+# Rencana kerja `agas/` — v78 aktif
 
 Dokumen ini adalah rencana eksekusi aktif. **Rencana yang sedang dijalankan
-adalah v77, ada di bagian paling bawah file ini.** Rencana v71–v76 di atasnya
+adalah v78, ada di bagian paling bawah file ini.** Rencana v71–v77 di atasnya
 disimpan sebagai riwayat dan sudah selesai. Aturan kompetisi di
 `agas/limit.md`, `agas/overview.md`, dan `agas/rules.md` tetap mengikat.
 
@@ -733,8 +733,12 @@ terbaca pada sd 0.00007.
 
 ---
 
-# Rencana v77 — ikuti gradien yang baru ditemukan (AKTIF)
+# Rencana v77 — ikuti gradien yang baru ditemukan (SELESAI)
 
+> **Status 2026-10-27: sumbu r ditutup.** `r=1.00` = 0.56464; kuadratik tiga
+> titik berpuncak di r=0.7864 nilai 0.565217, gain tersisa +0.000017. Netto
+> sumbu ini +0.00102. Dilanjutkan oleh rencana v78 di bawah.
+>
 > **Status 2026-10-26:** Fase 2 selesai (hipotesis dipatahkan, leg tetap
 > dipakai sebagai lever terpisah). Fase 1 menunggu satu submission:
 > `agas/v77/output/submission_v77_r1p000.csv`. Final pick sudah berubah ke
@@ -884,3 +888,57 @@ search `r` selesai, karena `r` punya gradien terukur sementara jalur ini belum.
   gradien terukur, bukan undian.
 - Satu pengukuran tetap satu pengukuran. `r=1.00` adalah tes, dan kalau ia
   turun, +0.00102 di `r=0.75` harus dicurigai sebagai titik tunggal.
+
+---
+
+# Rencana v78 — sumbu referensi dan training panjang (AKTIF)
+
+Ditulis 2026-10-27 setelah `r=1.00` = 0.56464 menutup sumbu ekstrapolasi.
+
+## Posisi sekarang
+
+| sumbu | status | hasil |
+|---|---|---|
+| ekstrapolasi `r` | **tertutup** | +0.00102, puncak r=0.7864 |
+| leg referensi | **dibuka v78** | belum ada pengukuran public |
+| `tm`, bobot `core` | dibangun, antre | belum ada pengukuran public |
+| kualitas leg (training) | run panjang berjalan | OOF naik, public belum diuji |
+
+## Fase 1 — sumbu referensi (prioritas)
+
+Satu submission per langkah, kekuatan pengurangan disamakan di −0.31190:
+
+1. `submission_v78_ref_lgb_full_matched.csv` — kolom berbeda, keluarga sama
+2. `submission_v78_ref_fac_full_matched.csv` — leg di luar `base`
+3. `submission_v78_ref_xgb_full_matched.csv` — keluarga model berbeda
+
+Aturan: kalau ada yang melewati 0.56520, sumbu ini hidup dan `r` optimumnya
+perlu dipetakan ulang **untuk referensi itu** (tiap referensi punya kelengkungan
+sendiri). Kalau ketiganya di bawah, `lgb_lean` memang pilihan yang benar dan
+sumbu ini ditutup.
+
+## Fase 2 — rantai dari leg hasil training panjang
+
+Setelah run 10 fold × 6 fold-seed × 3 booster seed selesai: bangun rantai pada
+`r = 0.75` dengan leg baru, uji **sekali** di public. Perbandingan OOF v76b
+(`hybrid` −0.000088) tidak bisa memutuskan ini, karena OOF tidak melacak public
+di wilayah ini.
+
+## Fase 3 — `tm` dan bobot `core`
+
+Hanya setelah Fase 1 dan 2 selesai. Kandidat sudah dibangun.
+
+## Prinsip (tidak berubah)
+
+- Python saja; hanya data di `data/`. Tanpa external data, AutoML, AutoFE.
+- Tanpa leakage; semua fitur memakai cutoff `decision_datetime`.
+- `features.py` tidak diubah.
+- Tidak push GitHub, tidak submit Kaggle tanpa instruksi.
+- CSV: 30.000 baris, ID unik dan cocok test, [0,1], tanpa NaN.
+- **Tanpa gate OOF** di sumbu-sumbu ini: OOF terukur tidak melacak public.
+
+## Ekspektasi jujur
+
+Sumbu `r` memberi +0.00102 dan itu kenaikan nyata pertama dalam 21 versi.
+Tidak ada alasan menduga sumbu referensi memberi lebih; ia hanya satu-satunya
+yang belum diukur. 0.57788 tetap tidak dijanjikan oleh satu pun pengukuran.

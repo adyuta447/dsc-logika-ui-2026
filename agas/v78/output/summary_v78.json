@@ -1,0 +1,237 @@
+{
+  "r_axis": {
+    "measured": {
+      "0.5": 0.56418,
+      "0.75": 0.5652,
+      "1.0": 0.56464
+    },
+    "curvature": -0.012640000000001334,
+    "peak_r": 0.7863924050632497,
+    "peak_value": 0.5652167405063293,
+    "remaining_gain": 1.6740506329271376e-05,
+    "closed": true
+  },
+  "instrument_sd": 7e-05,
+  "target_net_coefficient": -0.3119,
+  "weight_in_base": {
+    "lgb_full": 0.11666666666666665,
+    "lgb_lean": 0.11666666666666665,
+    "cat_full": 0.11666666666666665,
+    "xgb_full": 0.11666666666666665,
+    "lgbx_full": 0.2333333333333333,
+    "linear": 0.3,
+    "fac_full": 0.0,
+    "dropped": 0.0,
+    "trees4": 0.4666666666666666
+  },
+  "reference_oof_auc": 0.8464901183223571,
+  "reference_oof_ks": 0.5277923775259673,
+  "reference_public": 0.5652,
+  "submit_order": [
+    "ref_lgb_full_matched",
+    "ref_fac_full_matched",
+    "ref_xgb_full_matched"
+  ],
+  "candidates": [
+    {
+      "name": "core3to1_r075",
+      "group": "core weight",
+      "why": "trees4:lgbx = 3:1 with r held at 0.75",
+      "oof_auc": 0.846495,
+      "oof_ks": 0.528132,
+      "d_oof_auc": 5e-06,
+      "spearman_vs_r075": 0.99998,
+      "file": "submission_v78_core3to1_r075.csv"
+    },
+    {
+      "name": "core1to1_r075",
+      "group": "core weight",
+      "why": "trees4:lgbx = 1:1 with r held at 0.75",
+      "oof_auc": 0.846446,
+      "oof_ks": 0.527562,
+      "d_oof_auc": -4.4e-05,
+      "spearman_vs_r075": 0.999922,
+      "file": "submission_v78_core1to1_r075.csv"
+    },
+    {
+      "name": "tm40_r075",
+      "group": "linear weight",
+      "why": "tm=0.4 with r held at the measured optimum",
+      "oof_auc": 0.845512,
+      "oof_ks": 0.52613,
+      "d_oof_auc": -0.000978,
+      "spearman_vs_r075": 0.999218,
+      "file": "submission_v78_tm40_r075.csv"
+    },
+    {
+      "name": "tm20_r075",
+      "group": "linear weight",
+      "why": "tm=0.2 with r held at the measured optimum",
+      "oof_auc": 0.847053,
+      "oof_ks": 0.528286,
+      "d_oof_auc": 0.000562,
+      "spearman_vs_r075": 0.999217,
+      "file": "submission_v78_tm20_r075.csv"
+    },
+    {
+      "name": "ref_lgb_full_r075",
+      "group": "reference at fixed r=0.75",
+      "why": "subtract lgb_full at the same r as the measured optimum",
+      "oof_auc": 0.846571,
+      "oof_ks": 0.527775,
+      "d_oof_auc": 8.1e-05,
+      "spearman_vs_r075": 0.999348,
+      "file": "submission_v78_ref_lgb_full_r075.csv"
+    },
+    {
+      "name": "ref_trees4_r075",
+      "group": "reference at fixed r=0.75",
+      "why": "subtract trees4 at the same r as the measured optimum",
+      "oof_auc": 0.84648,
+      "oof_ks": 0.52703,
+      "d_oof_auc": -1e-05,
+      "spearman_vs_r075": 0.999235,
+      "file": "submission_v78_ref_trees4_r075.csv"
+    },
+    {
+      "name": "ref_fac_full_r075",
+      "group": "reference at fixed r=0.75",
+      "why": "subtract fac_full at the same r as the measured optimum",
+      "oof_auc": 0.846403,
+      "oof_ks": 0.529078,
+      "d_oof_auc": -8.7e-05,
+      "spearman_vs_r075": 0.999053,
+      "file": "submission_v78_ref_fac_full_r075.csv"
+    },
+    {
+      "name": "ref_lgbx_full_r075",
+      "group": "reference at fixed r=0.75",
+      "why": "subtract lgbx_full at the same r as the measured optimum",
+      "oof_auc": 0.84637,
+      "oof_ks": 0.526934,
+      "d_oof_auc": -0.00012,
+      "spearman_vs_r075": 0.998858,
+      "file": "submission_v78_ref_lgbx_full_r075.csv"
+    },
+    {
+      "name": "ref_xgb_full_r075",
+      "group": "reference at fixed r=0.75",
+      "why": "subtract xgb_full at the same r as the measured optimum",
+      "oof_auc": 0.846542,
+      "oof_ks": 0.526831,
+      "d_oof_auc": 5.2e-05,
+      "spearman_vs_r075": 0.998777,
+      "file": "submission_v78_ref_xgb_full_r075.csv"
+    },
+    {
+      "name": "ref_cat_full_r075",
+      "group": "reference at fixed r=0.75",
+      "why": "subtract cat_full at the same r as the measured optimum",
+      "oof_auc": 0.845137,
+      "oof_ks": 0.523688,
+      "d_oof_auc": -0.001353,
+      "spearman_vs_r075": 0.994203,
+      "file": "submission_v78_ref_cat_full_r075.csv"
+    },
+    {
+      "name": "ref_linear_r075",
+      "group": "reference at fixed r=0.75",
+      "why": "subtract linear at the same r as the measured optimum",
+      "oof_auc": 0.846131,
+      "oof_ks": 0.522807,
+      "d_oof_auc": -0.00036,
+      "spearman_vs_r075": 0.985915,
+      "file": "submission_v78_ref_linear_r075.csv"
+    },
+    {
+      "name": "ref_dropped_r075",
+      "group": "reference at fixed r=0.75",
+      "why": "subtract dropped at the same r as the measured optimum",
+      "oof_auc": 0.840663,
+      "oof_ks": 0.517814,
+      "d_oof_auc": -0.005827,
+      "spearman_vs_r075": 0.979193,
+      "file": "submission_v78_ref_dropped_r075.csv"
+    },
+    {
+      "name": "ref_lgb_full_matched",
+      "group": "reference at matched net strength",
+      "why": "subtract lgb_full at r=0.7500 so its net coefficient is -0.3119",
+      "oof_auc": 0.846571,
+      "oof_ks": 0.527775,
+      "d_oof_auc": 8.1e-05,
+      "spearman_vs_r075": 0.999348,
+      "file": "submission_v78_ref_lgb_full_matched.csv"
+    },
+    {
+      "name": "ref_fac_full_matched",
+      "group": "reference at matched net strength",
+      "why": "subtract fac_full at r=0.4533 so its net coefficient is -0.3119",
+      "oof_auc": 0.846854,
+      "oof_ks": 0.528949,
+      "d_oof_auc": 0.000364,
+      "spearman_vs_r075": 0.999199,
+      "file": "submission_v78_ref_fac_full_matched.csv"
+    },
+    {
+      "name": "ref_xgb_full_matched",
+      "group": "reference at matched net strength",
+      "why": "subtract xgb_full at r=0.7500 so its net coefficient is -0.3119",
+      "oof_auc": 0.846543,
+      "oof_ks": 0.526831,
+      "d_oof_auc": 5.2e-05,
+      "spearman_vs_r075": 0.998777,
+      "file": "submission_v78_ref_xgb_full_matched.csv"
+    },
+    {
+      "name": "ref_lgbx_full_matched",
+      "group": "reference at matched net strength",
+      "why": "subtract lgbx_full at r=1.1989 so its net coefficient is -0.3119",
+      "oof_auc": 0.845307,
+      "oof_ks": 0.52581,
+      "d_oof_auc": -0.001183,
+      "spearman_vs_r075": 0.997216,
+      "file": "submission_v78_ref_lgbx_full_matched.csv"
+    },
+    {
+      "name": "ref_cat_full_matched",
+      "group": "reference at matched net strength",
+      "why": "subtract cat_full at r=0.7500 so its net coefficient is -0.3119",
+      "oof_auc": 0.845137,
+      "oof_ks": 0.523704,
+      "d_oof_auc": -0.001353,
+      "spearman_vs_r075": 0.994203,
+      "file": "submission_v78_ref_cat_full_matched.csv"
+    },
+    {
+      "name": "ref_dropped_matched",
+      "group": "reference at matched net strength",
+      "why": "subtract dropped at r=0.4533 so its net coefficient is -0.3119",
+      "oof_auc": 0.844759,
+      "oof_ks": 0.524084,
+      "d_oof_auc": -0.001731,
+      "spearman_vs_r075": 0.991203,
+      "file": "submission_v78_ref_dropped_matched.csv"
+    },
+    {
+      "name": "ref_trees4_matched",
+      "group": "reference at matched net strength",
+      "why": "subtract trees4 at r=3.5160 so its net coefficient is -0.3119",
+      "oof_auc": 0.837937,
+      "oof_ks": 0.513146,
+      "d_oof_auc": -0.008554,
+      "spearman_vs_r075": 0.982352,
+      "file": "submission_v78_ref_trees4_matched.csv"
+    },
+    {
+      "name": "ref_linear_matched",
+      "group": "reference at matched net strength",
+      "why": "subtract linear at r=1.5767 so its net coefficient is -0.3119",
+      "oof_auc": 0.840396,
+      "oof_ks": 0.513909,
+      "d_oof_auc": -0.006094,
+      "spearman_vs_r075": 0.958296,
+      "file": "submission_v78_ref_linear_matched.csv"
+    }
+  ]
+}
