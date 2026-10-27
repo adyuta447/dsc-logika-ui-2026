@@ -2930,3 +2930,39 @@ penuh tetap memberi ranking yang identik.
    memutuskan ini karena OOF tidak melacak public di wilayah ini.
 4. **Final pick Kaggle: `agas/v76/output/submission_v76_02_r0.75.csv`**
    (0.56520).
+
+## Koreksi dedup (2026-10-27, setelah audit kandidat)
+
+Dua hal yang ditemukan saat mengaudit 57 file kandidat:
+
+**1. Kerangka "matched strength" v78 vakum untuk anggota `trees4`.**
+`lgb_full`, `cat_full`, dan `xgb_full` punya bobot di dalam `base` yang identik
+dengan `lgb_lean` (0.11667), jadi `r` yang menyamakan bobot neto ke −0.31190
+keluar **0.749985** — praktis sama dengan `r=0.75`. File `_matched` dan `_r075`
+untuk ketiga leg itu hanya berbeda 295–549 posisi rank dari 30.000, artefak
+pembulatan konstanta `TARGET_NET`. **Kirim salah satu saja.** Kerangka matched
+hanya bermakna untuk `fac_full` (bobot 0 → matched r=0.4532, beda 29.900 rank),
+`lgbx_full`, `linear`, `dropped`, dan `trees4`.
+
+**2. Resep pemecah rekor sudah ada sejak v74 dan menganggur empat versi.**
+`agas/v74/output/submission_v74_07_plateau_r0.75.csv` **rank-identik** dengan
+`agas/v76/output/submission_v76_02_r0.75.csv` yang mencetak 0.56520 — ρ =
+1.0000000000, nol rank berbeda. v74 membangunnya, memvalidasinya, lalu memberi
+peringkat **7 dari 9** dengan skor berbasis OOF (`P(>anchor)` 0.447). Jadi
+kenaikan +0.00102 itu tersedia sejak v74 dan disembunyikan bukan oleh ketiadaan
+kandidat, melainkan oleh **urutan seleksinya**. Ini pembenaran terkuat untuk
+aturan v78: tidak ada gate OOF di sumbu-sumbu ini.
+
+**Duplikat lain yang tidak boleh memakan slot:**
+
+| jangan kirim | duplikat dari | public |
+|---|---|---:|
+| `v74_07_plateau_r0.75` | `v76_02_r0.75` | 0.56520 |
+| `v76_06_r1.00` | `v77_r1p000` | 0.56464 |
+| `v74_09_anchor`, `v74_final`, `v75_01_anchor`, `v76_00_anchor` | `v66_04` | 0.56424 |
+| `v74_06_plateau_r0.25`, `v76_03_r0.25`, `v77_r0p250` | satu sama lain | belum (prediksi 0.56158) |
+| `v74_05_tm20_r0.5`, `v76_05_tm0.20` | satu sama lain | belum |
+
+Dan jangan kirim titik `r` lain sama sekali: `r0p625` 0.56489, `r0p875` 0.56512,
+`r1p250` 0.56250, `r1p500` 0.55878, `r2p000` 0.54660 — semua di bawah 0.56520
+yang sudah terukur.

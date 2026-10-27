@@ -912,6 +912,12 @@ Satu submission per langkah, kekuatan pengurangan disamakan di −0.31190:
 2. `submission_v78_ref_fac_full_matched.csv` — leg di luar `base`
 3. `submission_v78_ref_xgb_full_matched.csv` — keluarga model berbeda
 
+**Catatan dedup:** untuk anggota `trees4` (`lgb_full`, `cat_full`, `xgb_full`)
+bobot di dalam `base` sama dengan `lgb_lean`, jadi matched `r` = 0.749985 dan
+file `_matched` praktis identik dengan `_r075` (beda 295–549 rank dari 30.000).
+Kirim salah satu saja. Kerangka matched hanya bermakna untuk `fac_full`,
+`lgbx_full`, `linear`, `dropped`, `trees4`.
+
 Aturan: kalau ada yang melewati 0.56520, sumbu ini hidup dan `r` optimumnya
 perlu dipetakan ulang **untuk referensi itu** (tiap referensi punya kelengkungan
 sendiri). Kalau ketiganya di bawah, `lgb_lean` memang pilihan yang benar dan
