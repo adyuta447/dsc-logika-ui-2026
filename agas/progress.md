@@ -2966,3 +2966,65 @@ aturan v78: tidak ada gate OOF di sumbu-sumbu ini.
 Dan jangan kirim titik `r` lain sama sekali: `r0p625` 0.56489, `r0p875` 0.56512,
 `r1p250` 0.56250, `r1p500` 0.55878, `r2p000` 0.54660 — semua di bawah 0.56520
 yang sudah terukur.
+
+## 2026-10-27 — Sumbu referensi: satu pengukuran, ditutup
+
+`submission_v78_ref_lgb_full_matched.csv` = **0.55934**, turun **−0.00586**
+dari `r=0.75` (0.56520) dan di bawah anchor (0.56424). Pada ρ 0.999348.
+
+**Pilihan `lgb_lean` sebagai leg yang dikurangkan menanggung beban.** Mengganti
+ke `lgb_full` — keluarga model sama, hanya kolom berbeda — merugikan 0.0059.
+
+### Diagnostik: apa yang dibawa ekstrapolasi
+
+| korelasi dengan efek r=0.75 | Pearson |
+|---|---:|
+| `base − lgb_lean` (dirinya sendiri, per aljabar) | +0.9991 |
+| `lgb_full − lgb_lean` (kontras kolom full-minus-lean) | **+0.3334** |
+| `base − lgb_full` | +0.8113 |
+| `lgb_full − linear` | −0.8164 |
+
+Dua kesimpulan:
+
+1. **Pembacaan berbasis kolom tetap tertolak.** Hanya sepertiga arah kemenangan
+   sejalan dengan kontras full-minus-lean. Penarikan hipotesis di v77 tetap
+   berlaku; datapoint baru tidak menghidupkannya.
+2. **Permukaannya peka pada residu spesifik, bukan arah umum.**
+   `base − lgb_full` 81% sejalan dengan arah yang menang dan tetap kalah
+   0.00586. Jadi tidak ada cerita struktural — kolom latih maupun keluarga
+   model — yang menjelaskan mengapa `lgb_lean` yang bekerja.
+
+### Keputusan
+
+**Sumbu referensi ditutup setelah satu pengukuran.** Empat kandidat yang belum
+dikirim (`xgb_full`, `cat_full`, `lgbx_full`, `fac_full`) semuanya leg
+kolom-penuh/fac — sekelas dengan yang baru saja gagal, jadi nilai harapannya
+rendah. Dua yang jauh (`trees4` ρ 0.982, `linear` ρ 0.958) adalah langkah besar
+tanpa dasar struktural, karena argumen "`linear` juga dilatih pada kolom lean"
+bersandar pada pembacaan kolom yang baru saja ditolak (korelasi 0.33).
+
+Ledger sumbu referensi, lengkap:
+
+| ref | kolom latih | ρ ke r=0.75 | public |
+|---|---|---:|---:|
+| `lgb_lean` | lean (490) | 1.000000 | **0.56520** |
+| `lgb_full` | full (598) | 0.999348 | 0.55934 |
+
+### Langkah berikutnya
+
+Sumbu yang masih belum terukur dan **mengubah komposisi `base`**, bukan apa
+yang dikurangkan:
+
+1. `submission_v78_tm20_r075.csv` — bobot `linear` 0.20 (dari 0.30)
+2. `submission_v78_tm40_r075.csv` — bobot `linear` 0.40, mengapit 0.30
+3. `submission_v78_core3to1_r075.csv` — bobot `trees4:lgbx` 3:1 (dari 2:1)
+
+Lalu rantai dari leg hasil training panjang, pada `r = 0.75`.
+
+ρ **tidak** dipakai untuk mengurutkan: ρ 0.999803 (`r=0.75`) naik 0.00102
+sementara ρ 0.999348 (`ref lgb_full`) turun 0.00586. Kedekatan tidak
+memprediksi apa pun. Urutan di atas berdasarkan kebaruan struktural.
+
+**Final pick tetap `agas/v76/output/submission_v76_02_r0.75.csv`** (0.56520).
+Karena final pick dipilih setelah skor terlihat, tiap submission tambahan hanya
+berisiko satu slot, bukan skor akhir.

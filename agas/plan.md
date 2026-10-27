@@ -904,7 +904,17 @@ Ditulis 2026-10-27 setelah `r=1.00` = 0.56464 menutup sumbu ekstrapolasi.
 | `tm`, bobot `core` | dibangun, antre | belum ada pengukuran public |
 | kualitas leg (training) | run panjang berjalan | OOF naik, public belum diuji |
 
-## Fase 1 — sumbu referensi (prioritas)
+## Fase 1 — sumbu referensi: DITUTUP (2026-10-27)
+
+> `ref_lgb_full_matched` = **0.55934**, −0.00586 dari `r=0.75`. Pilihan
+> `lgb_lean` menanggung beban. Diagnostik: efek ekstrapolasi hanya berkorelasi
+> **+0.33** dengan kontras kolom full-minus-lean, jadi pembacaan berbasis kolom
+> tetap tertolak; dan `base − lgb_full` 81% sejalan dengan arah yang menang
+> namun tetap kalah 0.0059, jadi permukaannya peka pada residu spesifik bukan
+> arah umum. Empat referensi sisa sekelas dengan yang gagal; dua yang jauh
+> tanpa dasar struktural. **Lanjut ke Fase 3 (`tm`, `core`), lalu Fase 2.**
+
+## Fase 1 — sumbu referensi (rencana awal, sudah dieksekusi)
 
 Satu submission per langkah, kekuatan pengurangan disamakan di −0.31190:
 
