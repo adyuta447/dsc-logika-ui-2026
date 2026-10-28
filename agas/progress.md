@@ -3220,3 +3220,82 @@ Antrean submit, satu per satu:
 
 **Final pick Kaggle: `agas/v76/output/submission_v76_02_r0.75.csv`** (0.56520).
 Deadline notebook **30 Oktober 2026, 23:59 WIB**.
+
+---
+
+# 2026-10-28 — Sumbu tm ditutup, gradien core diikuti — v80
+
+## RINGKASAN
+
+| submission | public | vs 0.56520 |
+|---|---:|---:|
+| `v78_tm40_r075` | 0.56084 | −0.00436 |
+| `v78_core3to1_r075` | 0.56294 | −0.00226 |
+
+**Sumbu `tm` tertutup.** Tiga titik (0.20 → 0.56158, 0.30 → 0.56520,
+0.40 → 0.56084) mencocokkan kuadratik dengan kelengkungan **−0.399**, puncak di
+**tm = 0.2954** nilai **0.565209**. Gain tersisa di atas tm=0.30 adalah
+**+0.000009** — seperdelapan sd instrumen. Optimum interior, terkonfirmasi dari
+**dua sisi**.
+
+**Sumbu `core` punya gradien yang belum diikuti.** 3:1 → 2:1 naik **+0.00226**,
+jadi arah yang belum diuji adalah 2:1 → 1:1 — melanjutkan gradien yang sama.
+Ini bentuk persis yang membayar di sumbu `r` (0.5 → 0.75 naik, langkah
+berikutnya menemukan puncak). `core` juga sumbu non-`r` **paling landai** yang
+terukur, tempat ruang paling mungkin tersisa.
+
+## STATUS
+
+Selesai. Grid `core` halus dibangun dan tervalidasi (5 file baru). Tidak ada
+push GitHub.
+
+## BIAYA PER SUMBU — lengkap, tujuh pengukuran
+
+| perubahan satu langkah | biaya | status sumbu |
+|---|---:|---|
+| `r` → 1.00 | −0.00056 | tertutup (kuadratik, puncak r=0.786) |
+| `r` → 0.50 | −0.00096 | tertutup |
+| **`core` → 3:1** | **−0.00226** | **satu sisi, gradien belum diikuti** |
+| leg ditingkatkan +0.0008 AUC | −0.00361 | tertutup (bukti public) |
+| `tm` → 0.20 | −0.00362 | tertutup (kuadratik, puncak tm=0.295) |
+| `tm` → 0.40 | −0.00436 | tertutup |
+| `ref` → `lgb_full` | −0.00586 | tertutup (satu pengukuran) |
+
+## GRID core YANG DIBANGUN
+
+`core` adalah rasio pada `(trees4·cw + lgbx_full)/(cw+1)`; `lgbx share` =
+`1/(cw+1)`.
+
+| cw | rasio | porsi `lgbx` | OOF AUC | ρ | public |
+|---:|---|---:|---:|---:|---:|
+| 0.50 | 0.5:1 | 0.66667 | 0.846356 | 0.999691 | — |
+| 0.75 | 0.75:1 | 0.57143 | 0.846414 | 0.999842 | — |
+| 1.00 | 1:1 | 0.50000 | 0.846446 | 0.999922 | — |
+| 1.50 | 1.5:1 | 0.40000 | 0.846479 | 0.999987 | — |
+| **2.00** | **2:1** | 0.33333 | 0.846490 | 1.000000 | **0.56520** |
+| 2.50 | 2.5:1 | 0.28571 | 0.846494 | 0.999993 | — |
+| 3.00 | 3:1 | 0.25000 | 0.846495 | 0.999980 | 0.56294 |
+
+Perhatikan OOF: ia naik monoton dengan `cw` (0.846356 → 0.846495), sementara
+public **turun** dari 2:1 ke 3:1. Anti-korelasi yang sama seperti di sumbu `r`.
+
+**Catatan dedup:** `submission_v80_core1p00_r075.csv` identik dengan
+`submission_v78_core1to1_r075.csv` — resep yang sama. Kirim salah satu saja.
+
+## LANGKAH BERIKUTNYA
+
+Submit **satu file**: `agas/v78/output/submission_v78_core1to1_r075.csv`
+
+| hasil 1:1 | tindakan |
+|---|---|
+| **> 0.56520** | gradien masih jalan → `v80_core0p75_r075`, lalu `core0p50` |
+| 0.56294–0.56520 | puncak antara 1 dan 2 → `v80_core1p50_r075` |
+| **< 0.56294** | 2:1 optimum interior → sumbu `core` tertutup |
+
+Kalau `core` tertutup, sumbu terakhir yang belum diuji adalah keanggotaan
+`trees4`: `agas/v79/output/submission_v79_trees5_add_fac_full.csv`. Sesudah itu
+**freeze**.
+
+**Final pick Kaggle: `agas/v76/output/submission_v76_02_r0.75.csv`** (0.56520).
+Deadline notebook **30 Oktober 2026, 23:59 WIB** — notebook committee di root
+sudah byte-identical dengan file itu.

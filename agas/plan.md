@@ -1,7 +1,7 @@
-# Rencana kerja `agas/` — v79 aktif
+# Rencana kerja `agas/` — v80 aktif
 
 Dokumen ini adalah rencana eksekusi aktif. **Rencana yang sedang dijalankan
-adalah v79, ada di bagian paling bawah file ini.** Rencana v71–v78 di atasnya
+adalah v80, ada di bagian paling bawah file ini.** Rencana v71–v79 di atasnya
 disimpan sebagai riwayat dan sudah selesai. Aturan kompetisi di
 `agas/limit.md`, `agas/overview.md`, dan `agas/rules.md` tetap mengikat.
 
@@ -1053,3 +1053,55 @@ Nilainya adalah menutup sumbu dengan pengukuran, bukan dengan dugaan.
 Prioritas dua hari terakhir adalah **melindungi** skor itu: notebook yang
 sesuai aturan (10% nilai, dinilai dari reproducibility) bernilai lebih besar
 daripada sisa sumbu yang ekspektasinya negatif.
+
+---
+
+# Rencana v80 — ikuti gradien core, lalu freeze (AKTIF)
+
+Ditulis 2026-10-28. Deadline notebook **30 Oktober 2026, 23:59 WIB**.
+
+## Status sumbu, tujuh pengukuran
+
+| sumbu | status | bukti |
+|---|---|---|
+| `r` | **tertutup** | kuadratik, puncak 0.786, sisa +0.000017 |
+| `tm` | **tertutup** | kuadratik, puncak 0.295, sisa +0.000009 |
+| `ref` | **tertutup** | −0.00586 satu pengukuran |
+| kualitas leg | **tertutup** | −0.00361, bukti public, A/B bit-identical |
+| **`core`** | **satu sisi, gradien belum diikuti** | 3:1 → 2:1 naik +0.00226 |
+| keanggotaan `trees4` | belum diukur | 4 kandidat siap |
+
+## Fase 1 — `core` ke arah yang belum diuji
+
+Submit `agas/v78/output/submission_v78_core1to1_r075.csv`.
+
+- **> 0.56520** → gradien jalan: `v80_core0p75_r075`, lalu `core0p50`
+- **0.56294–0.56520** → puncak antara 1 dan 2: `v80_core1p50_r075`
+- **< 0.56294** → 2:1 optimum interior, sumbu tertutup
+
+## Fase 2 — sumbu terakhir
+
+`agas/v79/output/submission_v79_trees5_add_fac_full.csv` (keanggotaan `trees4`,
+belum diuji 22 versi).
+
+## Fase 3 — freeze
+
+Kalau Fase 1 dan 2 tidak melewati 0.56520: bekukan
+`agas/v76/output/submission_v76_02_r0.75.csv`, hentikan probe, dan pastikan
+notebook committee tetap byte-identical dengannya (sudah, sha256
+`35260db3…f07c733b`).
+
+## Prinsip (tidak berubah)
+
+- Python saja; hanya data di `data/`. Tanpa external data, AutoML, AutoFE.
+- Tanpa leakage; cutoff `decision_datetime`. `features.py` tidak diubah.
+- Tidak push GitHub, tidak submit Kaggle tanpa instruksi.
+- CSV: 30.000 baris, ID unik dan cocok test, [0,1], tanpa NaN.
+- Tanpa gate OOF: terukur anti-korelasi dengan public di sumbu `r` dan `core`.
+
+## Ekspektasi jujur
+
+Enam dari tujuh sumbu tertutup, dan dua yang memberi kenaikan (`r`, dan mungkin
+`core`) adalah yang paling landai. Peluang `core 1:1` melewati 0.56520 ada
+karena gradiennya terukur, tetapi besarnya kemungkinan kecil — ordo +0.001,
+bukan +0.01. 0.57788 tetap tidak dijanjikan oleh satu pun pengukuran.

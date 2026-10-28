@@ -1,0 +1,114 @@
+{
+  "held_fixed": {
+    "r": 0.75,
+    "tm": 0.3,
+    "reference": "lgb_lean",
+    "legs": "v66"
+  },
+  "instrument_sd": 7e-05,
+  "core_measured": {
+    "3.0": 0.56294,
+    "2.0": 0.5652
+  },
+  "local_slope_per_unit_cw": -0.0022600000000000398,
+  "baseline_oof_auc": 0.8464901183223571,
+  "baseline_oof_ks": 0.5277923775259673,
+  "tm_axis_closed": {
+    "points": {
+      "0.20": 0.56158,
+      "0.30": 0.5652,
+      "0.40": 0.56084
+    },
+    "curvature": -0.399,
+    "peak_tm": 0.2954,
+    "peak_value": 0.565209,
+    "remaining_gain": 9e-06
+  },
+  "axis_costs": {
+    "r_to_1.00": -0.00056,
+    "r_to_0.50": -0.00096,
+    "core_to_3to1": -0.00226,
+    "tm_to_0.20": -0.00362,
+    "legs_retrained": -0.00361,
+    "tm_to_0.40": -0.00436,
+    "ref_to_lgb_full": -0.00586
+  },
+  "grid": [
+    {
+      "cw": 0.5,
+      "ratio": "0.5:1",
+      "lgbx_share": 0.66667,
+      "oof_auc": 0.846356,
+      "oof_ks": 0.527448,
+      "d_oof_auc": -0.000134,
+      "spearman_vs_best": 0.999691,
+      "public_measured": null,
+      "file": "submission_v80_core0p50_r075.csv"
+    },
+    {
+      "cw": 0.75,
+      "ratio": "0.75:1",
+      "lgbx_share": 0.57143,
+      "oof_auc": 0.846414,
+      "oof_ks": 0.527681,
+      "d_oof_auc": -7.6e-05,
+      "spearman_vs_best": 0.999842,
+      "public_measured": null,
+      "file": "submission_v80_core0p75_r075.csv"
+    },
+    {
+      "cw": 1.0,
+      "ratio": "1:1",
+      "lgbx_share": 0.5,
+      "oof_auc": 0.846446,
+      "oof_ks": 0.527562,
+      "d_oof_auc": -4.4e-05,
+      "spearman_vs_best": 0.999922,
+      "public_measured": null,
+      "file": "submission_v80_core1p00_r075.csv"
+    },
+    {
+      "cw": 1.5,
+      "ratio": "1.5:1",
+      "lgbx_share": 0.4,
+      "oof_auc": 0.846479,
+      "oof_ks": 0.527489,
+      "d_oof_auc": -1.1e-05,
+      "spearman_vs_best": 0.999987,
+      "public_measured": null,
+      "file": "submission_v80_core1p50_r075.csv"
+    },
+    {
+      "cw": 2.0,
+      "ratio": "2:1",
+      "lgbx_share": 0.33333,
+      "oof_auc": 0.84649,
+      "oof_ks": 0.527792,
+      "d_oof_auc": 0.0,
+      "spearman_vs_best": 1.0,
+      "public_measured": 0.5652
+    },
+    {
+      "cw": 2.5,
+      "ratio": "2.5:1",
+      "lgbx_share": 0.28571,
+      "oof_auc": 0.846494,
+      "oof_ks": 0.527965,
+      "d_oof_auc": 4e-06,
+      "spearman_vs_best": 0.999993,
+      "public_measured": null,
+      "file": "submission_v80_core2p50_r075.csv"
+    },
+    {
+      "cw": 3.0,
+      "ratio": "3:1",
+      "lgbx_share": 0.25,
+      "oof_auc": 0.846495,
+      "oof_ks": 0.528132,
+      "d_oof_auc": 5e-06,
+      "spearman_vs_best": 0.99998,
+      "public_measured": 0.56294
+    }
+  ],
+  "next": "agas/v78/output/submission_v78_core1to1_r075.csv"
+}

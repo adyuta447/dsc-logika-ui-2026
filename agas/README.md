@@ -1586,3 +1586,28 @@ dengan nol rank berbeda dan sha256 **byte-identical**; nol error,
 **Antrean submit:** `v78_tm40_r075` → `v78_core3to1_r075` →
 `v79_trees5_add_fac_full`. **Gate berhenti:** kalau tidak ada yang melewati
 0.56520, bekukan `submission_v76_02_r0.75.csv` dan hentikan probe.
+
+## v80 — sumbu tm ditutup, gradien core diikuti (2026-10-28)
+
+`tm40_r075` **0.56084** (−0.00436), `core3to1_r075` **0.56294** (−0.00226).
+
+**Sumbu `tm` tertutup:** tiga titik (0.20/0.30/0.40 → 0.56158/0.56520/0.56084)
+mencocokkan kuadratik kelengkungan −0.399, puncak tm=0.2954 nilai 0.565209,
+gain tersisa **+0.000009** = seperdelapan sd instrumen. Optimum interior,
+terkonfirmasi dua sisi.
+
+**Sumbu `core` masih hidup:** 3:1 → 2:1 naik +0.00226, jadi arah 2:1 → 1:1
+belum diuji dan melanjutkan gradien yang sama — bentuk persis yang membayar di
+sumbu `r`. `core` juga sumbu non-`r` paling landai yang terukur. Grid halus
+dibangun: cw = 0.5, 0.75, 1.0, 1.5, 2.5 (`agas/v80/output/`). OOF naik monoton
+dengan `cw` sementara public turun dari 2:1 ke 3:1 — anti-korelasi yang sama
+seperti di `r`.
+
+**Submit berikutnya:** `agas/v78/output/submission_v78_core1to1_r075.csv`
+(`v80_core1p00_r075.csv` identik dengannya — kirim salah satu). Aturan:
+>0.56520 → `core0p75`; 0.56294–0.56520 → `core1p50`; <0.56294 → sumbu tertutup,
+lanjut ke `v79_trees5_add_fac_full`, lalu **freeze**.
+
+Tujuh pengukuran biaya per sumbu kini lengkap: `r` →1.00 −0.00056, `r` →0.50
+−0.00096, `core` →3:1 −0.00226, leg ditingkatkan −0.00361, `tm` →0.20 −0.00362,
+`tm` →0.40 −0.00436, `ref` →`lgb_full` −0.00586.
