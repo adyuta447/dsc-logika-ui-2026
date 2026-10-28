@@ -1,0 +1,88 @@
+{
+  "held_fixed": {
+    "r": 0.75,
+    "tm": 0.3,
+    "core_weight": 2.0,
+    "reference": "lgb_lean",
+    "legs": "v66"
+  },
+  "baseline_public": 0.5652,
+  "baseline_oof_auc": 0.8464901183223571,
+  "baseline_oof_ks": 0.5277923775259673,
+  "axis_costs": {
+    "r_to_0.50": -0.00096,
+    "r_to_1.00": -0.00056,
+    "tm_to_0.20": -0.00362,
+    "ref_to_lgb_full": -0.00586,
+    "legs_retrained": -0.00361
+  },
+  "candidates": [
+    {
+      "name": "trees3_drop_lgb_full",
+      "members": [
+        "lgb_lean",
+        "cat_full",
+        "xgb_full"
+      ],
+      "why": "drop lgb_full, leaving three",
+      "oof_auc": 0.846507,
+      "oof_ks": 0.528231,
+      "d_oof_auc": 1.7e-05,
+      "d_oof_ks": 0.000439,
+      "spearman_vs_best": 0.999926,
+      "file": "submission_v79_trees3_drop_lgb_full.csv"
+    },
+    {
+      "name": "trees3_drop_cat_full",
+      "members": [
+        "lgb_full",
+        "lgb_lean",
+        "xgb_full"
+      ],
+      "why": "drop cat_full, leaving three",
+      "oof_auc": 0.84635,
+      "oof_ks": 0.526648,
+      "d_oof_auc": -0.00014,
+      "d_oof_ks": -0.001145,
+      "spearman_vs_best": 0.999617,
+      "file": "submission_v79_trees3_drop_cat_full.csv"
+    },
+    {
+      "name": "trees3_drop_xgb_full",
+      "members": [
+        "lgb_full",
+        "lgb_lean",
+        "cat_full"
+      ],
+      "why": "drop xgb_full, leaving three",
+      "oof_auc": 0.846554,
+      "oof_ks": 0.527482,
+      "d_oof_auc": 6.4e-05,
+      "d_oof_ks": -0.000311,
+      "spearman_vs_best": 0.999935,
+      "file": "submission_v79_trees3_drop_xgb_full.csv"
+    },
+    {
+      "name": "trees5_add_fac_full",
+      "members": [
+        "lgb_full",
+        "lgb_lean",
+        "cat_full",
+        "xgb_full",
+        "fac_full"
+      ],
+      "why": "add fac_full, the only leg on a third column set and used nowhere else",
+      "oof_auc": 0.846477,
+      "oof_ks": 0.527458,
+      "d_oof_auc": -1.3e-05,
+      "d_oof_ks": -0.000334,
+      "spearman_vs_best": 0.99996,
+      "file": "submission_v79_trees5_add_fac_full.csv"
+    }
+  ],
+  "queue": [
+    "agas/v78/output/submission_v78_tm40_r075.csv",
+    "agas/v78/output/submission_v78_core3to1_r075.csv",
+    "agas/v79/output/submission_v79_trees5_add_fac_full.csv"
+  ]
+}

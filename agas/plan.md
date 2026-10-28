@@ -1,7 +1,7 @@
-# Rencana kerja `agas/` — v78 aktif
+# Rencana kerja `agas/` — v79 aktif
 
 Dokumen ini adalah rencana eksekusi aktif. **Rencana yang sedang dijalankan
-adalah v78, ada di bagian paling bawah file ini.** Rencana v71–v77 di atasnya
+adalah v79, ada di bagian paling bawah file ini.** Rencana v71–v78 di atasnya
 disimpan sebagai riwayat dan sudah selesai. Aturan kompetisi di
 `agas/limit.md`, `agas/overview.md`, dan `agas/rules.md` tetap mengikat.
 
@@ -958,3 +958,98 @@ Hanya setelah Fase 1 dan 2 selesai. Kandidat sudah dibangun.
 Sumbu `r` memberi +0.00102 dan itu kenaikan nyata pertama dalam 21 versi.
 Tidak ada alasan menduga sumbu referensi memberi lebih; ia hanya satu-satunya
 yang belum diukur. 0.57788 tetap tidak dijanjikan oleh satu pun pengukuran.
+
+---
+
+# Rencana v79 — kepatuhan notebook, sumbu terakhir, lalu freeze
+
+Ditulis 2026-10-28 setelah tiga hasil public masuk. Deadline notebook
+**30 Oktober 2026, 23:59 WIB** — dua hari.
+
+## Hasil baru
+
+| submission | public | vs titik terbaik |
+|---|---:|---:|
+| `v78_ref_lgb_full_matched` | 0.55934 | −0.00586 |
+| `v78_tm20_r075` | 0.56158 | −0.00362 |
+| `v78legs_r075` (hasil training 8.7 jam) | 0.56159 | −0.00361 |
+
+**Kualitas leg sekarang terukur merugikan.** Run 8.7 jam menaikkan tiga leg
++0.00075…+0.00083 AUC dengan A/B bit-identical di empat leg kontrol, dan
+rantainya turun **−0.00361** di public. v76b menyimpulkan ini dari OOF dan saya
+menolak kesimpulannya karena OOF tidak punya standing; ternyata kesimpulannya
+benar, hanya alasannya yang lemah. Jalur kualitas leg **ditutup, dengan bukti
+public**.
+
+## Struktur yang terukur: puncak sempit
+
+Biaya satu langkah dari titik terbaik (`r=0.75`, `ref=lgb_lean`, `tm=0.30`,
+`core=2:1`, leg v66):
+
+| perubahan | biaya |
+|---|---:|
+| `r` → 0.50 | −0.00096 |
+| `r` → 1.00 | −0.00056 |
+| `tm` → 0.20 | −0.00362 |
+| `ref` → `lgb_full` | −0.00586 |
+| leg ditingkatkan +0.0008 AUC | −0.00361 |
+
+Hanya `r` yang landai. Semua sumbu lain merugikan 0.0036–0.0059 untuk satu
+langkah. Sepuluh dari sebelas probe pasca-`r` merugikan.
+
+## Fase 0 — KEPATUHAN ATURAN (prioritas tertinggi)
+
+`rules.md` bagian 7: *"The submitted notebook must correspond to the team's
+competition approach and submission."*
+
+Notebook committee di root (`DSC0152_kali ini beneran deh_Notebook.ipynb`)
+mereproduksi `rank01(tm30 + 0.5*(tm30 − lgb_lean))` → public 0.56424. **Final
+pick kita sekarang `r = 0.75` → 0.56520.** Notebook itu **tidak sesuai** dengan
+submission final.
+
+- `agas/v79/training/make_notebook_v79.py` membangun notebook committee baru
+  yang mereproduksi **persis** `submission_v76_02_r0.75.csv`, diverifikasi nol
+  rank berbeda dan hash cocok.
+- Memuat: audit cutoff, fitur, model, rantai `r=0.75`, ledger public lengkap,
+  tabel biaya per sumbu, validasi CSV.
+- Dieksekusi penuh dengan `RUN_TRAINING=False`, nol error.
+- Versi lama dicadangkan, tidak dihapus.
+
+## Fase 1 — sumbu terakhir yang belum diukur
+
+Satu submission per langkah. Semua dibangun dari prediksi leg v66 tersimpan.
+
+1. `submission_v78_tm40_r075.csv` — mengapit `tm=0.30` dari atas. `tm=0.20`
+   sudah merugikan 0.00362; kalau `tm=0.40` juga merugikan, `tm=0.30` adalah
+   optimum interior dan sumbu ini tertutup.
+2. `submission_v78_core3to1_r075.csv` — ρ 0.999980, langkah terkecil yang
+   pernah dibuat. Belum pernah diukur.
+3. **Keanggotaan `trees4`** — belum pernah dibangun sama sekali.
+   `agas/v79/training/make_submission_v79.py` membangun varian yang membuang
+   satu anggota atau menambah `fac_full`, pada `r=0.75` dengan `tm`, `core`,
+   dan `ref` ditahan.
+
+## Fase 2 — freeze
+
+Gate berhenti: kalau Fase 1 tidak menghasilkan apa pun di atas 0.56520,
+bekukan `submission_v76_02_r0.75.csv` sebagai final dan hentikan probe.
+
+Dengan sepuluh dari sebelas probe pasca-`r` merugikan dan hanya sumbu `r` yang
+memberi kenaikan, ekspektasi realistis Fase 1 adalah **netral sampai negatif**.
+Nilainya adalah menutup sumbu dengan pengukuran, bukan dengan dugaan.
+
+## Prinsip (tidak berubah)
+
+- Python saja; hanya data di `data/`. Tanpa external data, AutoML, AutoFE.
+- Tanpa leakage; semua fitur memakai cutoff `decision_datetime`.
+- `features.py` tidak diubah.
+- Tidak push GitHub, tidak submit Kaggle tanpa instruksi.
+- CSV: 30.000 baris, ID unik dan cocok test, [0,1], tanpa NaN.
+- **Tanpa gate OOF**: terukur tidak melacak public di sumbu-sumbu ini.
+
+## Ekspektasi jujur
+
+0.56520 kemungkinan besar adalah titik terbaik yang bisa dicapai paket ini.
+Prioritas dua hari terakhir adalah **melindungi** skor itu: notebook yang
+sesuai aturan (10% nilai, dinilai dari reproducibility) bernilai lebih besar
+daripada sisa sumbu yang ekspektasinya negatif.

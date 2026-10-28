@@ -1559,3 +1559,30 @@ belakang** `tm` dan `core` yang belum pernah diukur di `r=0.75`.
 
 Notebook `notebook_v78.ipynb` → 21 sel, bagian 6c; nol error, 23 file
 tervalidasi.
+
+## v79 — puncak sempit, notebook disesuaikan aturan (2026-10-28)
+
+Tiga hasil baru: `ref_lgb_full` **0.55934** (−0.00586), `tm20_r075` **0.56158**
+(−0.00362), `v78legs_r075` **0.56159** (−0.00361). **Kualitas leg tertutup
+dengan bukti public:** run 8.7 jam menaikkan tiga leg +0.0008 AUC (A/B bersih,
+empat leg kontrol bit-identical) dan rantainya turun 0.0036.
+
+**Strukturnya puncak sempit.** Biaya satu langkah dari `r=0.75 / ref=lgb_lean /
+tm=0.30 / core=2:1 / leg v66`: `r`→0.50 −0.00096, `r`→1.00 −0.00056, `tm`→0.20
+−0.00362, `ref`→`lgb_full` −0.00586, leg ditingkatkan −0.00361. Hanya `r` yang
+landai; **10 dari 11 probe pasca-`r` merugikan**.
+
+**Kepatuhan aturan diperbaiki.** Notebook committee di root masih mereproduksi
+`r=0.5` (0.56424) sementara final pick sudah `r=0.75` (0.56520) sejak 26
+Oktober — tidak sesuai `rules.md` bagian 7. Notebook baru
+(`make_notebook_v79.py`, 17 sel) mereproduksi `submission_v76_02_r0.75.csv`
+dengan nol rank berbeda dan sha256 **byte-identical**; nol error,
+`STATUS: PASS`. Versi lama dicadangkan ke `agas/OtherTries/`.
+
+**Sumbu terakhir dibangun:** keanggotaan `trees4`, belum pernah diuji 22 versi
+(v61 menulis empat leg itu dan tidak ada yang menanyakannya). 4 kandidat di
+`agas/v79/output/`.
+
+**Antrean submit:** `v78_tm40_r075` → `v78_core3to1_r075` →
+`v79_trees5_add_fac_full`. **Gate berhenti:** kalau tidak ada yang melewati
+0.56520, bekukan `submission_v76_02_r0.75.csv` dan hentikan probe.

@@ -3088,3 +3088,135 @@ Notebook `notebook_v78.ipynb` kini **21 sel**, bagian 6c memuat hasil run;
 dieksekusi penuh nol error, `STATUS: PASS`, **23 file tervalidasi**.
 
 **Final pick tetap `agas/v76/output/submission_v76_02_r0.75.csv`** (0.56520).
+
+---
+
+# 2026-10-28 — Puncak sempit, notebook disesuaikan aturan, sumbu terakhir — v79
+
+## RINGKASAN
+
+Tiga hasil public baru menutup dua pertanyaan dan mengungkap satu masalah
+kepatuhan aturan yang lebih penting daripada sisa sumbu mana pun.
+
+| submission | public | vs titik terbaik |
+|---|---:|---:|
+| `v78_ref_lgb_full_matched` | 0.55934 | −0.00586 |
+| `v78_tm20_r075` | 0.56158 | −0.00362 |
+| `v78legs_r075` (training 8.7 jam) | 0.56159 | −0.00361 |
+
+**Kualitas leg sekarang tertutup dengan bukti public.** Run 8.7 jam menaikkan
+tiga leg +0.00075…+0.00083 AUC — A/B bersih, empat leg kontrol bit-identical
+pada 1e-12 — dan rantainya turun **−0.00361**. v76b menyimpulkan ini dari OOF
+dan saya menolak kesimpulannya karena OOF tidak punya standing; ternyata
+kesimpulan v76b benar, hanya alasannya lemah. Saya menduga "dekat 0.5652 atau
+sedikit di bawah"; dugaan saya salah arah besarnya.
+
+## STATUS
+
+Selesai. Notebook committee diganti agar sesuai submission final. 4 kandidat
+keanggotaan `trees4` dibangun dan tervalidasi. Notebook final (17 sel)
+dieksekusi penuh nol error, `STATUS: PASS`, **byte-identical** dengan file yang
+disubmit. Tidak ada push GitHub.
+
+## HASIL — strukturnya puncak sempit
+
+Biaya satu langkah dari `r=0.75`, `ref=lgb_lean`, `tm=0.30`, `core=2:1`,
+leg v66:
+
+| perubahan | public | biaya |
+|---|---:|---:|
+| `r` → 0.50 | 0.56424 | −0.00096 |
+| `r` → 1.00 | 0.56464 | −0.00056 |
+| `tm` → 0.20 | 0.56158 | −0.00362 |
+| `ref` → `lgb_full` | 0.55934 | −0.00586 |
+| leg ditingkatkan +0.0008 AUC | 0.56159 | −0.00361 |
+
+Hanya `r` yang landai. **Sepuluh dari sebelas probe pasca-`r` merugikan.**
+
+## FASE 0 — kepatuhan aturan (temuan terpenting sesi ini)
+
+`rules.md` bagian 7: *"The submitted notebook must correspond to the team's
+competition approach and submission."*
+
+Notebook committee di root mereproduksi `rank01(tm30 + 0.5*(tm30 − lgb_lean))`
+→ public **0.56424**, sementara final pick sudah berubah ke `r = 0.75` →
+**0.56520** sejak 26 Oktober. **Notebook itu tidak sesuai dengan submission
+final** selama dua hari tanpa saya sadari.
+
+Diperbaiki: `agas/v79/training/make_notebook_v79.py` membangun notebook yang
+mereproduksi `submission_v76_02_r0.75.csv`:
+
+- nol rank berbeda, Spearman 1.0000000000;
+- sha256 `35260db3…f07c733b` **byte-identical** dengan file yang disubmit;
+- 17 sel end-to-end, `RUN_TRAINING=False`, nol error, `STATUS: PASS`;
+- memuat audit cutoff (0 record pasca-cutoff dari 7,2 juta), ledger 13
+  submission, tabel biaya per sumbu, dan bagian Limits yang menyatakan bahwa
+  OOF tidak dipakai sebagai kunci seleksi serta ada risiko seleksi public.
+
+Versi lama dicadangkan ke
+`agas/OtherTries/DSC0152_Notebook_v74_anchor_backup.ipynb`, tidak dihapus.
+
+## FASE 1 — sumbu terakhir: keanggotaan `trees4`
+
+Belum pernah dibangun 22 versi. v61 menulis
+`lgb_full, lgb_lean, cat_full, xgb_full` dan tidak ada versi sesudahnya yang
+menanyakan apakah empat itu jumlah yang benar atau keempatnya leg yang benar.
+Ini penting karena `lgb_lean` sekaligus anggota `trees4` **dan** leg yang
+dikurangkan, jadi membuang anggota mengubah terhadap apa pengurangan itu diukur.
+
+`r`, `tm`, `core`, dan `ref` ditahan; hanya keanggotaan berubah. `lgb_lean`
+tidak pernah dibuang karena ia referensinya.
+
+| kandidat | anggota | OOF AUC | dAUC | ρ |
+|---|---:|---:|---:|---:|
+| `trees3_drop_xgb_full` | 3 | 0.846554 | +0.000064 | 0.999935 |
+| `trees3_drop_lgb_full` | 3 | 0.846507 | +0.000017 | 0.999926 |
+| `trees5_add_fac_full` | 5 | 0.846477 | −0.000013 | 0.999960 |
+| `trees3_drop_cat_full` | 3 | 0.846350 | −0.000140 | 0.999617 |
+
+Baseline diverifikasi mereproduksi file yang terskor: nol rank berbeda.
+
+## KESIMPULAN
+
+1. 0.56520 adalah puncak sempit. Lima sumbu diukur; hanya `r` memberi kenaikan,
+   dan `r` sudah tertutup oleh kuadratik.
+2. Jalur kualitas leg **tertutup dengan bukti public**, bukan dugaan OOF.
+3. Prioritas dua hari terakhir adalah **melindungi** 0.56520. Notebook yang
+   sesuai aturan bernilai 10% nilai dan dinilai dari reproducibility — lebih
+   besar daripada sisa sumbu yang ekspektasinya negatif.
+
+## KESALAHAN DAN PROBLEM
+
+- **Notebook committee tidak sesuai submission final selama dua hari.** Final
+  pick berubah ke `r=0.75` pada 26 Oktober dan saya tidak memperbarui notebook
+  di root. Itu risiko kepatuhan aturan, bukan sekadar kerapian, dan seharusnya
+  saya tangani di hari yang sama. Sudah diperbaiki dan diverifikasi
+  byte-identical.
+- **Ekspektasi saya untuk kandidat training salah arah.** Saya tulis "dekat
+  0.5652 atau sedikit di bawah"; aktualnya −0.00361, lima kali lebih buruk dari
+  batas dugaan saya.
+
+## ARTEFAK
+
+- `agas/v79/training/`: `make_notebook_v79.py`, `make_submission_v79.py`.
+- `agas/v79/output/`: `summary_v79.json`, `submission_final.csv`
+  (byte-identical dengan yang disubmit), 4 CSV keanggotaan `trees4`.
+- `agas/v79/notebook/notebook_v79_final.ipynb` — 17 sel, nol error.
+- `DSC0152_kali ini beneran deh_Notebook.ipynb` di root — salinan committee.
+
+## LANGKAH KE DEPAN
+
+Antrean submit, satu per satu:
+
+1. `agas/v78/output/submission_v78_tm40_r075.csv` — mengapit `tm=0.30` dari
+   atas; `tm=0.20` sudah merugikan 0.00362
+2. `agas/v78/output/submission_v78_core3to1_r075.csv` — ρ 0.999980, langkah
+   terkecil yang pernah dibuat, belum pernah diukur
+3. `agas/v79/output/submission_v79_trees5_add_fac_full.csv` — keanggotaan
+   `trees4`, sumbu yang belum pernah diukur 22 versi
+
+**Gate berhenti:** kalau tidak ada yang melewati 0.56520, bekukan
+`agas/v76/output/submission_v76_02_r0.75.csv` sebagai final dan hentikan probe.
+
+**Final pick Kaggle: `agas/v76/output/submission_v76_02_r0.75.csv`** (0.56520).
+Deadline notebook **30 Oktober 2026, 23:59 WIB**.
