@@ -3299,3 +3299,100 @@ Kalau `core` tertutup, sumbu terakhir yang belum diuji adalah keanggotaan
 **Final pick Kaggle: `agas/v76/output/submission_v76_02_r0.75.csv`** (0.56520).
 Deadline notebook **30 Oktober 2026, 23:59 WIB** — notebook committee di root
 sudah byte-identical dengan file itu.
+
+---
+
+# 2026-10-29 — Sumbu core ditutup, audit paket final — v81
+
+## RINGKASAN
+
+`submission_v78_core1to1_r075.csv` = **0.56400** (−0.00120). Dengan tiga titik,
+sumbu `core` tertutup. **Enam dari tujuh sumbu kini tertutup**; satu belum
+pernah diukur. Audit paket final untuk deadline besok: **PASS**.
+
+## SUMBU core — tertutup
+
+| cw | rasio | public | vs 0.56520 |
+|---:|---|---:|---:|
+| 1.0 | 1:1 | 0.56400 | −0.00120 |
+| **2.0** | **2:1** | **0.56520** | — |
+| 3.0 | 3:1 | 0.56294 | −0.00226 |
+
+Kuadratik: kelengkungan **−0.00173**, puncak **cw = 1.8468** nilai **0.565241**.
+Gain tersisa **+0.000041 = 0.58 sd instrumen** — di bawah resolusi. Titik puncak
+tetap dibangun (`submission_v81_core1p85_r075.csv`) tetapi sebagai **opsi
+terakhir, bukan rekomendasi**: 0.58 sd tidak bisa dibedakan dari noise yang
+dihasilkan tiga pelatihan independen satu resep.
+
+## STATUS SELURUH SUMBU
+
+| sumbu | status | ditutup oleh | sisa |
+|---|---|---|---:|
+| `r` | tertutup | kuadratik, puncak 0.786 | +0.000017 (0.24 sd) |
+| `tm` | tertutup | kuadratik, puncak 0.295 | +0.000009 (0.13 sd) |
+| `core` | **tertutup** | kuadratik, puncak 1.847 | +0.000041 (0.58 sd) |
+| `ref` | tertutup | satu pengukuran −0.00586 | — |
+| kualitas leg | tertutup | satu pengukuran −0.00361, A/B bit-identical | — |
+| **keanggotaan `trees4`** | **BELUM DIUKUR** | — | — |
+
+## LEDGER PUBLIC — 16 submission terskor
+
+| submission | public | vs final |
+|---|---:|---:|
+| **`r=0.75 tm=0.30 core=2:1 ref=lgb_lean` FINAL** | **0.56520** | — |
+| `r=1.00` | 0.56464 | −0.00056 |
+| `r=0.50` (v66_04) | 0.56424 | −0.00096 |
+| `r=0.50` fitur v70 | 0.56419 | −0.00101 |
+| `r=0.50` sepuluh fold-seed | 0.56411 | −0.00109 |
+| `core=1:1` | 0.56400 | −0.00120 |
+| `core=3:1` | 0.56294 | −0.00226 |
+| leg ditingkatkan +0.0008 AUC | 0.56159 | −0.00361 |
+| `tm=0.20` | 0.56158 | −0.00362 |
+| MLP-heavy blend | 0.56111 | −0.00409 |
+| `tm=0.40` | 0.56084 | −0.00436 |
+| 80% MLP mix | 0.56073 | −0.00447 |
+| MLP + v70 pair | 0.56045 | −0.00475 |
+| anchor + 5% GRU | 0.55968 | −0.00552 |
+| `ref=lgb_full` | 0.55934 | −0.00586 |
+| leg mentah tunggal | 0.55801 | −0.00719 |
+
+**Final pick adalah maksimum dari keenam belas.**
+
+## AUDIT PAKET FINAL — STATUS: PASS
+
+`agas/v81/training/finalize_v81.py`, output `final_audit_v81.json`.
+
+**CSV submitted** — `agas/v76/output/submission_v76_02_r0.75.csv`:
+8 cek lolos (kolom, 30.000 baris, ID unik, set ID cocok test, tanpa NaN,
+finite, [0,1]); sha256 `35260db3…f07c733b`.
+
+**Notebook committee** — `DSC0152_kali ini beneran deh_Notebook.ipynb`, 17 sel:
+10 cek lolos — nama sesuai format `ParticipantNumber_TeamName_Notebook`,
+nol error, output tersimpan, ada switch `RUN_TRAINING`, membangun `r=0.75`,
+mereferensi file yang disubmit, **meng-assert** reproduksinya, menjalankan ulang
+audit cutoff, menyatakan tanpa data eksternal.
+
+**Cek aturan**: hanya tabel dari `data/`, tanpa library AutoML/AutoFE di seluruh
+`agas/`, `features.py` utuh.
+
+## KESALAHAN DAN PROBLEM
+
+- **Audit pertama melaporkan FAIL palsu** pada cek AutoML: satu-satunya file
+  yang memuat nama-nama library itu adalah **skrip auditnya sendiri**, yang
+  mendaftarnya sebagai target pencarian. Bug self-reference. Diperbaiki dengan
+  mengecualikan file itu sendiri, dan nama-nama library dipecah pada level
+  string supaya tidak terulang. Tidak ada AutoML di mana pun.
+
+## LANGKAH KE DEPAN
+
+1. **Submit `agas/v79/output/submission_v79_trees5_add_fac_full.csv`** — sumbu
+   terakhir yang belum diukur (keanggotaan `trees4`, tidak pernah diuji 22
+   versi).
+2. Kalau ada slot lebih dan Anda ingin memeras sisa:
+   `agas/v81/output/submission_v81_core1p85_r075.csv` — puncak kuadratik `core`,
+   prediksi 0.56524, yaitu +0.00004. **Di bawah resolusi**; saya tidak
+   merekomendasikannya.
+3. **Freeze.** Final pick Kaggle:
+   `agas/v76/output/submission_v76_02_r0.75.csv` (0.56520).
+4. Upload `DSC0152_kali ini beneran deh_Notebook.ipynb` sebelum **30 Oktober
+   2026, 23:59 WIB**.

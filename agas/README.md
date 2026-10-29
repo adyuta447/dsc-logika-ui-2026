@@ -1611,3 +1611,28 @@ lanjut ke `v79_trees5_add_fac_full`, lalu **freeze**.
 Tujuh pengukuran biaya per sumbu kini lengkap: `r` →1.00 −0.00056, `r` →0.50
 −0.00096, `core` →3:1 −0.00226, leg ditingkatkan −0.00361, `tm` →0.20 −0.00362,
 `tm` →0.40 −0.00436, `ref` →`lgb_full` −0.00586.
+
+## v81 — sumbu core ditutup, audit paket final (2026-10-29)
+
+`core1to1_r075` **0.56400** (−0.00120). Tiga titik (1:1/2:1/3:1 →
+0.56400/0.56520/0.56294) mencocokkan kuadratik kelengkungan −0.00173, puncak
+cw=1.8468 nilai 0.565241, sisa **+0.000041 = 0.58 sd instrumen** → tertutup.
+Titik puncak dibangun (`submission_v81_core1p85_r075.csv`) sebagai opsi terakhir,
+bukan rekomendasi.
+
+**Enam dari tujuh sumbu tertutup:** `r` (+0.000017), `tm` (+0.000009), `core`
+(+0.000041) oleh kuadratik; `ref` (−0.00586) dan kualitas leg (−0.00361) oleh
+satu pengukuran masing-masing. Satu belum diukur: keanggotaan `trees4`.
+
+**Audit paket final — STATUS: PASS** (`finalize_v81.py` →
+`final_audit_v81.json`): CSV 8 cek lolos, sha256 `35260db3…f07c733b`; notebook
+committee 17 sel, 10 cek lolos termasuk nama format committee, nol error, dan
+assertion bahwa ia mereproduksi file yang disubmit; cek aturan lolos.
+
+Catatan: audit pertama melaporkan FAIL palsu karena skrip auditnya sendiri
+memuat nama library AutoML sebagai target pencarian. Bug self-reference,
+diperbaiki.
+
+**Langkah terakhir:** submit `v79_trees5_add_fac_full` (sumbu terakhir), lalu
+**freeze**. Final pick `agas/v76/output/submission_v76_02_r0.75.csv` (0.56520) —
+maksimum dari 16 submission terskor.

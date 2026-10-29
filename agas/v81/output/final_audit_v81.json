@@ -1,0 +1,125 @@
+{
+  "final_csv": "agas/v76/output/submission_v76_02_r0.75.csv",
+  "sha256": "35260db3730a3eec7bc2cce9fb3b540d047c64d5d980e39ab19b07ebf07c733b",
+  "csv_checks": {
+    "final CSV exists": true,
+    "columns are application_id,default_probability": true,
+    "30000 rows": true,
+    "ids unique": true,
+    "id set equals the test set": true,
+    "no missing values": true,
+    "all values finite": true,
+    "all values within [0, 1]": true
+  },
+  "notebook": "DSC0152_kali ini beneran deh_Notebook.ipynb",
+  "notebook_cells": 17,
+  "notebook_errors": 0,
+  "notebook_checks": {
+    "notebook present at the required name": true,
+    "name matches ParticipantNumber_TeamName_Notebook": true,
+    "notebook executed with zero errors": true,
+    "notebook has stored outputs": true,
+    "notebook carries a RUN_TRAINING switch": true,
+    "notebook builds the submitted ratio r=0.75": true,
+    "notebook references the submitted file": true,
+    "notebook asserts it reproduces that file": true,
+    "notebook re-runs the cutoff audit": true,
+    "notebook states no external data": true
+  },
+  "rule_checks": {
+    "only tables from data/ are read": true,
+    "no AutoML / AutoFE library imported anywhere in agas/": true,
+    "features.py untouched since the anchor": true
+  },
+  "core_axis": {
+    "points": {
+      "1.0": 0.564,
+      "2.0": 0.5652,
+      "3.0": 0.56294
+    },
+    "curvature": -0.0017300000000000256,
+    "peak_cw": 1.8468208092485363,
+    "peak_value": 0.5652405924855489,
+    "remaining_gain": 4.059248554888484e-05,
+    "closed": true
+  },
+  "axes_closed": [
+    "r",
+    "tm",
+    "core",
+    "ref",
+    "leg_quality"
+  ],
+  "axes_open": [
+    "trees4 membership"
+  ],
+  "next_submission": "agas/v79/output/submission_v79_trees5_add_fac_full.csv",
+  "last_resort": "agas/v81/output/submission_v81_core1p85_r075.csv",
+  "ledger": [
+    [
+      "r=0.75 tm=0.30 core=2:1 ref=lgb_lean  FINAL",
+      0.5652
+    ],
+    [
+      "r=1.00",
+      0.56464
+    ],
+    [
+      "core=1:1",
+      0.564
+    ],
+    [
+      "r=0.50 (v66_04)",
+      0.56424
+    ],
+    [
+      "r=0.50 on v70 features",
+      0.56419
+    ],
+    [
+      "r=0.50, ten fold seeds",
+      0.56411
+    ],
+    [
+      "core=3:1",
+      0.56294
+    ],
+    [
+      "retrained legs, +0.0008 AUC each",
+      0.56159
+    ],
+    [
+      "tm=0.20",
+      0.56158
+    ],
+    [
+      "MLP-heavy blend",
+      0.56111
+    ],
+    [
+      "80% MLP mix",
+      0.56073
+    ],
+    [
+      "MLP + v70 pair",
+      0.56045
+    ],
+    [
+      "tm=0.40",
+      0.56084
+    ],
+    [
+      "anchor + 5% GRU sequence",
+      0.55968
+    ],
+    [
+      "reference leg = lgb_full",
+      0.55934
+    ],
+    [
+      "single raw leg",
+      0.55801
+    ]
+  ],
+  "status": "PASS"
+}
