@@ -1,0 +1,99 @@
+{
+  "final_public": 0.5652,
+  "instrument_sd": 7e-05,
+  "allpeaks_result": {
+    "public": 0.56481,
+    "predicted": 0.565266,
+    "delta": -0.00039,
+    "finding": "the three per-axis quadratics do not compose; interaction about -0.00046"
+  },
+  "decomposition": {
+    "r_0.786_alone": {
+      "align_good": 0.977,
+      "align_bad": 0.517
+    },
+    "tm_0.295_alone": {
+      "align_good": -0.772,
+      "align_bad": -0.03
+    },
+    "core_1.847_alone": {
+      "align_good": -0.185,
+      "align_bad": 0.569
+    }
+  },
+  "second_slot_weight": 0.3333333333333333,
+  "trees4_member_weight": 0.16666666666666666,
+  "candidates": [
+    {
+      "name": "slot2_cat_full",
+      "spearman_vs_final": 0.998157,
+      "align_good": 0.337,
+      "align_bad": -0.205,
+      "rank_changed": 29963,
+      "inside_noise_band": false,
+      "file": "submission_v83_slot2_cat_full.csv",
+      "sha256": "bfe2c8bc083ec8fc"
+    },
+    {
+      "name": "slot2_fac_full",
+      "spearman_vs_final": 0.999787,
+      "align_good": -0.021,
+      "align_bad": -0.455,
+      "rank_changed": 29861,
+      "inside_noise_band": false,
+      "file": "submission_v83_slot2_fac_full.csv",
+      "sha256": "cd685a3f5e57bdf8"
+    },
+    {
+      "name": "slot2_lgb_full",
+      "spearman_vs_final": 0.999851,
+      "align_good": -0.041,
+      "align_bad": -0.595,
+      "rank_changed": 29866,
+      "inside_noise_band": false,
+      "file": "submission_v83_slot2_lgb_full.csv",
+      "sha256": "158b25069b87f173"
+    },
+    {
+      "name": "slot2_xgb_full",
+      "spearman_vs_final": 0.999704,
+      "align_good": 0.246,
+      "align_bad": -0.341,
+      "rank_changed": 29903,
+      "inside_noise_band": false,
+      "file": "submission_v83_slot2_xgb_full.csv",
+      "sha256": "6e5a66db123596b4"
+    },
+    {
+      "name": "slot2_lgbx_fac_mix",
+      "spearman_vs_final": 0.999946,
+      "align_good": -0.022,
+      "align_bad": -0.453,
+      "rank_changed": 29774,
+      "inside_noise_band": true,
+      "file": "submission_v83_slot2_lgbx_fac_mix.csv",
+      "sha256": "17a0cbb3b0406bdd"
+    },
+    {
+      "name": "r0p786_only",
+      "spearman_vs_final": 0.999996,
+      "align_good": 0.977,
+      "align_bad": 0.517,
+      "rank_changed": 29247,
+      "inside_noise_band": true,
+      "file": "submission_v83_r0p786_only.csv",
+      "sha256": "2a63b4a1920b3860"
+    }
+  ],
+  "recommended": "slot2_cat_full",
+  "expected_value": "slightly negative; downside truncated by the final pick",
+  "axes_closed": [
+    "r",
+    "tm",
+    "core",
+    "ref",
+    "leg_quality",
+    "trees4_membership",
+    "axis_composition"
+  ]
+}

@@ -1660,3 +1660,27 @@ merugikan 0.002–0.007.
 
 **Kalau `allpeaks` > 0.56520 dan jadi final pick, notebook committee harus
 diperbarui** agar mereproduksinya (`rules.md` §7).
+
+## v83 — sumbu tidak aditif, slot kedua `core` dibuka (2026-10-29)
+
+`allpeaks` **0.56481** (−0.00039) melawan prediksi aditif +0.000066. **Ketiga
+kuadratik per-sumbu tidak berkomposisi**; interaksi ≈ −0.00046 = 6.6 sd.
+
+**Dekomposisi** terhadap dua arah terukur (`GOOD` = r 0.5→0.75 yang naik
++0.00102, `BAD` = allpeaks yang turun): `r`→0.786 selaras **+0.977** dengan
+GOOD, tetapi `tm`→0.295 **−0.772** dan `core`→1.847 **−0.185**/+0.569. Jadi
+puncak kuadratik `tm` dan `core` adalah **artefak** — cocok dengan datanya tapi
+bergerak melawan arah yang bekerja. Penyetelan parameter ditutup.
+
+**Slot yang belum pernah dipertanyakan:** `core = (2·trees4 + lgbx_full)/3`
+memberi penghuni slot kedua bobot **0.33333**, dua kali bobot satu anggota
+`trees4` (0.16667). v61 menempatkan `lgbx_full` dan 23 versi menyetel
+**bobotnya** tanpa menanyakan apakah itu **leg yang tepat**.
+
+**Rekomendasi:** `agas/v83/output/submission_v83_slot2_cat_full.csv` — satu-satunya
+dengan ρ < 0.999 (langkah bermakna) **dan** profil menguntungkan di kedua arah
+terukur (GOOD +0.337, BAD −0.205). Alternatif konservatif `slot2_xgb_full`
+(+0.246/−0.341). Apa pun dengan ρ > 0.9999 ada di dalam pita noise ±0.0001.
+
+**Nilai harapan sedikit negatif** — ini taruhan dengan downside terpotong oleh
+mekanisme final pick, bukan perbaikan yang terukur.

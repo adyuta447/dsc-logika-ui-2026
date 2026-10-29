@@ -3489,3 +3489,106 @@ itu.
 4. **Kalau final pick berubah ke `allpeaks`, notebook harus diperbarui** agar
    mereproduksi file itu — `rules.md` bagian 7. Beri tahu saya dan saya
    kerjakan; butuh ~10 menit.
+
+---
+
+# 2026-10-29 — Sumbu tidak aditif, slot kedua `core` dibuka — v83
+
+## RINGKASAN
+
+`submission_v82_allpeaks.csv` = **0.56481**, **turun −0.00039** melawan prediksi
+aditif **+0.000066**. Temuannya: **ketiga kuadratik per-sumbu tidak
+berkomposisi.** Interaksinya sekitar **−0.00046 = 6.6 sd instrumen** — nyata,
+bukan noise.
+
+Dekomposisi kegagalan itu menunjuk koordinat mana yang merusak, dan membuka satu
+slot yang **belum pernah dipertanyakan 23 versi**.
+
+## STATUS
+
+Selesai. 6 kandidat dibangun dan tervalidasi. Tidak ada push GitHub.
+
+## DEKOMPOSISI: kenapa `allpeaks` gagal
+
+Diuji terhadap dua arah yang public benar-benar ukur — `GOOD` = pergerakan
+`r` 0.5 → 0.75 yang naik +0.00102, dan `BAD` = pergerakan `allpeaks` yang turun
+0.00039.
+
+| koordinat digerakkan sendiri | selaras `GOOD` | selaras `BAD` |
+|---|---:|---:|
+| `r` → 0.786 | **+0.977** | +0.517 |
+| `tm` → 0.295 | **−0.772** | −0.030 |
+| `core` → 1.847 | **−0.185** | **+0.569** |
+
+Hanya `r` bergerak ke arah yang satu-satunya kenaikan terukur bergerak. Puncak
+kuadratik `tm` dan `core` menunjuk **berlawanan** — mereka cocok dengan tiga
+titiknya sendiri dan tetap bergerak melawan arah yang bekerja. Itu tampilan
+puncak yang berada **di dalam sebaran instrumen sendiri**: artefak, bukan sinyal.
+
+Ini menutup penyetelan parameter. Tiga "sisa gain" yang saya laporkan
+(+0.000017, +0.000009, +0.000041) tidak boleh dipercaya sebagai arah — hanya `r`
+yang punya dasar.
+
+## SLOT YANG BELUM PERNAH DIPERTANYAKAN
+
+Rantainya: `core = (2·trees4 + lgbx_full) / 3`
+
+| | bobot |
+|---|---:|
+| penghuni slot kedua (`lgbx_full`) | **0.33333** |
+| satu anggota `trees4` | 0.16667 |
+
+Jadi penghuni slot itu membawa **dua kali** bobot tiap leg pohon tunggal. v61
+menempatkan `lgbx_full` di sana, dan setiap versi sesudahnya menyetel
+**bobotnya** (sumbu `core`: 1:1, 2:1, 3:1 — semua terukur) tanpa pernah
+menanyakan apakah itu **leg yang tepat**. Ini jenis pertanyaan yang sama dengan
+sumbu referensi, pada slot yang berbeda.
+
+## GEOMETRI KANDIDAT
+
+| kandidat | ρ ke final | `GOOD` | `BAD` | di dalam noise? |
+|---|---:|---:|---:|---|
+| **`slot2_cat_full`** | **0.998157** | **+0.337** | **−0.205** | tidak |
+| `slot2_xgb_full` | 0.999704 | +0.246 | −0.341 | tidak |
+| `slot2_fac_full` | 0.999787 | −0.021 | −0.455 | tidak |
+| `slot2_lgb_full` | 0.999851 | −0.041 | −0.595 | tidak |
+| `slot2_lgbx_fac_mix` | 0.999946 | −0.022 | −0.453 | **ya** |
+| `r0p786_only` | 0.999996 | +0.977 | +0.517 | **ya** |
+
+Dua kandidat punya profil yang menguntungkan di **kedua** arah terukur:
+`cat_full` dan `xgb_full`. `cat_full` punya langkah terbesar (ρ 0.998157) dan
+keselarasan `GOOD` terkuat, jadi upside-nya paling besar. `xgb_full` lebih
+konservatif: langkah lebih kecil, penghindaran `BAD` lebih kuat.
+
+Apa pun dengan ρ > 0.9999 berada di dalam pita ±0.0001 yang sudah ditetapkan 18
+pengukuran sebagai noise rantai ini, jadi tidak bisa menghasilkan skor lebih
+tinggi apa pun tandanya. Itu menyingkirkan `lgbx_fac_mix` dan `r0p786_only`.
+
+## EKSPEKTASI JUJUR
+
+**Nilai harapan sedikit negatif.** 18 submission terskor, 7 sumbu tertutup, dan
+satu upaya komposisi — semuanya mengatakan titik final adalah puncak sempit.
+Ini **taruhan**, diambil hanya karena final pick Kaggle dipilih **setelah** skor
+terlihat: slot yang tidak terpakai bernilai nol, dan slot yang terpakai **tidak
+bisa menurunkan** hasil.
+
+Rentang realistis: **0.5640–0.5660**. Untuk 0.57788 dibutuhkan +0.01268 = 181 sd
+instrumen; tidak ada sumbu terukur yang punya ruang sebesar itu.
+
+## ARTEFAK
+
+- `agas/v83/training/make_submission_v83.py`, `agas/v83/output/summary_v83.json`
+- 6 CSV tervalidasi; `submission_v83_slot2_cat_full.csv` sha256 `bfe2c8bc…`
+
+## LANGKAH KE DEPAN
+
+1. **Submit `agas/v83/output/submission_v83_slot2_cat_full.csv`** besok.
+   Alternatif konservatif: `submission_v83_slot2_xgb_full.csv`.
+2. Final pick: kandidat baru **kalau > 0.56520**, kalau tidak
+   `agas/v76/output/submission_v76_02_r0.75.csv` (0.56520).
+3. **Kalau final pick berubah, notebook committee WAJIB diperbarui** agar
+   mereproduksi file itu — `rules.md` bagian 7. Beri tahu saya; ~10 menit.
+   Saat ini notebook byte-identical dengan `v76_02_r0.75`
+   (sha256 `35260db3…f07c733b`), audit PASS.
+4. Upload `DSC0152_kali ini beneran deh_Notebook.ipynb` sebelum **30 Oktober
+   2026, 23:59 WIB**.
