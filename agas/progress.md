@@ -3396,3 +3396,96 @@ audit cutoff, menyatakan tanpa data eksternal.
    `agas/v76/output/submission_v76_02_r0.75.csv` (0.56520).
 4. Upload `DSC0152_kali ini beneran deh_Notebook.ipynb` sebelum **30 Oktober
    2026, 23:59 WIB**.
+
+---
+
+# 2026-10-29 — Ketujuh sumbu tertutup, submission terakhir — v82
+
+## RINGKASAN
+
+`submission_v79_trees5_add_fac_full.csv` = **0.56315** (−0.00205). Sumbu
+keanggotaan `trees4` tertutup. **Ketujuh sumbu kini tertutup.** Tiga belas dari
+empat belas probe pasca-`r` merugikan.
+
+User meminta cara menaikkan skor **jauh** dengan satu submission tersisa.
+Jawaban jujurnya: **tidak ada satu pun dari 17 submission terskor yang
+menunjukkan lompatan besar ada di ruang kandidat ini.** Yang tersedia adalah
++0.00007.
+
+## BIAYA SATU LANGKAH DARI TITIK FINAL — lengkap
+
+| perubahan | biaya | status |
+|---|---:|---|
+| `r` → 1.00 | −0.00056 | tertutup, puncak 0.786, sisa +0.000017 |
+| `r` → 0.50 | −0.00096 | tertutup |
+| `core` → 1:1 | −0.00120 | tertutup, puncak 1.847, sisa +0.000041 |
+| `trees4` → tambah `fac_full` | **−0.00205** | **tertutup, satu pengukuran** |
+| `core` → 3:1 | −0.00226 | tertutup |
+| leg ditingkatkan +0.0008 AUC | −0.00361 | tertutup, bukti public |
+| `tm` → 0.20 | −0.00362 | tertutup, puncak 0.295, sisa +0.000009 |
+| `tm` → 0.40 | −0.00436 | tertutup |
+| `ref` → `lgb_full` | −0.00586 | tertutup, satu pengukuran |
+
+## EMPAT IDE STRUKTURAL, TIGA DITOLAK OLEH GEOMETRI
+
+Sebelum membelanjakan slot terakhir, tiap ide diuji keselarasan arahnya dengan
+satu-satunya pergerakan yang pernah terukur membantu (`r` 0.5 → 0.75).
+
+| ide | ρ ke final | keselarasan | verdict |
+|---|---:|---:|---|
+| blend ruang probit, bukan rank | 0.999973 | **−0.004** | hampir tidak mengubah ranking — **bukan lever** |
+| kurangkan dua leg lean (`lgb_lean`+`linear`) | 0.996416 | **−0.90** | bergerak **berlawanan** arah yang bekerja |
+| `r` melewati puncak dengan tm & core di puncaknya | 0.999667 | +0.99 | arah benar, tapi `r` sudah dipetakan turun di sana |
+| **gabung ketiga puncak kuadratik** | 0.999997 | — | **satu-satunya delta prediksi positif** |
+
+Dua ide struktural yang saya ajukan sendiri ternyata bukan lever, dan itu
+ditemukan oleh pengukuran geometri — bukan oleh dugaan, dan bukan dengan
+membuang slot submit.
+
+## KANDIDAT TERAKHIR
+
+`agas/v82/output/submission_v82_allpeaks.csv` — ketiga kuadratik di puncaknya
+sekaligus: `r = 0.7864`, `tm = 0.2954`, `core = 1.8468`.
+
+| | |
+|---|---|
+| prediksi aditif | **+0.000066 = 0.94 sd instrumen** → **0.565266** |
+| ρ ke final | 0.999997 |
+| rank berubah | 28.980 dari 30.000 (perubahan kecil, tersebar) |
+| validasi | 7 cek lolos, sha256 `d2a1a5cd…` |
+
+Baseline diverifikasi mereproduksi file terskor: nol rank berbeda.
+
+**Kenapa tetap layak dikirim:** final pick Kaggle dipilih **setelah** skor
+terlihat, jadi slot yang tidak terpakai bernilai nol, dan slot yang dipakai di
+sini **tidak bisa menurunkan** skor final — hanya bisa menggantikannya kalau
+terbaca lebih tinggi.
+
+**Kenapa ini bukan lompatan besar, dan tidak ada yang bisa:** +0.00007 adalah
+satu sd instrumen. Untuk mencapai 0.57788 dibutuhkan +0.01268, yaitu **181 sd
+instrumen** atau **124× gain terbesar yang pernah kita temukan** (+0.00102 di
+sumbu `r`). Tidak ada satu pun dari tujuh sumbu terukur yang punya ruang sebesar
+itu.
+
+## KESIMPULAN
+
+1. Ruang kandidat dari ketujuh leg ini **habis**. Setiap vektor dengan
+   ρ > 0.999 terhadap final berada di dalam noise; setiap vektor dengan
+   ρ < 0.999 sudah diukur dan merugikan 0.002–0.007.
+2. Gain total yang pernah ditemukan: **+0.00102**, seluruhnya dari sumbu `r`,
+   dan resepnya sudah ada sejak v74 — disembunyikan oleh urutan seleksi berbasis
+   OOF, bukan oleh kekurangan kandidat.
+3. Nilai sisa ada di **notebook** (10% nilai, dinilai dari reproducibility),
+   yang sudah audit **PASS** dan byte-identical dengan submission final.
+
+## LANGKAH KE DEPAN
+
+1. **Submit `agas/v82/output/submission_v82_allpeaks.csv`** — prediksi 0.56527.
+2. Final pick Kaggle: **`submission_v82_allpeaks.csv` kalau > 0.56520**, kalau
+   tidak **`agas/v76/output/submission_v76_02_r0.75.csv`** (0.56520).
+3. Upload `DSC0152_kali ini beneran deh_Notebook.ipynb` sebelum **30 Oktober
+   2026, 23:59 WIB**. Audit PASS, sha256 submission di dalamnya
+   `35260db3…f07c733b`.
+4. **Kalau final pick berubah ke `allpeaks`, notebook harus diperbarui** agar
+   mereproduksi file itu — `rules.md` bagian 7. Beri tahu saya dan saya
+   kerjakan; butuh ~10 menit.

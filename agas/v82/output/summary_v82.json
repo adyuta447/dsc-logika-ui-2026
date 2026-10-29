@@ -1,0 +1,67 @@
+{
+  "final_public": 0.5652,
+  "instrument_sd": 7e-05,
+  "axis_peaks": {
+    "r": {
+      "peak": 0.7864,
+      "peak_value": 0.565217,
+      "gain": 1.7e-05,
+      "gain_in_sd": 0.24,
+      "curvature": -0.01264
+    },
+    "tm": {
+      "peak": 0.2954,
+      "peak_value": 0.565209,
+      "gain": 9e-06,
+      "gain_in_sd": 0.12,
+      "curvature": -0.399
+    },
+    "core": {
+      "peak": 1.8468,
+      "peak_value": 0.565241,
+      "gain": 4.1e-05,
+      "gain_in_sd": 0.58,
+      "curvature": -0.00173
+    }
+  },
+  "additive_prediction": 6.59106861139458e-05,
+  "predicted_public": 0.565265910686114,
+  "candidate": "submission_v82_allpeaks.csv",
+  "sha256": "d2a1a5cd8a2c452b7b876bead852545e8ce1ef52db8f644ecbbefce8961fac7a",
+  "spearman_vs_final": 0.9999974646802192,
+  "rank_positions_changed": 28980,
+  "rejected_by_geometry": {
+    "probit_space_blend": {
+      "rho": 0.999973,
+      "alignment": -0.0036,
+      "why": "barely changes the ranking"
+    },
+    "dual_lean_reference": {
+      "rho": 0.996416,
+      "alignment": -0.9024,
+      "why": "moves opposite to what works"
+    },
+    "r_past_peak": {
+      "rho": 0.999667,
+      "alignment": 0.9905,
+      "why": "right direction, axis already mapped down"
+    }
+  },
+  "axes_closed": [
+    "r",
+    "tm",
+    "core",
+    "ref",
+    "leg_quality",
+    "trees4_membership"
+  ],
+  "validation": {
+    "columns": true,
+    "30000 rows": true,
+    "ids unique": true,
+    "id set matches test": true,
+    "no NaN": true,
+    "finite": true,
+    "within [0,1]": true
+  }
+}

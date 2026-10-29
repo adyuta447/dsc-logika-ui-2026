@@ -1636,3 +1636,27 @@ diperbaiki.
 **Langkah terakhir:** submit `v79_trees5_add_fac_full` (sumbu terakhir), lalu
 **freeze**. Final pick `agas/v76/output/submission_v76_02_r0.75.csv` (0.56520) —
 maksimum dari 16 submission terskor.
+
+## v82 — ketujuh sumbu tertutup, submission terakhir (2026-10-29)
+
+`trees5_add_fac_full` **0.56315** (−0.00205) menutup sumbu terakhir. **13 dari
+14 probe pasca-`r` merugikan.**
+
+Empat ide struktural diuji keselarasan arahnya dengan satu-satunya pergerakan
+yang terukur membantu (`r` 0.5→0.75) **sebelum** membelanjakan slot terakhir;
+tiga ditolak oleh geometri: blend ruang probit (keselarasan −0.004, hampir tidak
+mengubah ranking), kurangkan dua leg lean (**−0.90**, arah berlawanan), `r`
+melewati puncak (+0.99 tapi sumbunya sudah dipetakan turun).
+
+**Kandidat terakhir** `agas/v82/output/submission_v82_allpeaks.csv` — ketiga
+kuadratik di puncaknya: `r=0.7864`, `tm=0.2954`, `core=1.8468`. Prediksi aditif
+**+0.000066 = 0.94 sd instrumen** → 0.565266. ρ 0.999997, 7 cek validasi lolos.
+
+**Jujur soal besarnya:** untuk 0.57788 dibutuhkan +0.01268 = **181 sd
+instrumen** = **124× gain terbesar yang pernah ditemukan** (+0.00102 di sumbu
+`r`). Tidak ada sumbu terukur yang punya ruang sebesar itu. Ruang kandidat dari
+ketujuh leg ini habis: ρ>0.999 ada di dalam noise, ρ<0.999 sudah diukur dan
+merugikan 0.002–0.007.
+
+**Kalau `allpeaks` > 0.56520 dan jadi final pick, notebook committee harus
+diperbarui** agar mereproduksinya (`rules.md` §7).
