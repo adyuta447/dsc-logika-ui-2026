@@ -1,0 +1,33 @@
+14:24:44 feature counts: full=598 lean=490 fac=553
+14:24:44 folds=2 fold_seeds=[42] lgb_seeds=[0]
+14:24:44 computing factor inputs
+14:25:05 factor inputs ready
+14:26:34 seed 42 fac_full   auc=0.843093 ks=0.521418
+14:28:45 seed 42 lgb_full   auc=0.843241 ks=0.521620
+14:29:39 seed 42 lgb_lean   auc=0.843447 ks=0.522825
+14:30:39 seed 42 lgbx_full  auc=0.842608 ks=0.521702
+14:33:42 seed 42 cat_full   auc=0.842276 ks=0.520013
+14:47:09 seed 42 xgb_full   auc=0.843117 ks=0.520487
+14:47:45 seed 42 linear     auc=0.838435 ks=0.514890
+14:47:46 saved after 1/1 fold seeds, elapsed 23.0 min
+14:47:46 BAG fac_full   auc=0.843093 ks=0.521418
+14:47:46 BAG lgb_full   auc=0.843241 ks=0.521620
+14:47:46 BAG lgb_lean   auc=0.843447 ks=0.522825
+14:47:46 BAG lgbx_full  auc=0.842608 ks=0.521702
+14:47:46 BAG cat_full   auc=0.842276 ks=0.520013
+14:47:46 BAG xgb_full   auc=0.843117 ks=0.520487
+14:47:46 BAG linear     auc=0.838435 ks=0.514890
+14:47:46 done in 23.0 min
+feature counts: full=598 lean=490 fac=553
+folds=2 fold_seeds=[42] lgb_seeds=[0]
+computing factor inputs
+factor inputs ready
+seed 42 fac_full   auc=0.843093 ks=0.521418
+seed 42 lgb_full   auc=0.843241 ks=0.521620
+seed 42 lgb_lean   auc=0.843447 ks=0.522825
+seed 42 lgbx_full  auc=0.842608 ks=0.521702
+seed 42 cat_full   auc=0.842276 ks=0.520013
+seed 42 xgb_full   auc=0.843117 ks=0.520487
+seed 42 linear     auc=0.838435 ks=0.514890
+trainer: PASS, 16 arrays identical to the v66 script
+exit 0

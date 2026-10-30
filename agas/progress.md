@@ -3727,3 +3727,73 @@ juga rugi — jadi peluangnya kecil, nilainya adalah menutup sumbu.
 
 - `agas/v85/training/make_submission_v85.py`, `agas/v85/output/` (2 CSV + summary)
 - `agas/v84/training/switch_notebook_v84.py` kini mendukung `--r`
+
+---
+
+# 2026-10-30 — Notebook committee final, berdiri sendiri dan rapi — v86
+
+## RINGKASAN
+
+Final pick dibekukan: `agas/v76/output/submission_v76_02_r0.75.csv` (public
+**0.56520**). Kedua probe terakhir v85 tidak melewati itu. Notebook committee
+dibangun ulang dari nol (`make_notebook_v86.py`) dan kini **berdiri sendiri**:
+seluruh kode fitur dan training ada di dalam notebook, data dideteksi otomatis,
+dan outputnya byte-identical dengan file yang disubmit.
+
+## STATUS
+
+Selesai. Notebook root = v86, audit `finalize_v81.py` PASS. Tidak ada push GitHub.
+
+## MASALAH DI NOTEBOOK LAMA (v79–v84)
+
+1. **Hanya jalan di dalam repo.** Mengimpor `features.py`, membaca cache dari
+   `agas/shared/cache/` dan prediksi dari `agas/v66/output/`. Diberi data lomba
+   saja, gagal di sel pertama.
+2. **Perintah training salah.** Menulis `--lgb-seeds 0,1,2,3,4`, padahal run
+   produksi memakai `0,1` (`train_log_v66.txt`, progress baris 1248). Mode
+   `RUN_TRAINING=True` tidak akan mereproduksi prediksi tersimpan.
+3. **Deskripsi `fac_full` keliru.** Disebut memakai factor features, padahal kolom
+   faktor dihitung per fold tetapi tidak dipilih oleh leg mana pun.
+
+## STRUKTUR NOTEBOOK v86 (38 sel)
+
+Header: kode peserta DSC0152, tim *kali ini beneran deh*, tiga anggota, metrik,
+skor public, cara menjalankan (tabel fast/full path), input/output, environment,
+daftar isi. Lalu 11 bagian, **setiap sel kode diawali subjudul bernomor dan
+penjelasan singkat**:
+
+1 Setup · 2 Data · 3 Cutoff audit · 4 Feature code (`%%writefile` tiga modul,
+sumber persis) · 5 Feature frame · 6 Models (`trainer.py`, baris 134–285 skrip
+v66 verbatim) · 7 Blend dan submission (+ grafik kurva KS) · 8 Cara resep dipilih
+(+ ledger 19 submission) · 9 Validasi · 10 Ringkasan akhir · 11 Batasan.
+
+## VERIFIKASI
+
+| cek | hasil |
+|---|---|
+| fast path di repo (~30 dtk) | 0 rank berbeda, SHA-256 `35260db3…` identik, STATUS PASS |
+| notebook di folder kosong + data saja | otomatis pindah ke full path, modul tertulis, tanpa error |
+| fitur dari kode notebook vs cache produksi | **PASS** — frame 100.000 × 601 identik, urutan kolom sama |
+| trainer notebook vs skrip v66 (2 fold, seed 42, lgb seed 0) | **PASS** — 16 array prediksi identik (skrip v66 23 menit) |
+| audit `finalize_v81.py` pada root | PASS |
+
+## KESALAHAN DAN PROBLEM
+
+- Uji folder terisolasi pertama memakai symlink data; `Path.resolve()` mengikuti
+  symlink ke repo sehingga notebook mengira berjalan di project. Diganti
+  `absolute()`.
+- Deskripsi awal menulis jendela waktu 7–365 hari; dicek ke `features.py`,
+  ternyata sampai 800 hari. Diperbaiki.
+
+## ARTEFAK
+
+- `agas/v86/training/make_notebook_v86.py` — builder notebook
+- `agas/v86/training/verify_full_path_v86.py` — verifikasi fitur dan trainer
+- `agas/v86/notebook/DSC0152_kali ini beneran deh_Notebook.ipynb` = root
+- `agas/v86/output_verify_features.log`, `agas/v86/output_verify_trainer.log`
+
+## LANGKAH KE DEPAN
+
+1. Upload **`DSC0152_kali ini beneran deh_Notebook.ipynb` di root** sebelum
+   **30 Oktober 2026, 23:59 WIB**.
+2. Final pick Kaggle: `submission_v76_02_r0.75.csv` (0.56520).

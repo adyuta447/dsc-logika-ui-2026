@@ -12,7 +12,7 @@
     "all values within [0, 1]": true
   },
   "notebook": "DSC0152_kali ini beneran deh_Notebook.ipynb",
-  "notebook_cells": 17,
+  "notebook_cells": 38,
   "notebook_errors": 0,
   "notebook_checks": {
     "notebook present at the required name": true,

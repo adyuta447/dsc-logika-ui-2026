@@ -17,3 +17,4 @@ features.parquet
 *.parquet
 old_deliverables/ 
 combined_objs.npz
+agas/v86/notebook/work/
