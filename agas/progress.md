@@ -3863,3 +3863,12 @@ persis submission final pick.
 1. Upload **`DSC0152_kali ini beneran deh_Notebook.ipynb` di root** sebelum
    **30 Oktober 2026, 23:59 WIB**.
 2. Final pick Kaggle tetap `submission_v76_02_r0.75.csv` (0.56520).
+
+
+### v87 — revisi: nama file submission
+
+Output notebook diganti dari `submission_DSC0152.csv` menjadi
+`DSC0152_kali ini beneran deh_Submission.csv` (format
+`NomorPeserta_NamaTim_Submission.csv`). Hanya literal nama file di sel penulisan,
+teks penjelasan dan output tercetak yang berubah; isi file tetap sha256
+`35260db3…`. File di root sudah di-rename.

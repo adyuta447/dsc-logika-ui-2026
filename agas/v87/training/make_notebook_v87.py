@@ -197,7 +197,7 @@ or a path given in the `DSC_DATA` environment variable.
 | Item | Description |
 |---|---|
 | **Input** | the eight competition CSVs, nothing else |
-| **Output** | `submission_DSC0152.csv` (`application_id,default_probability`, 30,000 rows) and `training_log.txt`, written next to this notebook |
+| **Output** | `DSC0152_kali ini beneran deh_Submission.csv` (`application_id,default_probability`, 30,000 rows) and `training_log.txt`, written next to this notebook |
 | **Work folder** | the folder the notebook is run from; every generated file is written there |
 | **Code** | all of it is in this notebook; sections 4 and 6 write the feature and training modules (`fe_base.py`, `fe_v65.py`, `fe_extra.py`, `trainer.py`) next to the notebook with `%%writefile` and import them |
 
@@ -615,11 +615,11 @@ print(perf.round(6).to_string())
 md("""
 ### 7.3 Write the submission
 
-Writes `submission_DSC0152.csv` next to the notebook.
+Writes `DSC0152_kali ini beneran deh_Submission.csv` next to the notebook.
 """)
 
 code('''
-OUT_CSV = WORK / "submission_DSC0152.csv"
+OUT_CSV = WORK / "DSC0152_kali ini beneran deh_Submission.csv"
 pd.DataFrame({"application_id": test_ids, "default_probability": test_final}).to_csv(OUT_CSV, index=False)
 print(f"wrote {OUT_CSV}")
 ''')
