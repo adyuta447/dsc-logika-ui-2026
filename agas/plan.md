@@ -1105,3 +1105,48 @@ Enam dari tujuh sumbu tertutup, dan dua yang memberi kenaikan (`r`, dan mungkin
 `core`) adalah yang paling landai. Peluang `core 1:1` melewati 0.56520 ada
 karena gradiennya terukur, tetapi besarnya kemungkinan kecil — ordo +0.001,
 bukan +0.01. 0.57788 tetap tidak dijanjikan oleh satu pun pengukuran.
+
+---
+
+# Rencana v84 — tiga slot terakhir di sumbu identitas slot-2, notebook siap ganti (AKTIF)
+
+Ditulis 2026-10-30 14:00 WIB. Deadline notebook **hari ini 23:59 WIB**.
+Skor terbaik: `agas/v76/output/submission_v76_02_r0.75.csv` = **0.56524**
+(public yang dilihat user). Sisa slot hari ini: **3**.
+
+## Kenapa sumbu ini
+
+Enam sumbu parameter (`r`, `tm`, `core`, `ref`, kualitas leg, komposisi) sudah
+tertutup oleh pengukuran public. Satu-satunya pertanyaan struktural yang belum
+pernah dijawab public adalah **leg mana yang menempati slot kedua `core`**
+(bobot 1/3, dua kali satu leg `trees4`). v83 sudah membangun kandidatnya;
+`cat_full` dan `xgb_full` adalah dua yang selaras dengan arah yang pernah naik
+dan berlawanan dengan arah yang pernah turun.
+
+## Pohon keputusan (3 slot)
+
+Parameter slot: `second = (1 − a)·lgbx_full + a·LEG`; `a = 0` adalah final sekarang.
+
+| slot | submit | lanjut |
+|---|---|---|
+| 1 | `v83/slot2_cat_full` (`a = 1`) | > 0.56524 → slot 2 = `cat a=1.5`; selain itu → slot 2 = `v83/slot2_xgb_full` |
+| 2a | `v84/slot2_cat_a1p5` | slot 3 = puncak kuadratik `a ∈ {0, 1, 1.5}` (dibangun setelah skor) |
+| 2b | `v83/slot2_xgb_full` | > 0.56524 → slot 3 = `xgb a=1.5`; selain itu → slot 3 = `v84/slot2_catxgb` (rata-rata keduanya) |
+
+Semua kandidat cabang dibangun **sekarang** supaya slot tidak menunggu kode.
+
+## Notebook
+
+1. `agas/v84/training/switch_notebook_v84.py <csv>` — menambal notebook committee
+   (konstanta `FINAL_CSV`, `SECOND`, `A_MIX`, skor, ledger), mengeksekusi ulang,
+   dan meng-assert reproduksi 0 rank berbeda + byte-identical.
+2. Dijalankan **sekarang dalam mode v76** untuk membuktikan pipeline tidak
+   mengubah apa pun. Notebook lama dicadangkan di `agas/OtherTries/`.
+3. Kalau final pick berubah: satu perintah, lalu audit `finalize_v81.py`.
+4. **Batas aman: 22:30 WIB** — setelah itu final pick dibekukan apa pun hasilnya.
+
+## Ekspektasi jujur
+
+Ruang realistis **±0.001**. 0.57788 butuh +0.0126 dan tidak ada sumbu blend yang
+punya ruang sebesar itu; mengejar itu dalam 10 jam dengan retrain penuh (6.5 jam)
+mempertaruhkan notebook yang bernilai 10%.

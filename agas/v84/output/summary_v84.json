@@ -1,0 +1,30 @@
+{
+  "final": "submission_v76_02_r0.75.csv",
+  "final_public": 0.56524,
+  "candidates": [
+    {
+      "name": "slot2_cat_a1p5",
+      "file": "submission_v84_slot2_cat_a1p5.csv",
+      "spearman_vs_final": 0.995876,
+      "align_good": 0.336,
+      "align_bad": -0.206,
+      "sha256": "5bc153f70d21abc6"
+    },
+    {
+      "name": "slot2_xgb_a1p5",
+      "file": "submission_v84_slot2_xgb_a1p5.csv",
+      "spearman_vs_final": 0.999337,
+      "align_good": 0.246,
+      "align_bad": -0.342,
+      "sha256": "b4804bd3036276c7"
+    },
+    {
+      "name": "slot2_catxgb",
+      "file": "submission_v84_slot2_catxgb.csv",
+      "spearman_vs_final": 0.999284,
+      "align_good": 0.35,
+      "align_bad": -0.274,
+      "sha256": "5045a43bf4135603"
+    }
+  ]
+}

@@ -3592,3 +3592,78 @@ instrumen; tidak ada sumbu terukur yang punya ruang sebesar itu.
    (sha256 `35260db3…f07c733b`), audit PASS.
 4. Upload `DSC0152_kali ini beneran deh_Notebook.ipynb` sebelum **30 Oktober
    2026, 23:59 WIB**.
+
+---
+
+# 2026-10-30 — Tiga slot terakhir di sumbu slot-2, notebook siap ganti satu perintah — v84
+
+## RINGKASAN
+
+Hari deadline. Skor terbaik tetap `v76_02_r0.75` (public **0.56524** menurut
+user; dokumen sebelumnya mencatat 0.56520). Sisa **3 slot** hari ini. Semua
+kandidat untuk pohon keputusan 3 slot sudah dibangun, dan notebook committee
+kini bisa dialihkan ke final pick baru dengan **satu perintah** (~12 detik
+eksekusi, reproduksi di-assert).
+
+## STATUS
+
+Siap submit. Notebook root tetap mereproduksi `v76_02_r0.75` byte-identical,
+audit `finalize_v81.py` **PASS**. Tidak ada push GitHub, tidak ada submit Kaggle
+dari sisi saya (CLI belum login).
+
+## HIPOTESIS
+
+Slot kedua `core` (bobot 1/3) tidak pernah ditanya penghuninya sejak v61.
+Parameter: `second = (1 − a)·lgbx_full + a·LEG`, `a = 0` = final sekarang.
+
+## KANDIDAT
+
+| file | a | ρ ke final | GOOD | BAD |
+|---|---:|---:|---:|---:|
+| `v83/submission_v83_slot2_cat_full.csv` | 1.0 | 0.998157 | +0.337 | −0.205 |
+| `v83/submission_v83_slot2_xgb_full.csv` | 1.0 | 0.999704 | +0.246 | −0.341 |
+| `v84/submission_v84_slot2_cat_a1p5.csv` | 1.5 | 0.995876 | +0.336 | −0.206 |
+| `v84/submission_v84_slot2_xgb_a1p5.csv` | 1.5 | 0.999337 | +0.246 | −0.342 |
+| `v84/submission_v84_slot2_catxgb.csv` | 1.0 (rata cat+xgb) | 0.999284 | +0.350 | −0.274 |
+
+Skrip memverifikasi bahwa file v83 `a = 1` identik dengan rantai v84, jadi
+semuanya satu sumbu.
+
+## POHON KEPUTUSAN
+
+| slot | submit | lanjut |
+|---|---|---|
+| 1 | `v83/slot2_cat_full` | > 0.56524 → `v84/slot2_cat_a1p5`; selain itu → `v83/slot2_xgb_full` |
+| 2a | `v84/slot2_cat_a1p5` | slot 3 = puncak kuadratik `a ∈ {0, 1, 1.5}` |
+| 2b | `v83/slot2_xgb_full` | > 0.56524 → `v84/slot2_xgb_a1p5`; selain itu → `v84/slot2_catxgb` |
+
+## NOTEBOOK
+
+`agas/v84/training/switch_notebook_v84.py` menambal salinan asli
+(`agas/v84/notebook/committee_base_v83.ipynb`): konstanta `FINAL_CSV`,
+`SECOND_LEG`, `A_MIX`, rumus di header, skor, ledger, dan satu paragraf di
+bagian 6. Lalu mengeksekusi dan meng-assert "rank positions changed : 0",
+"byte-identical … True", "STATUS: PASS" sebelum menimpa root.
+
+Diuji dua arah: v76 → PASS, `cat_full` → PASS, kembali ke v76 → PASS.
+
+## KESALAHAN DAN PROBLEM
+
+- Versi pertama skrip menambal notebook root, yang sudah ditambal pada run
+  pertama → run kedua akan gagal. Diperbaiki: selalu menambal dari salinan asli.
+- Backup uji yang memuat skor palsu (0.56999) dihapus; yang disimpan hanya
+  `agas/OtherTries/DSC0152_Notebook_before_v84_140231.ipynb` (asli).
+
+## ARTEFAK
+
+- `agas/v84/training/make_submission_v84.py`, `agas/v84/output/summary_v84.json`
+- `agas/v84/training/switch_notebook_v84.py`, `agas/v84/notebook/`
+
+## LANGKAH KE DEPAN
+
+1. Submit slot 1: `agas/v83/output/submission_v83_slot2_cat_full.csv`.
+2. Ikuti pohon keputusan untuk slot 2 dan 3.
+3. Kalau ada yang > 0.56524, jalankan:
+   `python3 agas/v84/training/switch_notebook_v84.py --leg <cat_full|xgb_full|catxgb> --a <a> --csv <path> --public <skor>`
+   Diuji PASS untuk `catxgb a=1`, `cat_full a=1` dan `a=1.5`; root lalu dikembalikan ke v76.
+4. **Batas aman 22:30 WIB**, lalu upload notebook sebelum 23:59 WIB.
