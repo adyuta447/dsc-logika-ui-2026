@@ -23,3 +23,5 @@ combined_objs.npz
 /fe_extra.py
 /trainer.py
 /preds_retrained.npz
+/training_log.txt
+/DSC0152_executed_v87.ipynb
