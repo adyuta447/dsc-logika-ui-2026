@@ -3792,6 +3792,22 @@ v66 verbatim) · 7 Blend dan submission (+ grafik kurva KS) · 8 Cara resep dipi
 - `agas/v86/notebook/DSC0152_kali ini beneran deh_Notebook.ipynb` = root
 - `agas/v86/output_verify_features.log`, `agas/v86/output_verify_trainer.log`
 
+### v86 — revisi: folder kerja = folder notebook (root)
+
+Atas permintaan user agar panitia bisa langsung menjalankannya, notebook tidak
+lagi memakai `agas/v86/notebook/work/` atau `./dsc0152_work/`. Folder kerja kini
+**folder tempat notebook dijalankan** (untuk file committee: root project):
+`fe_base.py`, `fe_v65.py`, `fe_extra.py`, `trainer.py` dan
+`submission_DSC0152.csv` ditulis di sana, tanpa `os.chdir`.
+
+- Notebook dieksekusi langsung di root; salinan arsip di `agas/v86/notebook/`.
+- Root: 0 rank berbeda, `submission_DSC0152.csv` sha256 `35260db3…` = file
+  disubmit, audit `finalize_v81.py` PASS.
+- Folder kosong + data saja: modul tertulis di samping notebook, impor tanpa error.
+- `.gitignore`: modul hasil generate di root diabaikan (CSV sudah diabaikan).
+- Tabel identitas dan input/output kini punya baris header (sebelumnya `| | |`,
+  tidak dirender sebagai tabel di sebagian viewer).
+
 ## LANGKAH KE DEPAN
 
 1. Upload **`DSC0152_kali ini beneran deh_Notebook.ipynb` di root** sebelum

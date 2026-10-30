@@ -192,9 +192,9 @@ or a path given in the `DSC_DATA` environment variable.
 | Item | Description |
 |---|---|
 | **Input** | the eight competition CSVs, nothing else |
-| **Output** | `submission_DSC0152.csv` in the work folder (`application_id,default_probability`, 30,000 rows) |
-| **Work folder** | `agas/v86/notebook/work/` inside the project, otherwise `./dsc0152_work/` |
-| **Code** | all of it is in this notebook; sections 4 and 6 write the feature and training modules to the work folder with `%%writefile` and import them |
+| **Output** | `submission_DSC0152.csv` (`application_id,default_probability`, 30,000 rows), written next to this notebook |
+| **Work folder** | the folder the notebook is run from (for this file, the project root); every generated file is written there |
+| **Code** | all of it is in this notebook; sections 4 and 6 write the feature and training modules (`fe_base.py`, `fe_v65.py`, `fe_extra.py`, `trainer.py`) next to the notebook with `%%writefile` and import them |
 
 ### Environment used for the submission
 
@@ -251,7 +251,8 @@ SUBMITTED_SHA256 = "35260db3730a3eec7bc2cce9fb3b540d047c64d5d980e39ab19b07ebf07c
 md("""
 ### 1.2 Locate the data and choose the run mode
 
-Searches for the data folder, creates the work folder, and decides between the
+Searches for the data folder, uses the notebook's own folder as the work folder,
+and decides between the
 fast and the full path. The printed versions are the ones this run used.
 """)
 
@@ -275,10 +276,8 @@ PROJECT = DATA.parent                        # the project folder when run insid
 STORED = PROJECT / "agas/v66/output/preds_v66.npz"
 REFERENCE_CSV = PROJECT / "agas/v76/output/submission_v76_02_r0.75.csv"
 IN_PROJECT = (PROJECT / "agas").is_dir()
-WORK = PROJECT / "agas/v86/notebook/work" if IN_PROJECT else Path.cwd() / "dsc0152_work"
-(WORK / "modules").mkdir(parents=True, exist_ok=True)
-os.chdir(WORK)
-sys.path.insert(0, str(WORK / "modules"))
+WORK = Path.cwd().absolute()                 # the notebook's own folder: modules and outputs go here
+sys.path.insert(0, str(WORK))
 
 if not RUN_TRAINING and not STORED.exists():
     print("stored predictions not found: switching to the full path (features + training)")
@@ -411,7 +410,7 @@ up to 800 days), followed by debt-to-income and cash-flow ratios that combine bl
 used by the trainer in section 6.
 """)
 
-code("%%writefile modules/fe_base.py\n" + FEATURES_SRC)
+code("%%writefile fe_base.py\n" + FEATURES_SRC)
 
 md("""
 ### 4.2 `fe_v65.py` — data quality and stress blocks
@@ -421,7 +420,7 @@ Missingness and coverage across sources (`dataquality`), bureau direction
 measured against observed cash flow rather than declared income (`stress`).
 """)
 
-code("%%writefile modules/fe_v65.py\n" + V65_SRC)
+code("%%writefile fe_v65.py\n" + V65_SRC)
 
 md("""
 ### 4.3 `fe_extra.py` — second-round blocks
@@ -432,7 +431,7 @@ cross-source consistency checks, and a small block of hand-picked interactions.
 `build(names)` returns the requested blocks keyed by `application_id`.
 """)
 
-code("%%writefile modules/fe_extra.py\n" + EXTRA_SRC)
+code("%%writefile fe_extra.py\n" + EXTRA_SRC)
 
 md("""
 ## 5. Feature frame
@@ -549,13 +548,13 @@ the 70,000 training rows) and its averaged test predictions. It returns both for
 all seven legs. The loop body is the production script copied line for line.
 """)
 
-code("%%writefile modules/trainer.py\n" + TRAINER_SRC)
+code("%%writefile trainer.py\n" + TRAINER_SRC)
 
 md("""
 ### 6.2 Train (full path) or load the stored predictions (fast path)
 
 The full path prints one line per leg and fold partition with its out-of-fold
-AUC and KS, and saves the result to `preds_retrained.npz` in the work folder.
+AUC and KS, and saves the result to `preds_retrained.npz` next to the notebook.
 The fast path loads the predictions saved by the production run.
 """)
 

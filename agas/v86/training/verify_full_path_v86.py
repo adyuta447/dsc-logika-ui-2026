@@ -8,7 +8,7 @@
               must give identical predictions for all seven legs.
 
 Usage: python3 verify_full_path_v86.py features|trainer
-Needs the executed notebook's work/modules folder.
+Needs the modules the executed root notebook writes into the project root.
 """
 
 import subprocess
@@ -19,9 +19,8 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
-WORK = ROOT / "agas/v86/notebook/work"
 CACHE = ROOT / "agas/shared/cache"
-sys.path.insert(0, str(WORK / "modules"))
+sys.path.insert(0, str(ROOT))  # the notebook, run from the root, writes its modules there
 
 import fe_base, fe_extra, fe_v65  # noqa: E402
 
