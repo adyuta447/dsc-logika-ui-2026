@@ -151,7 +151,7 @@ def code(s):
 md("""
 # DSC LOGIKA UI 2026 — Credit Default Prediction
 
-| | |
+| Item | Detail |
 |---|---|
 | **Participant number** | DSC0152 |
 | **Team** | kali ini beneran deh |
@@ -189,7 +189,7 @@ or a path given in the `DSC_DATA` environment variable.
 
 ### Inputs and outputs
 
-| | |
+| Item | Description |
 |---|---|
 | **Input** | the eight competition CSVs, nothing else |
 | **Output** | `submission_DSC0152.csv` in the work folder (`application_id,default_probability`, 30,000 rows) |
