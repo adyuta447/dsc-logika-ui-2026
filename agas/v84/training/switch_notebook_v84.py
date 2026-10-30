@@ -44,12 +44,14 @@ def main():
     ap.add_argument("--csv", default="agas/v76/output/submission_v76_02_r0.75.csv")
     ap.add_argument("--public", type=float, default=None,
                     help="public score of --csv; required when it is not v76_02")
+    ap.add_argument("--r", type=float, default=0.75)
     args = ap.parse_args()
-    switching = args.a != 0.0
+    switching = args.a != 0.0 or args.r != 0.75
     assert (ROOT / args.csv).exists(), args.csv
     assert not switching or args.public, "--public is required for a new final"
 
     nb = nbformat.read(BASE, as_version=4)
+    patch(nb, 1, "R_FINAL = 0.75 ", f"R_FINAL = {args.r:g} ")
     patch(nb, 1, OLD_FINAL,
           f'FINAL_CSV = ROOT / "{args.csv}"\n'
           f'SECOND_LEG = "{args.leg}"   # occupant mixed into the second core slot\n'
@@ -60,20 +62,24 @@ def main():
           '    core = (trees4 * cw + second) / (cw + 1.0)')
     if switching:
         p = f"{args.public:.5f}"
-        patch(nb, 0, "core   = (2 * trees4 + lgbx_full) / 3",
-              f"second = {1 - args.a:g} * lgbx_full + {args.a:g} * {args.leg}\n"
-              "core   = (2 * trees4 + second) / 3")
+        if args.a != 0.0:
+            patch(nb, 0, "core   = (2 * trees4 + lgbx_full) / 3",
+                  f"second = {1 - args.a:g} * lgbx_full + {args.a:g} * {args.leg}\n"
+                  "core   = (2 * trees4 + second) / 3")
+        patch(nb, 0, "rank01(tm30 + 0.75 *", f"rank01(tm30 + {args.r:g} *")
         patch(nb, 0, "Public score **0.56520**.", f"Public score **{p}**.")
         patch(nb, 12, "The blend structure comes from v61",
-              f"**Update v84 — the second core slot.** `core` gives its second slot "
-              f"1/3 of the weight, twice any single `trees4` leg, and from v61 to v83 "
-              f"only its weight was tuned, never its occupant. Moving it from "
-              f"`lgbx_full` toward `{args.leg}` (`A_MIX = {args.a:g}`) scored "
-              f"**{p}** on public against 0.56520 for `A_MIX = 0`; everything below "
-              f"is unchanged and still describes the rest of the chain.\n\n"
+              f"**Update v84/v85 — final pick moved.** The submitted vector is "
+              f"`r = {args.r:g}`, second core slot `(1 - {args.a:g}) * lgbx_full + "
+              f"{args.a:g} * {args.leg}`; it scored **{p}** on public against 0.56520 "
+              f"for `r = 0.75`, `lgbx_full` alone. The second slot had only ever had its "
+              f"weight tuned, never its occupant; `cat_full` there (`A_MIX = 1`) scored "
+              f"0.56257. Everything below is unchanged and still describes the rest "
+              f"of the chain.\n\n"
               "The blend structure comes from v61")
         patch(nb, 13, OLD_ROW,
-              f'("r=0.75 slot2 {args.leg} a={args.a:g}  SUBMITTED", {p}),\n'
+              f'("r={args.r:g} slot2 {args.leg} a={args.a:g}  SUBMITTED", {p}),\n'
+              '    ("r=0.75 slot2 cat_full a=1", 0.56257),\n'
               '    ("r=0.75  ref=lgb_lean tm=0.30 core=2:1 (v76_02)", 0.56520),')
         patch(nb, 13, "(led.public - 0.56520)", f"(led.public - {p})")
     for c in nb.cells:

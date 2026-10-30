@@ -1150,3 +1150,8 @@ Semua kandidat cabang dibangun **sekarang** supaya slot tidak menunggu kode.
 Ruang realistis **±0.001**. 0.57788 butuh +0.0126 dan tidak ada sumbu blend yang
 punya ruang sebesar itu; mengejar itu dalam 10 jam dengan retrain penuh (6.5 jam)
 mempertaruhkan notebook yang bernilai 10%.
+
+**Revisi 2026-10-30 (v85):** skor terbaik dikoreksi ke 0.56520. Slot 1
+`slot2_cat_full` = 0.56257. Cabang `xgb` dibatalkan (searah dua langkah yang rugi).
+Slot 2 = `agas/v85/output/submission_v85_r0p786.csv`, slot 3 =
+`agas/v85/output/submission_v85_cat_am0p5.csv`; tidak ada yang naik → freeze v76_02.

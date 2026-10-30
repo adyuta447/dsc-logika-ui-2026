@@ -3667,3 +3667,63 @@ Diuji dua arah: v76 → PASS, `cat_full` → PASS, kembali ke v76 → PASS.
    `python3 agas/v84/training/switch_notebook_v84.py --leg <cat_full|xgb_full|catxgb> --a <a> --csv <path> --public <skor>`
    Diuji PASS untuk `catxgb a=1`, `cat_full a=1` dan `a=1.5`; root lalu dikembalikan ke v76.
 4. **Batas aman 22:30 WIB**, lalu upload notebook sebelum 23:59 WIB.
+
+---
+
+# 2026-10-30 — slot2_cat_full gagal, semua sumbu rugi di kedua sisi — v85
+
+## RINGKASAN
+
+Koreksi dari user: skor terbaik adalah **0.56520** (bukan 0.56524).
+`submission_v83_slot2_cat_full.csv` = **0.56257 (−0.00263)**. Cabang `xgb a=1`
+dari v84 **dibatalkan**. Sisa 2 slot dipakai untuk satu probe berisiko rendah
+dan satu penutup sumbu.
+
+## HASIL
+
+| sumbu | sisi kiri | sisi kanan |
+|---|---|---|
+| `r` | 0.50: −0.00096 | 1.00: −0.00056 |
+| `tm` | 0.20: −0.00362 | 0.40: −0.00436 |
+| `core` | 1:1: −0.00120 | 3:1: −0.00226 |
+| slot-2 `a` (cat) | ? | 1.0: **−0.00263** |
+
+Semua sumbu yang diukur di dua sisi **rugi di kedua sisi**. Itu konsisten dengan
+titik final sebagai puncak — dan juga dengan *winner's curse*: final dipilih
+sebagai maksimum ±19 pembacaan public, jadi sebagian 0.56520 adalah noise public
+yang menguntungkan, dan setiap langkah menjauh membaca ulang noise itu.
+
+## GEOMETRI (korelasi langkah terhadap langkah terukur)
+
+| kandidat | ρ | GOOD r (+) | CAT a=1 (−) | core 1:1 (−) | core 3:1 (−) |
+|---|---:|---:|---:|---:|---:|
+| `xgb a=1` (dibatalkan) | 0.999704 | +0.246 | **+0.487** | −0.754 | **+0.756** |
+| `cat a=−0.5` | 0.999537 | −0.340 | −0.995 | **+0.855** | −0.847 |
+| `r = 0.786` | 0.999996 | +0.977 | — | — | — |
+
+`xgb a=1` searah dengan dua langkah yang rugi. `cat a=−0.5` (menghapus `cat_full`
+dari `core`) berlawanan dengan langkah cat yang rugi, tetapi searah core 1:1 yang
+juga rugi — jadi peluangnya kecil, nilainya adalah menutup sumbu.
+
+## LANGKAH KE DEPAN (2 slot)
+
+1. **Slot 2:** `agas/v85/output/submission_v85_r0p786.csv` — puncak sumbu `r`,
+   satu-satunya koordinat yang searah dengan gain terukur. ρ 0.999996, jadi
+   pembacaannya ±0.0001 di sekitar 0.56520; risiko turun sangat kecil.
+2. **Slot 3:** `agas/v85/output/submission_v85_cat_am0p5.csv` — sisi lain sumbu
+   slot-2. Kalau rugi, sumbu tertutup.
+3. Kalau salah satu > 0.56520:
+   - `r0p786`: `python3 agas/v84/training/switch_notebook_v84.py --r 0.7864 --csv agas/v85/output/submission_v85_r0p786.csv --public <skor>`
+   - `cat_am0p5`: `python3 agas/v84/training/switch_notebook_v84.py --leg cat_full --a -0.5 --csv agas/v85/output/submission_v85_cat_am0p5.csv --public <skor>`
+   Keduanya diuji PASS lalu root dikembalikan ke v76.
+4. Kalau tidak ada: **freeze `v76_02_r0.75` (0.56520)**. Notebook root sudah
+   byte-identical dengannya — tidak perlu apa-apa.
+5. **Private hedge:** kalau halaman *Select Submissions* Kaggle mengizinkan 2
+   pilihan, private memakai yang terbaik dari keduanya. Pilih `v76_02_r0.75` +
+   `agas/v76/output/submission_v76_06_r1.00.csv` (0.56464, korelasi lebih rendah, kualitas setara; rantai yang sama dengan `R_FINAL = 1.0`, 0 rank berbeda).
+6. Upload notebook sebelum 23:59 WIB.
+
+## ARTEFAK
+
+- `agas/v85/training/make_submission_v85.py`, `agas/v85/output/` (2 CSV + summary)
+- `agas/v84/training/switch_notebook_v84.py` kini mendukung `--r`

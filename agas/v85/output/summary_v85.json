@@ -1,0 +1,18 @@
+{
+  "final_public": 0.5652,
+  "slot2_cat_full_public": 0.56257,
+  "candidates": [
+    {
+      "file": "submission_v85_r0p786.csv",
+      "spearman_vs_final": 0.999996,
+      "rank_changed": 29247,
+      "sha256": "2a63b4a1920b3860"
+    },
+    {
+      "file": "submission_v85_cat_am0p5.csv",
+      "spearman_vs_final": 0.999537,
+      "rank_changed": 29901,
+      "sha256": "1d70c22330b90281"
+    }
+  ]
+}
