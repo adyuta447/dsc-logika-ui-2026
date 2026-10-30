@@ -3813,3 +3813,53 @@ lagi memakai `agas/v86/notebook/work/` atau `./dsc0152_work/`. Folder kerja kini
 1. Upload **`DSC0152_kali ini beneran deh_Notebook.ipynb` di root** sebelum
    **30 Oktober 2026, 23:59 WIB**.
 2. Final pick Kaggle: `submission_v76_02_r0.75.csv` (0.56520).
+
+---
+
+# 2026-10-30 — Notebook committee hanya butuh dirinya sendiri dan data lomba — v87
+
+## RINGKASAN
+
+Hanya file notebook yang diserahkan ke panitia, jadi notebook tidak boleh membaca
+file lain selain data lomba. Fast path v86 (prediksi tersimpan, cache fitur, CSV
+pembanding, path `agas/`) dihapus. Setiap run membangun fitur dari CSV mentah,
+melatih tujuh leg, mem-blend, lalu menulis **satu** submission
+`submission_DSC0152.csv`. Kecocokan dengan file yang disubmit dicek lewat
+SHA-256 yang ditulis sebagai konstanta di notebook.
+
+## STATUS
+
+**SELESAI** — run penuh dari root lolos, file identik byte demi byte dengan
+`submission_v76_02_r0.75.csv` (public 0.56520).
+
+## RUN
+
+`jupyter nbconvert --execute` dari root, mulai 15:25, selesai 22:25 WIB.
+Training 7,00 jam (10 fold × 6 fold seed, lgb seed 0,1).
+
+## HASIL
+
+| Cek | Hasil |
+|---|---|
+| error sel | 0 |
+| sha256 dibangun ulang | `35260db3730a3eec7bc2cce9fb3b540d047c64d5d980e39ab19b07ebf07c733b` |
+| identik dengan file disubmit | **True**, STATUS: PASS |
+| OOF AUC / KS blend | 0.846490 / 0.527792 |
+| file submission yang ditulis | 1 (`submission_DSC0152.csv`) |
+
+## KESIMPULAN
+
+Notebook root bisa dijalankan panitia hanya dengan data lomba dan menghasilkan
+persis submission final pick.
+
+## ARTEFAK
+
+- `agas/v87/training/make_notebook_v87.py` — builder notebook
+- `agas/v87/notebook/DSC0152_kali ini beneran deh_Notebook.ipynb` = root (sudah dieksekusi)
+- `agas/v87/output/training_log_v87.txt`, `agas/v87/run_v87.log`
+
+## LANGKAH KE DEPAN
+
+1. Upload **`DSC0152_kali ini beneran deh_Notebook.ipynb` di root** sebelum
+   **30 Oktober 2026, 23:59 WIB**.
+2. Final pick Kaggle tetap `submission_v76_02_r0.75.csv` (0.56520).
